@@ -1,31 +1,28 @@
 <!doctype html>
 <html lang="it">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aromat Ovunque</title>
-<style>
-html,body{
-  margin:0;
-  height:100%;
-  background:#000;
-}
-.wrap{
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:10px;
-}
-img{
-  max-width:100%;
-  max-height:100%;
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aromat Ovunque</title>
+  <style>
+    :root { color-scheme: dark; }
+    body{ margin:0; min-height:100vh; display:grid; place-items:center; background:#0b0b0b; color:#fff;
+          font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+    .card{ max-width:720px; padding:28px; text-align:center; }
+    h1{ margin:0 0 10px; font-size:34px; letter-spacing:.2px; }
+    p{ margin:0 0 18px; opacity:.8; line-height:1.4; }
+    a.btn{ display:inline-block; padding:14px 18px; border-radius:14px; background:#22c55e; color:#071b0f;
+           font-weight:800; text-decoration:none; }
+    a.btn:active{ transform:scale(.98); }
+    .tiny{ margin-top:14px; font-size:12px; opacity:.6; }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <img src="EB143FE4-65D8-48A6-A09C-0ADAB9526775.png" alt="Aromat Ovunque">
-</div>
+  <div class="card">
+    <h1>Aromat Ovunque</h1>
+    <p>Azioni della settimana in formato e-commerce: apri, tocchi, guardi il prodotto. Fine.</p>
+    <a class="btn" href="shop.html">Entra</a>
+    <div class="tiny">Powered by GitHub Pages, cioè gratis.</div>
+  </div>
 </body>
 </html>
