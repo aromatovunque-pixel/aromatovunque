@@ -24,6 +24,7 @@
       color:#fff;
 
       background: url("Hero.jpg") center center / cover no-repeat fixed;
+      overflow:hidden;
     }
 
     body::before{
@@ -38,16 +39,37 @@
       z-index:0;
     }
 
+    /* ---------- ANIMAZIONI ---------- */
+
+    @keyframes fadeUp {
+      from{
+        opacity:0;
+        transform: translateY(26px);
+      }
+      to{
+        opacity:1;
+        transform: translateY(0);
+      }
+    }
+
     .card{
       position:relative;
       z-index:1;
       max-width:720px;
       padding:36px 28px 30px;
       text-align:center;
-
-      /* QUESTO È IL FIX */
       margin-top:120px;
     }
+
+    .animate{
+      opacity:0;
+      animation: fadeUp .8s ease forwards;
+    }
+
+    .delay-1{ animation-delay:.2s; }
+    .delay-2{ animation-delay:.45s; }
+    .delay-3{ animation-delay:.7s; }
+    .delay-4{ animation-delay:1s; }
 
     h1{
       margin:0 0 14px;
@@ -63,7 +85,7 @@
 
     .btn{
       display:inline-flex;
-      padding:14px 24px;
+      padding:14px 26px;
       border-radius:999px;
       background: linear-gradient(135deg,
         var(--yellow),
@@ -73,7 +95,7 @@
       font-weight:900;
       text-decoration:none;
       box-shadow:0 14px 28px rgba(0,0,0,.4);
-      transition: all .15s ease;
+      transition: transform .15s ease, filter .15s ease;
     }
 
     .btn:hover{
@@ -109,15 +131,17 @@
 
 <body>
   <div class="card">
-    <h1>Aromat Ovunque*</h1>
+    <h1 class="animate delay-1">Aromat Ovunque*</h1>
 
-    <p class="claim">
+    <p class="claim animate delay-2">
       Stay strong. Stay Aromat.
     </p>
 
-    <a class="btn" href="shop.html">Entra</a>
+    <div class="animate delay-3">
+      <a class="btn" href="shop.html">Entra</a>
+    </div>
 
-    <div class="disclaimer">
+    <div class="disclaimer animate delay-4">
       * Questo sito è stato realizzato esclusivamente a scopo di intrattenimento e satira.
       I prodotti rappresentati sono frutto di fantasia e non corrispondono a prodotti reali
       né alle loro caratteristiche commerciali.
