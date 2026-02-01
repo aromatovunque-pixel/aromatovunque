@@ -3,11 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aromat Ovunque – Shop</title>
+<title>Aromat Ovunque – Azioni settimanali</title>
 
 <style>
 :root{color-scheme:dark}
-
 body{
   margin:0;
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
@@ -22,7 +21,6 @@ h1{
   letter-spacing:.4px;
 }
 
-/* GRID */
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -32,7 +30,6 @@ h1{
   margin:auto;
 }
 
-/* CARD */
 .card{
   background:#151515;
   border-radius:18px;
@@ -43,15 +40,15 @@ h1{
   box-shadow:0 10px 30px rgba(0,0,0,.6);
 }
 
-/* IMMAGINE */
 .card img{
   width:100%;
   height:260px;
   object-fit:contain;
   margin-bottom:14px;
+  display:block;
 }
 
-/* BOTTONE AROMAT */
+/* Bottone piccolo Aromat */
 .btn{
   display:inline-flex;
   align-items:center;
@@ -65,38 +62,24 @@ h1{
   text-decoration:none;
   color:#0b0b0b;
 
-  background:linear-gradient(
-    135deg,
-    #facc15 0%,
-    #22c55e 50%,
-    #ef4444 100%
-  );
+  background:linear-gradient(135deg,#facc15 0%,#22c55e 50%,#ef4444 100%);
   background-size:300% 300%;
   background-position:0% 50%;
 
   border:2px solid rgba(255,255,255,.65);
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,.7),
-    0 6px 14px rgba(0,0,0,.45);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.7), 0 6px 14px rgba(0,0,0,.45);
 
-  transition:
-    background-position .35s ease,
-    box-shadow .2s ease,
-    transform .1s ease;
+  transition:background-position .35s ease, box-shadow .2s ease, transform .1s ease;
 }
 
 .btn:hover{
   background-position:100% 50%;
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,.9),
-    0 10px 22px rgba(0,0,0,.55);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.9), 0 10px 22px rgba(0,0,0,.55);
 }
 
 .btn:active{
   transform:translateY(2px) scale(.97);
-  box-shadow:
-    inset 0 4px 8px rgba(0,0,0,.35),
-    0 4px 8px rgba(0,0,0,.45);
+  box-shadow:inset 0 4px 8px rgba(0,0,0,.35), 0 4px 8px rgba(0,0,0,.45);
 }
 
 @media(hover:none){
@@ -106,47 +89,48 @@ h1{
 </head>
 
 <body>
+  <h1>Azioni settimanali</h1>
 
-<h1>Azioni della settimana</h1>
+  <div class="grid">
+    <div class="card">
+      <img src="sigarette.jpg" alt="Sigarette Aromat">
+      <a class="btn" href="sigarette.jpg">Apri</a>
+    </div>
 
-<div class="grid">
+    <div class="card">
+      <img src="carta.jpg" alt="Carta igienica Aromat">
+      <a class="btn" href="carta.jpg">Apri</a>
+    </div>
 
-  <div class="card">
-    <img src="sigarette.jpg" alt="Sigarette Aromat">
-    <a class="btn" href="#">Apri</a>
+    <div class="card">
+      <img src="profumo.jpg" alt="Profumo Aromat">
+      <a class="btn" href="profumo.jpg">Apri</a>
+    </div>
+
+    <div class="card">
+      <img src="coca.jpg" alt="Bevanda Aromat">
+      <a class="btn" href="coca.jpg">Apri</a>
+    </div>
+
+    <div class="card">
+      <img src="cioccolato.jpg" alt="Cioccolato Aromat">
+      <a class="btn" href="cioccolato.jpg">Apri</a>
+    </div>
+
+    <div class="card">
+      <img src="dentifricio.jpg" alt="Dentifricio Aromat">
+      <a class="btn" href="dentifricio.jpg">Apri</a>
+    </div>
+
+    <div class="card">
+      <img src="gelato.jpg" alt="Gelato Aromat">
+      <a class="btn" href="gelato.jpg">Apri</a>
+    </div>
+
+    <div class="card">
+      <img src="caffe.jpg" alt="Caffè Aromat">
+      <a class="btn" href="caffe.jpg">Apri</a>
+    </div>
   </div>
-
-  <div class="card">
-    <img src="profumo.jpg" alt="Profumo Aromat">
-    <a class="btn" href="#">Apri</a>
-  </div>
-
-  <div class="card">
-    <img src="gelato.jpg" alt="Gelato Aromat">
-    <a class="btn" href="#">Apri</a>
-  </div>
-
-  <div class="card">
-    <img src="dentifricio.jpg" alt="Dentifricio Aromat">
-    <a class="btn" href="#">Apri</a>
-  </div>
-
-  <div class="card">
-    <img src="carta.jpg" alt="Carta igienica Aromat">
-    <a class="btn" href="#">Apri</a>
-  </div>
-
-  <div class="card">
-    <img src="cioccolato.jpg" alt="Cioccolato Aromat">
-    <a class="btn" href="#">Apri</a>
-  </div>
-
-  <div class="card">
-    <img src="caffe.jpg" alt="Caffè Aromat">
-    <a class="btn" href="#">Apri</a>
-  </div>
-
-</div>
-
 </body>
 </html>
