@@ -1,109 +1,152 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Aromat Ovunque</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aromat Ovunque – Shop</title>
 
-  <style>
-    :root { color-scheme: dark; }
+<style>
+:root{color-scheme:dark}
 
-    /* Niente scroll: così lo sfondo NON si muove */
-    html, body {
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color: #fff;
-      background: #000;
-    }
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:#0b0b0b;
+  color:#fff;
+}
 
-    /* Layer immagine fisso */
-    .bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      background-image: url("Hero.jpg");
-      background-size: cover;
-      background-repeat: no-repeat;
+h1{
+  text-align:center;
+  margin:22px 12px;
+  font-size:26px;
+  letter-spacing:.4px;
+}
 
-      /* Qui decidi cosa si vede su mobile: il barattolo è in basso */
-      background-position: center 90%;
-      transform: translateZ(0);
-    }
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:18px;
+  padding:16px;
+  max-width:1200px;
+  margin:auto;
+}
 
-    /* Overlay per leggibilità */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      background: rgba(0,0,0,.55);
-    }
+/* CARD */
+.card{
+  background:#151515;
+  border-radius:18px;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.6);
+}
 
-    /* Contenuto sopra */
-    .wrap {
-      position: relative;
-      z-index: 2;
-      height: 100dvh; /* viewport reale su mobile */
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      box-sizing: border-box;
-    }
+/* IMMAGINE */
+.card img{
+  width:100%;
+  height:260px;
+  object-fit:contain;
+  margin-bottom:14px;
+}
 
-    .card {
-      text-align: center;
-      max-width: 720px;
-    }
+/* BOTTONE AROMAT */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:110px;
+  padding:10px 14px;
+  border-radius:14px;
+  font-weight:900;
+  font-size:13px;
+  letter-spacing:.3px;
+  text-decoration:none;
+  color:#0b0b0b;
 
-    h1 {
-      margin: 0 0 12px;
-      font-size: 40px;
-      letter-spacing: .3px;
-      text-shadow: 0 8px 24px rgba(0,0,0,.6);
-    }
+  background:linear-gradient(
+    135deg,
+    #facc15 0%,
+    #22c55e 50%,
+    #ef4444 100%
+  );
+  background-size:300% 300%;
+  background-position:0% 50%;
 
-    p {
-      margin: 0 0 22px;
-      font-size: 18px;
-      font-weight: 600;
-      letter-spacing: .3px;
-      text-shadow: 0 8px 24px rgba(0,0,0,.6);
-    }
+  border:2px solid rgba(255,255,255,.65);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.7),
+    0 6px 14px rgba(0,0,0,.45);
 
-    a.btn {
-      display: inline-block;
-      padding: 16px 26px;
-      border-radius: 16px;
-      background: #22c55e;
-      color: #071b0f;
-      font-weight: 900;
-      font-size: 16px;
-      text-decoration: none;
-      box-shadow: 0 14px 40px rgba(0,0,0,.45);
-    }
+  transition:
+    background-position .35s ease,
+    box-shadow .2s ease,
+    transform .1s ease;
+}
 
-    a.btn:active { transform: scale(.97); }
+.btn:hover{
+  background-position:100% 50%;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.9),
+    0 10px 22px rgba(0,0,0,.55);
+}
 
-    /* Mobile: testo un filo più compatto e immagine ancora più “giusta” */
-    @media (max-width: 768px) {
-      .bg { background-position: center 85%; } /* spinge il soggetto in vista */
-      h1 { font-size: 32px; }
-      p { font-size: 16px; }
-    }
-  </style>
+.btn:active{
+  transform:translateY(2px) scale(.97);
+  box-shadow:
+    inset 0 4px 8px rgba(0,0,0,.35),
+    0 4px 8px rgba(0,0,0,.45);
+}
+
+@media(hover:none){
+  .btn:active{background-position:100% 50%}
+}
+</style>
 </head>
 
 <body>
-  <div class="bg"></div>
-  <div class="overlay"></div>
 
-  <main class="wrap">
-    <div class="card">
-      <h1>Aromat Ovunque</h1>
-      <p>Stay strong, Stay Aromat</p>
-      <a class="btn" href="shop.html">Entra</a>
-    </div>
-  </main>
+<h1>Azioni della settimana</h1>
+
+<div class="grid">
+
+  <div class="card">
+    <img src="sigarette.jpg" alt="Sigarette Aromat">
+    <a class="btn" href="#">Apri</a>
+  </div>
+
+  <div class="card">
+    <img src="profumo.jpg" alt="Profumo Aromat">
+    <a class="btn" href="#">Apri</a>
+  </div>
+
+  <div class="card">
+    <img src="gelato.jpg" alt="Gelato Aromat">
+    <a class="btn" href="#">Apri</a>
+  </div>
+
+  <div class="card">
+    <img src="dentifricio.jpg" alt="Dentifricio Aromat">
+    <a class="btn" href="#">Apri</a>
+  </div>
+
+  <div class="card">
+    <img src="carta.jpg" alt="Carta igienica Aromat">
+    <a class="btn" href="#">Apri</a>
+  </div>
+
+  <div class="card">
+    <img src="cioccolato.jpg" alt="Cioccolato Aromat">
+    <a class="btn" href="#">Apri</a>
+  </div>
+
+  <div class="card">
+    <img src="caffe.jpg" alt="Caffè Aromat">
+    <a class="btn" href="#">Apri</a>
+  </div>
+
+</div>
+
 </body>
 </html>
