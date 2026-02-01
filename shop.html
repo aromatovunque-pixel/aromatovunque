@@ -4,367 +4,540 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Aromat Ovunque – Azioni settimanali</title>
-
   <style>
     :root{
-      color-scheme: dark;
-      --giallo:#facc15;
-      --verde:#22c55e;
-      --rosso:#ef4444;
-      --stroke: rgba(255,255,255,.10);
+      --denner-red:#e11d2e;
+      --denner-yellow:#ffdd00;
+      --aromat-green:#1fa34a;
+      --ink:#101112;
+      --muted:#5d6167;
+      --card:#ffffff;
+      --line:#e7e7ea;
+      --shadow: 0 14px 40px rgba(16,17,18,.14);
+      --shadow2: 0 10px 24px rgba(16,17,18,.10);
+      --radius: 18px;
     }
 
     *{ box-sizing:border-box; }
-
+    html,body{ height:100%; }
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:#fff;
-
-      /* Sfondo Aromat soft */
+      color:var(--ink);
       background:
-        radial-gradient(900px 700px at 10% 10%, rgba(250,204,21,.18), transparent 60%),
-        radial-gradient(900px 700px at 70% 15%, rgba(34,197,94,.14), transparent 60%),
-        radial-gradient(900px 700px at 85% 85%, rgba(239,68,68,.12), transparent 60%),
-        #0b0b0b;
+        radial-gradient(900px 500px at 20% 0%, rgba(255,221,0,.22), transparent 65%),
+        radial-gradient(900px 500px at 80% 0%, rgba(31,163,74,.16), transparent 65%),
+        radial-gradient(900px 700px at 50% 110%, rgba(225,29,46,.12), transparent 65%),
+        #fafafa;
     }
 
-    /* Layout base */
+    /* ===== layout ===== */
     .app{
-      display:flex;
       min-height:100vh;
-      width:100%;
+      display:grid;
+      grid-template-columns: 280px 1fr;
     }
 
-    /* Sidebar */
-    .side{
-      width:280px;
-      padding:18px 16px;
-      border-right:1px solid var(--stroke);
-      background: rgba(0,0,0,.45);
+    @media (max-width: 980px){
+      .app{ grid-template-columns: 1fr; }
+    }
+
+    /* ===== sidebar ===== */
+    .sidebar{
+      position:sticky;
+      top:0;
+      height:100vh;
+      padding:18px 14px;
+      border-right:1px solid var(--line);
+      background: rgba(255,255,255,.72);
+      backdrop-filter: blur(10px);
+    }
+
+    @media (max-width: 980px){
+      .sidebar{
+        position:relative;
+        height:auto;
+        border-right:none;
+        border-bottom:1px solid var(--line);
+      }
     }
 
     .brand{
       display:flex;
       align-items:center;
-      gap:12px;
-      margin-bottom:14px;
+      gap:10px;
+      padding:10px 10px 14px;
     }
-
-    .logo{
-      width:34px;height:34px;border-radius:10px;
-      background: linear-gradient(135deg, var(--giallo), var(--verde), var(--rosso));
+    .logoDot{
+      width:14px; height:14px;
+      border-radius:999px;
+      background: linear-gradient(135deg, var(--denner-yellow), var(--aromat-green), var(--denner-red));
+      box-shadow: 0 6px 18px rgba(0,0,0,.18);
     }
-
-    .brand b{ font-size:16px; }
-    .brand small{ display:block; opacity:.75; margin-top:2px; font-size:12px; }
+    .brand strong{
+      font-size:16px;
+      letter-spacing:.2px;
+    }
+    .brand small{
+      display:block;
+      margin-top:2px;
+      color:var(--muted);
+      font-weight:600;
+      font-size:12px;
+    }
 
     .sectionTitle{
-      margin:16px 0 10px;
+      margin:12px 10px 8px;
       font-size:12px;
-      letter-spacing:.8px;
-      text-transform:uppercase;
-      opacity:.75;
-    }
-
-    .pill{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.05);
-      color:#fff;
-      text-decoration:none;
-      margin-bottom:10px;
-    }
-
-    .pill span:last-child{
-      opacity:.75;
+      color:var(--muted);
       font-weight:800;
-      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
     }
 
-    /* Main */
+    .catList{ display:grid; gap:10px; padding:0 10px; }
+    .cat{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+      box-shadow: 0 8px 18px rgba(0,0,0,.06);
+      font-weight:800;
+      color:#1b1d20;
+    }
+    .cat span{
+      font-size:12px;
+      color:#fff;
+      background:#1b1d20;
+      padding:2px 8px;
+      border-radius:999px;
+      font-weight:900;
+    }
+    .cat:hover{
+      border-color: rgba(225,29,46,.35);
+      box-shadow: 0 12px 22px rgba(225,29,46,.10);
+      transform: translateY(-1px);
+      transition: .18s ease;
+    }
+
+    /* ===== main ===== */
     .main{
-      flex:1;
-      padding:18px 18px 28px;
+      padding:18px 22px 40px;
     }
 
     .topbar{
       display:flex;
+      align-items:flex-end;
       justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      margin-bottom:14px;
+      gap:14px;
+      padding:10px 6px 14px;
     }
 
     .crumbs{
-      opacity:.7;
+      color:var(--muted);
+      font-weight:700;
       font-size:12px;
     }
+    .crumbs b{ color:#1b1d20; }
 
     h1{
       margin:6px 0 0;
-      font-size:28px;
+      font-size:34px;
+      letter-spacing:-.02em;
     }
 
-    .badge{
-      padding:8px 12px;
+    .datePill{
+      margin-left:auto;
+      border:1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.82);
+      backdrop-filter: blur(10px);
+      padding:10px 14px;
       border-radius:999px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.06);
-      font-size:12px;
-      font-weight:800;
-      opacity:.9;
+      font-weight:900;
+      font-size:13px;
+      box-shadow: var(--shadow2);
       white-space:nowrap;
     }
-
-    /* Grid */
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(220px, 1fr));
-      gap:18px;
-      margin-top:10px;
+    .datePill .tag{
+      display:inline-block;
+      margin-right:8px;
+      padding:4px 10px;
+      border-radius:999px;
+      background: linear-gradient(135deg, rgba(255,221,0,.95), rgba(31,163,74,.90));
+      color:#0e1510;
+      font-weight:1000;
+      font-size:12px;
     }
 
+    .grid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(3, minmax(240px, 1fr));
+      gap:18px;
+    }
+
+    @media (max-width: 1180px){
+      .grid{ grid-template-columns: repeat(2, minmax(240px, 1fr)); }
+    }
+    @media (max-width: 650px){
+      .main{ padding:16px 14px 34px; }
+      .grid{ grid-template-columns: 1fr; }
+      h1{ font-size:28px; }
+      .datePill{ font-size:12px; }
+    }
+
+    /* ===== product card ===== */
     .card{
-      border:1px solid var(--stroke);
-      border-radius:18px;
+      position:relative;
+      border-radius: var(--radius);
+      background: var(--card);
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
       overflow:hidden;
-      background: rgba(0,0,0,.35);
-      box-shadow: 0 18px 40px rgba(0,0,0,.45);
+      display:flex;
+      flex-direction:column;
+      min-height: 410px;
+    }
+
+    .card:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 18px 46px rgba(16,17,18,.18);
+      transition: .18s ease;
     }
 
     .imgWrap{
-  height:240px;
-  position:relative;
-  display:grid;
-  place-items:center;
-  overflow:hidden;
+      position:relative;
+      height: 230px;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
 
-  /* look moderno */
-  background:
-    radial-gradient(120px 120px at 30% 25%, rgba(250,204,21,.16), transparent 60%),
-    radial-gradient(160px 160px at 70% 35%, rgba(34,197,94,.14), transparent 65%),
-    radial-gradient(220px 220px at 60% 90%, rgba(239,68,68,.10), transparent 70%),
-    linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.18));
-}
-
-.imgWrap::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  /* vignetta per togliere effetto “sticker” */
-  background: radial-gradient(circle at 50% 40%, transparent 0 55%, rgba(0,0,0,.35) 100%);
-  pointer-events:none;
-}
-
-.imgWrap img{
-  width:min(78%, 320px);
-  height:86%;
-  object-fit:contain;
-  display:block;
-
-  /* “floating product” */
-  filter: drop-shadow(0 18px 24px rgba(0,0,0,.55)) saturate(1.05) contrast(1.05);
-  transform: translateY(6px);
-  transition: transform .25s ease, filter .25s ease;
-}
-
-/* hover su desktop */
-.card:hover .imgWrap img{
-  transform: translateY(2px) scale(1.04);
-  filter: drop-shadow(0 22px 28px rgba(0,0,0,.60)) saturate(1.12) contrast(1.08);
-}
-
-/* mobile: niente hover, ma mantiene il look */
-@media (max-width: 860px){
-  .imgWrap{ height:260px; }
-  .imgWrap img{ width:min(84%, 340px); }
-}
-
+      /* fondo “moderno” e coerente Aromat */
+      background:
+        radial-gradient(140px 140px at 28% 20%, rgba(255,221,0,.22), transparent 60%),
+        radial-gradient(220px 220px at 80% 30%, rgba(31,163,74,.18), transparent 65%),
+        radial-gradient(260px 260px at 50% 105%, rgba(225,29,46,.14), transparent 70%),
+        linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.08));
     }
 
-    .content{
-      padding:14px 14px 16px;
-      background: rgba(0,0,0,.25);
+    /* vignetta leggera */
+    .imgWrap::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(circle at 50% 40%, transparent 0 58%, rgba(0,0,0,.18) 100%);
+      pointer-events:none;
+    }
+
+    /* qui “nascondiamo” il rettangolo bianco: sfumiamo i bordi dell’immagine */
+    .imgWrap img{
+      width:min(88%, 360px);
+      height: 88%;
+      object-fit:contain;
+      display:block;
+
+      filter: drop-shadow(0 14px 22px rgba(0,0,0,.25)) saturate(1.05) contrast(1.05);
+      transform: translateY(6px);
+      transition: transform .22s ease, filter .22s ease;
+
+      -webkit-mask-image: radial-gradient(closest-side, #000 74%, transparent 100%);
+      mask-image: radial-gradient(closest-side, #000 74%, transparent 100%);
+    }
+
+    .card:hover .imgWrap img{
+      transform: translateY(2px) scale(1.04);
+      filter: drop-shadow(0 18px 26px rgba(0,0,0,.28)) saturate(1.10) contrast(1.08);
+    }
+
+    /* ===== sconto stile “Denner” ===== */
+    .discount{
+      position:absolute;
+      left:14px;
+      top:14px;
+      display:inline-flex;
+      align-items:baseline;
+      gap:6px;
+      padding:10px 12px;
+      border-radius:14px;
+      background: var(--denner-red);
+      color:#fff;
+      font-weight:1000;
+      box-shadow: 0 14px 24px rgba(225,29,46,.25);
+      border: 2px solid rgba(255,255,255,.55);
+    }
+    .discount .pct{
+      font-size:26px;
+      line-height:1;
+      letter-spacing:-.02em;
+    }
+    .discount .off{
+      font-size:13px;
+      opacity:.95;
+      font-weight:900;
+    }
+    .discount .flag{
+      margin-left:6px;
+      font-size:11px;
+      font-weight:1000;
+      color:#1b1d20;
+      background: var(--denner-yellow);
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,.10);
+    }
+
+    .meta{
+      padding:14px 16px 16px;
+      display:grid;
+      gap:8px;
     }
 
     .kicker{
       font-size:12px;
-      letter-spacing:.8px;
+      font-weight:1000;
+      letter-spacing:.08em;
+      color:#1b1d20;
       text-transform:uppercase;
       opacity:.75;
-      margin-bottom:6px;
     }
 
     .title{
-      margin:0 0 8px;
-      font-weight:900;
-      font-size:16px;
+      font-size:18px;
+      font-weight:1000;
+      margin:0;
+      letter-spacing:-.01em;
     }
 
     .desc{
-      margin:0 0 14px;
-      opacity:.75;
-      font-size:13px;
+      margin:0;
+      color:var(--muted);
+      font-weight:700;
       line-height:1.35;
-      min-height:34px;
+      font-size:13px;
+      min-height: 36px;
     }
 
-    /* Bottone Aromat */
+    .actions{
+      margin-top:8px;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+    }
+
+    /* bottone piccolo, “fisico”, giallo/verde/rosso */
     .btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      min-width:110px;
+      gap:8px;
       padding:10px 14px;
-      border-radius:14px;
-      font-weight:900;
-      font-size:13px;
-      letter-spacing:.3px;
+      border-radius: 999px;
+      border: 2px solid rgba(0,0,0,.12);
+      background:
+        linear-gradient(135deg,
+          rgba(255,221,0,.95) 0%,
+          rgba(31,163,74,.90) 55%,
+          rgba(225,29,46,.90) 100%);
+      color:#0e1410;
+      font-weight:1000;
       text-decoration:none;
-      color:#0b0b0b;
-
-      background:linear-gradient(135deg, var(--giallo) 0%, var(--verde) 50%, var(--rosso) 100%);
-      background-size:300% 300%;
-      background-position:0% 50%;
-
-      border:2px solid rgba(255,255,255,.65);
-      box-shadow: inset 0 2px 0 rgba(255,255,255,.7), 0 8px 18px rgba(0,0,0,.45);
-      transition: background-position .35s ease, transform .1s ease;
+      box-shadow: 0 10px 18px rgba(0,0,0,.12);
+      width: 118px;
+      user-select:none;
     }
-    .btn:hover{ background-position:100% 50%; }
-    .btn:active{ transform:translateY(2px) scale(.97); }
 
-    /* Mobile */
-    @media (max-width: 1100px){
-      .grid{ grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+    .btn:hover{
+      filter: brightness(1.05) saturate(1.08);
+      box-shadow: 0 14px 24px rgba(0,0,0,.16);
+      transform: translateY(-1px);
+      transition: .14s ease;
     }
-    @media (max-width: 860px){
-      .app{ flex-direction:column; }
-      .side{ width:100%; border-right:none; border-bottom:1px solid var(--stroke); }
-      .grid{ grid-template-columns: 1fr; }
-      .imgWrap{ height:240px; }
+
+    .btn:active{
+      transform: translateY(1px) scale(.99);
+      box-shadow: 0 8px 16px rgba(0,0,0,.12);
+    }
+
+    /* accessibilità */
+    .btn:focus{
+      outline: 3px solid rgba(255,221,0,.55);
+      outline-offset: 2px;
     }
   </style>
 </head>
 
 <body>
   <div class="app">
-    <aside class="side">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
       <div class="brand">
-        <div class="logo"></div>
+        <div class="logoDot"></div>
         <div>
-          <b>Aromat Ovunque</b>
-          <small>Azioni & assortimento</small>
+          <strong>Aromat Ovunque</strong>
+          <small>Azioni settimanali</small>
         </div>
       </div>
 
       <div class="sectionTitle">Categorie</div>
-      <a class="pill" href="#bevande"><span>Bevande</span><span>1</span></a>
-      <a class="pill" href="#caffe"><span>Caffè</span><span>1</span></a>
-      <a class="pill" href="#dolci"><span>Dolci</span><span>2</span></a>
-      <a class="pill" href="#cura"><span>Cura persona</span><span>2</span></a>
-      <a class="pill" href="#casa"><span>Casa</span><span>1</span></a>
-      <a class="pill" href="#extra"><span>Extra</span><span>1</span></a>
-
-      <div class="sectionTitle">Navigazione</div>
-      <a class="pill" href="index.html"><span>Home</span><span>↩</span></a>
+      <div class="catList">
+        <div class="cat">Bevande <span>1</span></div>
+        <div class="cat">Caffè <span>1</span></div>
+        <div class="cat">Dolci <span>2</span></div>
+        <div class="cat">Cura persona <span>2</span></div>
+        <div class="cat">Casa <span>1</span></div>
+        <div class="cat">Extra <span>1</span></div>
+      </div>
     </aside>
 
+    <!-- MAIN -->
     <main class="main">
       <div class="topbar">
         <div>
-          <div class="crumbs">Home › Azioni della settimana</div>
+          <div class="crumbs"><b>Home</b> › Azioni della settimana</div>
           <h1>Azioni settimanali</h1>
         </div>
-        <div class="badge">Rabadan 2026 · Carnevale</div>
+
+        <div class="datePill">
+          <span class="tag">Rabadan 2026</span>
+          12–17 Febbraio 2026
+        </div>
       </div>
 
-      <div class="grid">
-        <article class="card" id="extra">
-          <div class="imgWrap"><img src="sigarette.jpg" alt="Sigarette Aromat"></div>
-          <div class="content">
+      <section class="grid">
+
+        <!-- 1) Sigarette -->
+        <article class="card">
+          <div class="imgWrap">
+            <div class="discount"><span class="pct">35%</span><span class="off">di sconto</span><span class="flag">TOP</span></div>
+            <img src="sigarette.jpg" alt="Sigarette Aromat">
+          </div>
+          <div class="meta">
             <div class="kicker">TOP</div>
             <h3 class="title">Sigarette Aromat</h3>
             <p class="desc">Per chi ama il rischio. Il sito no, quello è stabile.</p>
-            <a class="btn" href="sigarette.jpg">Apri</a>
+            <div class="actions">
+              <a class="btn" href="products/sigarette.html">Apri</a>
+            </div>
           </div>
         </article>
 
-        <article class="card" id="casa">
-          <div class="imgWrap"><img src="carta.jpg" alt="Carta igienica Aromat"></div>
-          <div class="content">
+        <!-- 2) Carta -->
+        <article class="card">
+          <div class="imgWrap">
+            <div class="discount"><span class="pct">22%</span><span class="off">di sconto</span><span class="flag">CASA</span></div>
+            <img src="carta.jpg" alt="Carta igienica Aromat">
+          </div>
+          <div class="meta">
             <div class="kicker">CASA</div>
             <h3 class="title">Carta igienica Aromat</h3>
             <p class="desc">Piacevolmente insaporita. Sì, lo so.</p>
-            <a class="btn" href="carta.jpg">Apri</a>
+            <div class="actions">
+              <a class="btn" href="products/carta.html">Apri</a>
+            </div>
           </div>
         </article>
 
-        <article class="card" id="cura">
-          <div class="imgWrap"><img src="profumo.jpg" alt="Eau de Toilette Aromat"></div>
-          <div class="content">
+        <!-- 3) Profumo -->
+        <article class="card">
+          <div class="imgWrap">
+            <div class="discount"><span class="pct">48%</span><span class="off">di sconto</span><span class="flag">UOMO</span></div>
+            <img src="profumo.jpg" alt="Eau de Toilette Aromat">
+          </div>
+          <div class="meta">
             <div class="kicker">UOMO</div>
             <h3 class="title">Eau de Toilette</h3>
             <p class="desc">Profumo “Aromat”. Coraggio vero.</p>
-            <a class="btn" href="profumo.jpg">Apri</a>
+            <div class="actions">
+              <a class="btn" href="products/profumo.html">Apri</a>
+            </div>
           </div>
         </article>
 
-        <article class="card" id="bevande">
-          <div class="imgWrap"><img src="coca.jpg" alt="Coca Aromat"></div>
-          <div class="content">
+        <!-- 4) Coca -->
+        <article class="card">
+          <div class="imgWrap">
+            <div class="discount"><span class="pct">29%</span><span class="off">di sconto</span><span class="flag">BEV</span></div>
+            <img src="coca.jpg" alt="Coca Aromat">
+          </div>
+          <div class="meta">
             <div class="kicker">BEVANDE</div>
             <h3 class="title">Coca Aromat</h3>
             <p class="desc">Perché le scelte semplici non ti interessano.</p>
-            <a class="btn" href="coca.jpg">Apri</a>
+            <div class="actions">
+              <a class="btn" href="products/coca.html">Apri</a>
+            </div>
           </div>
         </article>
 
-        <article class="card" id="dolci">
-          <div class="imgWrap"><img src="cioccolato.jpg" alt="Cioccolato fondente Aromat"></div>
-          <div class="content">
+        <!-- 5) Cioccolato -->
+        <article class="card">
+          <div class="imgWrap">
+            <div class="discount"><span class="pct">50%</span><span class="off">di sconto</span><span class="flag">DOLCI</span></div>
+            <img src="cioccolato.jpg" alt="Cioccolato fondente Aromat">
+          </div>
+          <div class="meta">
             <div class="kicker">DOLCI</div>
             <h3 class="title">Cioccolato fondente</h3>
             <p class="desc">Forte, testardo. Come il progetto.</p>
-            <a class="btn" href="cioccolato.jpg">Apri</a>
+            <div class="actions">
+              <a class="btn" href="products/cioccolato.html">Apri</a>
+            </div>
           </div>
         </article>
 
+        <!-- 6) Dentifricio -->
         <article class="card">
-          <div class="imgWrap"><img src="dentifricio.jpg" alt="Dentifricio Aromat"></div>
-          <div class="content">
+          <div class="imgWrap">
+            <div class="discount"><span class="pct">26%</span><span class="off">di sconto</span><span class="flag">CURA</span></div>
+            <img src="dentifricio.jpg" alt="Dentifricio all'Aromat">
+          </div>
+          <div class="meta">
             <div class="kicker">CURA</div>
             <h3 class="title">Dentifricio all’Aromat</h3>
             <p class="desc">Alito potente. Zero compromessi.</p>
-            <a class="btn" href="dentifricio.jpg">Apri</a>
+            <div class="actions">
+              <a class="btn" href="products/dentifricio.html">Apri</a>
+            </div>
           </div>
         </article>
 
+        <!-- 7) Gelato -->
         <article class="card">
-          <div class="imgWrap"><img src="gelato.jpg" alt="Gelato Aromat"></div>
-          <div class="content">
+          <div class="imgWrap">
+            <div class="discount"><span class="pct">41%</span><span class="off">di sconto</span><span class="flag">DOLCI</span></div>
+            <img src="gelato.jpg" alt="Gelato Aromat Supreme">
+          </div>
+          <div class="meta">
             <div class="kicker">DOLCI</div>
             <h3 class="title">Gelato Aromat Supreme</h3>
             <p class="desc">Dolce, cremoso, inspiegabile.</p>
-            <a class="btn" href="gelato.jpg">Apri</a>
+            <div class="actions">
+              <a class="btn" href="products/gelato.html">Apri</a>
+            </div>
           </div>
         </article>
 
-        <article class="card" id="caffe">
-          <div class="imgWrap"><img src="caffe.jpg" alt="Capsule caffè Aromat"></div>
-          <div class="content">
+        <!-- 8) Caffè -->
+        <article class="card">
+          <div class="imgWrap">
+            <div class="discount"><span class="pct">33%</span><span class="off">di sconto</span><span class="flag">CAFFÈ</span></div>
+            <img src="caffe.jpg" alt="Capsule caffè Aromat">
+          </div>
+          <div class="meta">
             <div class="kicker">CAFFÈ</div>
             <h3 class="title">Capsule Espresso</h3>
             <p class="desc">Compatibili, forti, inevitabili.</p>
-            <a class="btn" href="caffe.jpg">Apri</a>
+            <div class="actions">
+              <a class="btn" href="products/caffe.html">Apri</a>
+            </div>
           </div>
         </article>
-      </div>
+
+      </section>
     </main>
   </div>
 </body>
