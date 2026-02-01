@@ -4,301 +4,189 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Azioni della settimana</title>
-  <style>
-    :root{ color-scheme: dark; --bg:#0b0b0b; --panel:#121212; --stroke:rgba(255,255,255,.10); --muted:rgba(255,255,255,.72); }
-    body{ margin:0; background:var(--bg); color:#fff; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; }
-    header{
-      position:sticky; top:0; z-index:10;
-      background:rgba(11,11,11,.88); backdrop-filter: blur(12px);
-      border-bottom:1px solid var(--stroke);
-    }
-    .bar{ max-width:1100px; margin:0 auto; padding:12px 16px; display:flex; gap:12px; align-items:center; justify-content:space-between; }
-    .bar a{ color:#fff; text-decoration:none; opacity:.85; }
-    .bar strong{ font-size:14px; letter-spacing:.2px; }
-    .wrap{ max-width:1100px; margin:0 auto; padding:18px 16px 42px; }
-    .hero{
-      border:1px solid var(--stroke); background:linear-gradient(180deg, rgba(34,197,94,.10), rgba(255,255,255,0));
-      border-radius:18px; padding:18px; display:flex; gap:16px; align-items:center; justify-content:space-between; flex-wrap:wrap;
-    }
-    .hero h1{ margin:0; font-size:24px; }
-    .hero p{ margin:6px 0 0; opacity:.75; line-height:1.35; }
-    .search{
-      display:flex; gap:10px; align-items:center;
-      background:rgba(255,255,255,.06); border:1px solid var(--stroke);
-      border-radius:14px; padding:10px 12px; min-width:260px;
-    }
-    .search input{
-      width:100%; background:transparent; border:0; outline:0; color:#fff; font-size:14px;
-    }
-    .grid{
-      margin-top:18px;
-      display:grid; gap:14px;
-      grid-template-columns: repeat( auto-fit, minmax(220px, 1fr) );
-    }
-    .card{
-      border:1px solid var(--stroke); background:var(--panel); border-radius:18px; overflow:hidden;
-      display:flex; flex-direction:column; cursor:pointer;
-      transition: transform .08s ease;
-    }
-    .card:active{ transform: scale(.99); }
-    .thumb{
-      aspect-ratio: 4/3;
-      background:rgba(255,255,255,.06);
-      display:grid; place-items:center;
-      overflow:hidden;
-    }
-    .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .content{ padding:12px 12px 14px; display:grid; gap:8px; }
-    .name{ font-weight:800; letter-spacing:.2px; }
-    .muted{ color:var(--muted); font-size:13px; line-height:1.35; }
-    .row{ display:flex; gap:10px; align-items:center; justify-content:space-between; }
-    .pill{
-      display:inline-block; padding:6px 10px; border-radius:999px;
-      background:rgba(34,197,94,.16); color:#86efac;
-      font-weight:800; font-size:12px;
-    }
-    .price{ font-weight:900; font-size:14px; }
-    .strike{ opacity:.55; text-decoration:line-through; font-weight:600; margin-left:6px; }
 
-    /* MODAL */
-    .backdrop{
-      position:fixed; inset:0; display:none; align-items:center; justify-content:center; padding:18px;
-      background:rgba(0,0,0,.68);
+  <style>
+    :root { color-scheme: dark; }
+
+    body{
+      margin:0;
+      background:#0b0b0b;
+      color:#fff;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
-    .modal{
-      max-width:760px; width:100%;
-      border:1px solid var(--stroke); background:var(--panel); border-radius:18px; overflow:hidden;
-      box-shadow:0 25px 80px rgba(0,0,0,.6);
+
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 10px 14px;
+      background: rgba(11,11,11,.88);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
     }
-    .top{
-      padding:12px 14px; display:flex; align-items:center; justify-content:space-between;
-      border-bottom:1px solid var(--stroke);
+
+    header a{
+      color:#fff;
+      text-decoration:none;
+      opacity:.85;
+      font-weight:700;
+      font-size:14px;
     }
-    .top strong{ font-size:14px; }
-    .close{
-      border:0; background:rgba(255,255,255,.06); color:#fff; border:1px solid var(--stroke);
-      padding:8px 10px; border-radius:12px; cursor:pointer; opacity:.9;
+
+    header .title{
+      font-weight:900;
+      font-size:14px;
+      letter-spacing:.2px;
+      opacity:.9;
     }
-    .body{
-      display:grid; grid-template-columns: 1.2fr 1fr; gap:0;
+
+    /* Contenitore immagine + hotspot */
+    .wrap{
+      display:grid;
+      place-items:center;
+      padding: 14px;
     }
-    .mimg{ background:rgba(255,255,255,.06); aspect-ratio: 4/3; }
-    .mimg img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .minfo{ padding:14px; display:grid; gap:10px; }
-    .title{ font-size:18px; font-weight:950; letter-spacing:.2px; }
-    .desc{ color:var(--muted); line-height:1.45; }
-    .cta{
-      display:flex; gap:10px; flex-wrap:wrap; margin-top:4px;
+
+    .poster{
+      position: relative;
+      width: min(980px, 100%);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 30px 100px rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.08);
     }
-    .btn{
-      padding:12px 14px; border-radius:14px; border:1px solid var(--stroke); background:rgba(255,255,255,.06);
-      color:#fff; text-decoration:none; font-weight:850; display:inline-block;
+
+    .poster img{
+      width:100%;
+      height:auto;
+      display:block;
+      user-select:none;
+      -webkit-user-drag:none;
+      pointer-events:none; /* così non “ruba” i tap ai bottoni */
     }
-    .btn.primary{ background:#22c55e; border-color:transparent; color:#071b0f; }
-    @media (max-width: 760px){
-      .body{ grid-template-columns: 1fr; }
+
+    /* Hotspot “fisico” */
+    .hotspot{
+      position:absolute;
+      left: var(--x);
+      top: var(--y);
+      transform: translate(-50%,-50%);
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+
+      background: radial-gradient(circle at 30% 30%, #ffffff, #d1d5db 35%, #111827 70%);
+      border: 2px solid rgba(255,255,255,.55);
+
+      box-shadow:
+        0 10px 22px rgba(0,0,0,.55),
+        0 0 0 6px rgba(34,197,94,.18),
+        0 0 22px rgba(34,197,94,.35);
+
+      display:grid;
+      place-items:center;
+
+      text-decoration:none;
+      cursor:pointer;
+      z-index: 10;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* “LED” al centro */
+    .hotspot::after{
+      content:"";
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34,197,94,.9);
+      opacity: .95;
+    }
+
+    /* Effetto luce quando ci passi o tocchi */
+    .hotspot:hover,
+    .hotspot:focus-visible{
+      box-shadow:
+        0 10px 22px rgba(0,0,0,.55),
+        0 0 0 8px rgba(34,197,94,.22),
+        0 0 34px rgba(34,197,94,.55);
+      outline: none;
+    }
+
+    .hotspot:active{
+      transform: translate(-50%,-50%) scale(.96);
+      box-shadow:
+        0 8px 18px rgba(0,0,0,.55),
+        0 0 0 10px rgba(34,197,94,.26),
+        0 0 40px rgba(34,197,94,.70);
+    }
+
+    /* Pulsazione “accendi” */
+    .pulse{
+      animation: pulse 1.6s infinite;
+    }
+
+    @keyframes pulse{
+      0%   { box-shadow: 0 10px 22px rgba(0,0,0,.55), 0 0 0 6px rgba(34,197,94,.14), 0 0 20px rgba(34,197,94,.35); }
+      50%  { box-shadow: 0 10px 22px rgba(0,0,0,.55), 0 0 0 10px rgba(34,197,94,.24), 0 0 40px rgba(34,197,94,.70); }
+      100% { box-shadow: 0 10px 22px rgba(0,0,0,.55), 0 0 0 6px rgba(34,197,94,.14), 0 0 20px rgba(34,197,94,.35); }
+    }
+
+    /* Mobile: bottoni un filo più piccoli */
+    @media (max-width: 520px){
+      .hotspot{ width: 36px; height: 36px; }
+      .hotspot::after{ width: 9px; height: 9px; }
     }
   </style>
 </head>
+
 <body>
-
-<header>
-  <div class="bar">
+  <header>
     <a href="index.html">← Home</a>
-    <strong>Azioni della settimana</strong>
-    <span style="opacity:.65;font-size:12px;">aromatovunque.ch</span>
-  </div>
-</header>
+    <div class="title">Azioni della settimana</div>
+    <a href="shop.html" style="opacity:.6;">Refresh</a>
+  </header>
 
-<main class="wrap">
-  <section class="hero">
-    <div>
-      <h1>Offerte</h1>
-      <p>Seleziona un prodotto per vedere i dettagli. Nessun checkout, niente fronzoli.</p>
-    </div>
-    <div class="search">
-      <input id="q" type="search" placeholder="Cerca prodotto (es. carta, profumo…)" />
-    </div>
-  </section>
+  <div class="wrap">
+    <div class="poster">
+      <!-- IMMAGINE IDENTICA ALLA TUA FOTO -->
+      <img src="Shop.png" alt="Azioni della settimana" />
 
-  <section class="grid" id="grid"></section>
-</main>
+      <!--
+        HOTSPOT (pulsanti)
+        Nota: le coordinate sono percentuali (x,y) sulla foto.
+        Se vuoi spostarli: cambia --x e --y.
+        I link (href) li colleghiamo alle foto prodotto più avanti.
+      -->
 
-<!-- Modal -->
-<div class="backdrop" id="backdrop" role="dialog" aria-modal="true">
-  <div class="modal">
-    <div class="top">
-      <strong>Dettagli prodotto</strong>
-      <button class="close" id="closeBtn">Chiudi</button>
-    </div>
-    <div class="body">
-      <div class="mimg"><img id="mPhoto" alt="" /></div>
-      <div class="minfo">
-        <div class="pill" id="mDeal"></div>
-        <div class="title" id="mTitle"></div>
-        <div class="desc" id="mDesc"></div>
-        <div class="row">
-          <div class="price" id="mPrice"></div>
-        </div>
-        <div class="cta">
-          <a class="btn primary" href="#" id="mAction">Vedi prodotto</a>
-          <a class="btn" href="shop.html">Torna alle offerte</a>
-        </div>
-        <div style="opacity:.6;font-size:12px;">
-          Tip: se vuoi, il bottone “Vedi prodotto” può aprire una pagina dedicata per ogni prodotto.
-        </div>
-      </div>
+      <!-- Carta igienica (in alto a destra) -->
+      <a class="hotspot pulse" style="--x:82%; --y:24%;" href="#" aria-label="Carta igienica"></a>
+
+      <!-- Profumo (zona centro-destra) -->
+      <a class="hotspot pulse" style="--x:78%; --y:54%;" href="#" aria-label="Profumo"></a>
+
+      <!-- Sigarette (zona alto-sinistra) -->
+      <a class="hotspot pulse" style="--x:22%; --y:34%;" href="#" aria-label="Sigarette"></a>
+
+      <!-- Gelato (zona centro-sinistra) -->
+      <a class="hotspot pulse" style="--x:22%; --y:63%;" href="#" aria-label="Gelato"></a>
+
+      <!-- Cola (basso-sinistra) -->
+      <a class="hotspot pulse" style="--x:18%; --y:87%;" href="#" aria-label="Cola"></a>
+
+      <!-- Caffè (basso centro-sinistra) -->
+      <a class="hotspot pulse" style="--x:40%; --y:87%;" href="#" aria-label="Caffè"></a>
+
+      <!-- Dentifricio (basso centro-destra) -->
+      <a class="hotspot pulse" style="--x:64%; --y:87%;" href="#" aria-label="Dentifricio"></a>
+
+      <!-- Detersivo (basso-destra) -->
+      <a class="hotspot pulse" style="--x:86%; --y:87%;" href="#" aria-label="Detersivo"></a>
     </div>
   </div>
-</div>
-
-<script>
-  // 1) Cambia qui i tuoi prodotti (nome, sconto, prezzo, immagine)
-  const PRODUCTS = [
-    {
-      id: "carta",
-      name: "Carta igienica Aromat (8 rotoli)",
-      deal: "-20%",
-      priceNow: "CHF 4.90",
-      priceWas: "CHF 6.10",
-      desc: "Sì, è carta igienica. Fa esattamente quello che pensi.",
-      img: "products/carta.jpg",
-      link: "#"
-    },
-    {
-      id: "profumo",
-      name: "Aromat Eau de Toilette",
-      deal: "-45%",
-      priceNow: "CHF 19.90",
-      priceWas: "CHF 36.20",
-      desc: "Per chi ama rischiare. O per regali vendicativi.",
-      img: "products/profumo.jpg",
-      link: "#"
-    },
-    {
-      id: "gelato",
-      name: "Gelato Aromat Supreme",
-      deal: "-40%",
-      priceNow: "CHF 2.50",
-      priceWas: "CHF 4.20",
-      desc: "Gelato con personalità. Non garantisco che sia una buona personalità.",
-      img: "products/gelato.jpg",
-      link: "#"
-    },
-    {
-      id: "cola",
-      name: "Aromat Cola (lattina)",
-      deal: "-35%",
-      priceNow: "CHF 0.90",
-      priceWas: "CHF 1.40",
-      desc: "È una cola. Probabilmente. In ogni caso è fredda.",
-      img: "products/cola.jpg",
-      link: "#"
-    },
-    {
-      id: "caffe",
-      name: "Aromat Espresso",
-      deal: "-35%",
-      priceNow: "CHF 3.90",
-      priceWas: "CHF 6.00",
-      desc: "Caffè per restare svegli abbastanza da finire questa pagina.",
-      img: "products/caffe.jpg",
-      link: "#"
-    },
-    {
-      id: "dentifricio",
-      name: "Dentifricio all’Aromat",
-      deal: "-25%",
-      priceNow: "CHF 2.90",
-      priceWas: "CHF 3.90",
-      desc: "Alito memorabile. Dipende da cosa intendi per ‘memorabile’.",
-      img: "products/dentifricio.jpg",
-      link: "#"
-    },
-    {
-      id: "detersivo",
-      name: "Detersivo Aromat (120 lavaggi)",
-      deal: "-25%",
-      priceNow: "CHF 12.90",
-      priceWas: "CHF 17.20",
-      desc: "Se non lava questo, niente laverà mai.",
-      img: "products/detersivo.jpg",
-      link: "#"
-    }
-  ];
-
-  const grid = document.getElementById("grid");
-  const q = document.getElementById("q");
-
-  const backdrop = document.getElementById("backdrop");
-  const mPhoto = document.getElementById("mPhoto");
-  const mDeal  = document.getElementById("mDeal");
-  const mTitle = document.getElementById("mTitle");
-  const mDesc  = document.getElementById("mDesc");
-  const mPrice = document.getElementById("mPrice");
-  const mAction= document.getElementById("mAction");
-
-  function cardHTML(p){
-    return `
-      <article class="card" data-id="${p.id}">
-        <div class="thumb">
-          <img src="${p.img}" alt="${p.name}" onerror="this.style.display='none'; this.parentElement.textContent='Immagine mancante';" />
-        </div>
-        <div class="content">
-          <div class="row">
-            <div class="name">${p.name}</div>
-          </div>
-          <div class="row">
-            <span class="pill">${p.deal}</span>
-            <div class="price">${p.priceNow}<span class="strike">${p.priceWas}</span></div>
-          </div>
-          <div class="muted">${p.desc}</div>
-        </div>
-      </article>
-    `;
-  }
-
-  function render(list){
-    grid.innerHTML = list.map(cardHTML).join("");
-    grid.querySelectorAll(".card").forEach(el => {
-      el.addEventListener("click", () => {
-        const id = el.dataset.id;
-        const p = PRODUCTS.find(x => x.id === id);
-        if (p) openModal(p);
-      });
-    });
-  }
-
-  function openModal(p){
-    mDeal.textContent = p.deal;
-    mTitle.textContent = p.name;
-    mDesc.textContent = p.desc;
-    mPrice.innerHTML = `${p.priceNow} <span class="strike">${p.priceWas}</span>`;
-    mAction.href = p.link || "#";
-
-    mPhoto.src = p.img;
-    mPhoto.alt = p.name;
-
-    backdrop.style.display = "flex";
-  }
-
-  function closeModal(){
-    backdrop.style.display = "none";
-  }
-
-  document.getElementById("closeBtn").addEventListener("click", closeModal);
-  backdrop.addEventListener("click", (e) => { if (e.target === backdrop) closeModal(); });
-
-  q.addEventListener("input", () => {
-    const term = q.value.trim().toLowerCase();
-    const filtered = !term ? PRODUCTS : PRODUCTS.filter(p =>
-      (p.name + " " + p.desc + " " + p.id).toLowerCase().includes(term)
-    );
-    render(filtered);
-  });
-
-  render(PRODUCTS);
-</script>
-
 </body>
 </html>
