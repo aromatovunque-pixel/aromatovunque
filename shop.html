@@ -37,7 +37,6 @@
       display:grid;
       grid-template-columns: 280px 1fr;
     }
-
     @media (max-width: 980px){
       .app{ grid-template-columns: 1fr; }
     }
@@ -52,7 +51,6 @@
       background: rgba(255,255,255,.72);
       backdrop-filter: blur(10px);
     }
-
     @media (max-width: 980px){
       .sidebar{
         position:relative;
@@ -96,38 +94,53 @@
     }
 
     .catList{ display:grid; gap:10px; padding:0 10px; }
-    .cat{
+
+    /* CATEGORIA (clickabile) */
+    .catBtn{
+      appearance:none;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:14px;
+      padding:12px 12px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:#fff;
-      box-shadow: 0 8px 18px rgba(0,0,0,.06);
-      font-weight:800;
+      font-weight:900;
       color:#1b1d20;
+      cursor:pointer;
+      box-shadow: 0 8px 18px rgba(0,0,0,.06);
+      text-align:left;
+      width:100%;
     }
-    .cat span{
+
+    .catBtn .count{
       font-size:12px;
       color:#fff;
       background:#1b1d20;
       padding:2px 8px;
       border-radius:999px;
-      font-weight:900;
+      font-weight:1000;
+      min-width: 26px;
+      text-align:center;
     }
-    .cat:hover{
+
+    .catBtn:hover{
       border-color: rgba(225,29,46,.35);
       box-shadow: 0 12px 22px rgba(225,29,46,.10);
       transform: translateY(-1px);
       transition: .18s ease;
     }
 
-    /* ===== main ===== */
-    .main{
-      padding:18px 22px 40px;
+    .catBtn.active{
+      border-color: rgba(31,163,74,.45);
+      box-shadow: 0 14px 26px rgba(31,163,74,.14);
+      background:
+        linear-gradient(135deg, rgba(255,221,0,.20), rgba(31,163,74,.12)),
+        #fff;
     }
 
+    /* ===== main ===== */
+    .main{ padding:18px 22px 40px; }
     .topbar{
       display:flex;
       align-items:flex-end;
@@ -135,19 +148,9 @@
       gap:14px;
       padding:10px 6px 14px;
     }
-
-    .crumbs{
-      color:var(--muted);
-      font-weight:700;
-      font-size:12px;
-    }
+    .crumbs{ color:var(--muted); font-weight:700; font-size:12px; }
     .crumbs b{ color:#1b1d20; }
-
-    h1{
-      margin:6px 0 0;
-      font-size:34px;
-      letter-spacing:-.02em;
-    }
+    h1{ margin:6px 0 0; font-size:34px; letter-spacing:-.02em; }
 
     .datePill{
       margin-left:auto;
@@ -178,7 +181,6 @@
       grid-template-columns: repeat(3, minmax(240px, 1fr));
       gap:18px;
     }
-
     @media (max-width: 1180px){
       .grid{ grid-template-columns: repeat(2, minmax(240px, 1fr)); }
     }
@@ -201,12 +203,14 @@
       flex-direction:column;
       min-height: 410px;
     }
-
     .card:hover{
       transform: translateY(-2px);
       box-shadow: 0 18px 46px rgba(16,17,18,.18);
       transition: .18s ease;
     }
+
+    /* quando è filtrato e nascosto */
+    .card.is-hidden{ display:none; }
 
     .imgWrap{
       position:relative;
@@ -214,16 +218,12 @@
       display:grid;
       place-items:center;
       overflow:hidden;
-
-      /* fondo “moderno” e coerente Aromat */
       background:
         radial-gradient(140px 140px at 28% 20%, rgba(255,221,0,.22), transparent 60%),
         radial-gradient(220px 220px at 80% 30%, rgba(31,163,74,.18), transparent 65%),
         radial-gradient(260px 260px at 50% 105%, rgba(225,29,46,.14), transparent 70%),
         linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.08));
     }
-
-    /* vignetta leggera */
     .imgWrap::before{
       content:"";
       position:absolute;
@@ -231,14 +231,11 @@
       background: radial-gradient(circle at 50% 40%, transparent 0 58%, rgba(0,0,0,.18) 100%);
       pointer-events:none;
     }
-
-    /* qui “nascondiamo” il rettangolo bianco: sfumiamo i bordi dell’immagine */
     .imgWrap img{
       width:min(88%, 360px);
       height: 88%;
       object-fit:contain;
       display:block;
-
       filter: drop-shadow(0 14px 22px rgba(0,0,0,.25)) saturate(1.05) contrast(1.05);
       transform: translateY(6px);
       transition: transform .22s ease, filter .22s ease;
@@ -246,13 +243,11 @@
       -webkit-mask-image: radial-gradient(closest-side, #000 74%, transparent 100%);
       mask-image: radial-gradient(closest-side, #000 74%, transparent 100%);
     }
-
     .card:hover .imgWrap img{
       transform: translateY(2px) scale(1.04);
       filter: drop-shadow(0 18px 26px rgba(0,0,0,.28)) saturate(1.10) contrast(1.08);
     }
 
-    /* ===== sconto stile “Denner” ===== */
     .discount{
       position:absolute;
       left:14px;
@@ -268,16 +263,8 @@
       box-shadow: 0 14px 24px rgba(225,29,46,.25);
       border: 2px solid rgba(255,255,255,.55);
     }
-    .discount .pct{
-      font-size:26px;
-      line-height:1;
-      letter-spacing:-.02em;
-    }
-    .discount .off{
-      font-size:13px;
-      opacity:.95;
-      font-weight:900;
-    }
+    .discount .pct{ font-size:26px; line-height:1; letter-spacing:-.02em; }
+    .discount .off{ font-size:13px; opacity:.95; font-weight:900; }
     .discount .flag{
       margin-left:6px;
       font-size:11px;
@@ -294,7 +281,6 @@
       display:grid;
       gap:8px;
     }
-
     .kicker{
       font-size:12px;
       font-weight:1000;
@@ -303,14 +289,12 @@
       text-transform:uppercase;
       opacity:.75;
     }
-
     .title{
       font-size:18px;
       font-weight:1000;
       margin:0;
       letter-spacing:-.01em;
     }
-
     .desc{
       margin:0;
       color:var(--muted);
@@ -320,27 +304,18 @@
       min-height: 36px;
     }
 
-    .actions{
-      margin-top:8px;
-      display:flex;
-      align-items:center;
-      justify-content:flex-start;
-    }
-
-    /* bottone piccolo, “fisico”, giallo/verde/rosso */
+    .actions{ margin-top:8px; display:flex; align-items:center; justify-content:flex-start; }
     .btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      gap:8px;
       padding:10px 14px;
       border-radius: 999px;
       border: 2px solid rgba(0,0,0,.12);
-      background:
-        linear-gradient(135deg,
-          rgba(255,221,0,.95) 0%,
-          rgba(31,163,74,.90) 55%,
-          rgba(225,29,46,.90) 100%);
+      background: linear-gradient(135deg,
+        rgba(255,221,0,.95) 0%,
+        rgba(31,163,74,.90) 55%,
+        rgba(225,29,46,.90) 100%);
       color:#0e1410;
       font-weight:1000;
       text-decoration:none;
@@ -348,20 +323,16 @@
       width: 118px;
       user-select:none;
     }
-
     .btn:hover{
       filter: brightness(1.05) saturate(1.08);
       box-shadow: 0 14px 24px rgba(0,0,0,.16);
       transform: translateY(-1px);
       transition: .14s ease;
     }
-
     .btn:active{
       transform: translateY(1px) scale(.99);
       box-shadow: 0 8px 16px rgba(0,0,0,.12);
     }
-
-    /* accessibilità */
     .btn:focus{
       outline: 3px solid rgba(255,221,0,.55);
       outline-offset: 2px;
@@ -383,13 +354,36 @@
       </div>
 
       <div class="sectionTitle">Categorie</div>
+
       <div class="catList">
-        <div class="cat">Bevande <span>1</span></div>
-        <div class="cat">Caffè <span>1</span></div>
-        <div class="cat">Dolci <span>2</span></div>
-        <div class="cat">Cura persona <span>2</span></div>
-        <div class="cat">Casa <span>1</span></div>
-        <div class="cat">Extra <span>1</span></div>
+        <!-- data-filter: valore categoria o "all" -->
+        <button class="catBtn active" data-filter="all" type="button">
+          Tutti <span class="count" data-count="all">0</span>
+        </button>
+
+        <button class="catBtn" data-filter="bevande" type="button">
+          Bevande <span class="count" data-count="bevande">0</span>
+        </button>
+
+        <button class="catBtn" data-filter="caffe" type="button">
+          Caffè <span class="count" data-count="caffe">0</span>
+        </button>
+
+        <button class="catBtn" data-filter="dolci" type="button">
+          Dolci <span class="count" data-count="dolci">0</span>
+        </button>
+
+        <button class="catBtn" data-filter="cura" type="button">
+          Cura persona <span class="count" data-count="cura">0</span>
+        </button>
+
+        <button class="catBtn" data-filter="casa" type="button">
+          Casa <span class="count" data-count="casa">0</span>
+        </button>
+
+        <button class="catBtn" data-filter="extra" type="button">
+          Extra <span class="count" data-count="extra">0</span>
+        </button>
       </div>
     </aside>
 
@@ -407,10 +401,10 @@
         </div>
       </div>
 
-      <section class="grid">
+      <section class="grid" id="grid">
 
-        <!-- 1) Sigarette -->
-        <article class="card">
+        <!-- 1) Sigarette (EXTRA) -->
+        <article class="card" data-cat="extra">
           <div class="imgWrap">
             <div class="discount"><span class="pct">35%</span><span class="off">di sconto</span><span class="flag">TOP</span></div>
             <img src="sigarette.jpg" alt="Sigarette Aromat">
@@ -425,8 +419,8 @@
           </div>
         </article>
 
-        <!-- 2) Carta -->
-        <article class="card">
+        <!-- 2) Carta (CASA) -->
+        <article class="card" data-cat="casa">
           <div class="imgWrap">
             <div class="discount"><span class="pct">22%</span><span class="off">di sconto</span><span class="flag">CASA</span></div>
             <img src="carta.jpg" alt="Carta igienica Aromat">
@@ -441,8 +435,8 @@
           </div>
         </article>
 
-        <!-- 3) Profumo -->
-        <article class="card">
+        <!-- 3) Profumo (CURA) -->
+        <article class="card" data-cat="cura">
           <div class="imgWrap">
             <div class="discount"><span class="pct">48%</span><span class="off">di sconto</span><span class="flag">UOMO</span></div>
             <img src="profumo.jpg" alt="Eau de Toilette Aromat">
@@ -457,8 +451,8 @@
           </div>
         </article>
 
-        <!-- 4) Coca -->
-        <article class="card">
+        <!-- 4) Coca (BEVANDE) -->
+        <article class="card" data-cat="bevande">
           <div class="imgWrap">
             <div class="discount"><span class="pct">29%</span><span class="off">di sconto</span><span class="flag">BEV</span></div>
             <img src="coca.jpg" alt="Coca Aromat">
@@ -473,8 +467,8 @@
           </div>
         </article>
 
-        <!-- 5) Cioccolato -->
-        <article class="card">
+        <!-- 5) Cioccolato (DOLCI) -->
+        <article class="card" data-cat="dolci">
           <div class="imgWrap">
             <div class="discount"><span class="pct">50%</span><span class="off">di sconto</span><span class="flag">DOLCI</span></div>
             <img src="cioccolato.jpg" alt="Cioccolato fondente Aromat">
@@ -489,8 +483,8 @@
           </div>
         </article>
 
-        <!-- 6) Dentifricio -->
-        <article class="card">
+        <!-- 6) Dentifricio (CURA) -->
+        <article class="card" data-cat="cura">
           <div class="imgWrap">
             <div class="discount"><span class="pct">26%</span><span class="off">di sconto</span><span class="flag">CURA</span></div>
             <img src="dentifricio.jpg" alt="Dentifricio all'Aromat">
@@ -505,10 +499,10 @@
           </div>
         </article>
 
-        <!-- 7) Gelato -->
-        <article class="card">
+        <!-- 7) Gelato (DOLCI) -->
+        <article class="card" data-cat="dolci">
           <div class="imgWrap">
-            <div class="discount"><span class="pct">41%</span><span class="off">di sconto</span><span class="flag">DOLCI</span></div>
+            <div class="discount"><span class="pct">41%</span><span class="off">di sconto</span><span class="flag">FREDDO</span></div>
             <img src="gelato.jpg" alt="Gelato Aromat Supreme">
           </div>
           <div class="meta">
@@ -521,8 +515,8 @@
           </div>
         </article>
 
-        <!-- 8) Caffè -->
-        <article class="card">
+        <!-- 8) Caffè (CAFFE) -->
+        <article class="card" data-cat="caffe">
           <div class="imgWrap">
             <div class="discount"><span class="pct">33%</span><span class="off">di sconto</span><span class="flag">CAFFÈ</span></div>
             <img src="caffe.jpg" alt="Capsule caffè Aromat">
@@ -540,5 +534,55 @@
       </section>
     </main>
   </div>
+
+  <script>
+    // ---- filtro categorie + conteggi ----
+    const buttons = Array.from(document.querySelectorAll(".catBtn"));
+    const cards   = Array.from(document.querySelectorAll(".card"));
+    const counts  = Array.from(document.querySelectorAll("[data-count]"));
+
+    function updateCounts(){
+      const total = cards.length;
+      const map = { all: total };
+
+      // conta per categoria
+      for (const c of cards){
+        const cat = (c.dataset.cat || "").trim();
+        map[cat] = (map[cat] || 0) + 1;
+      }
+
+      // scrivi i numeri
+      for (const el of counts){
+        const key = el.getAttribute("data-count");
+        el.textContent = map[key] || 0;
+      }
+    }
+
+    function setActive(btn){
+      buttons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+
+    function filter(cat){
+      for (const c of cards){
+        const ccat = (c.dataset.cat || "").trim();
+        const show = (cat === "all") || (ccat === cat);
+        c.classList.toggle("is-hidden", !show);
+      }
+    }
+
+    // click
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const cat = btn.dataset.filter;
+        setActive(btn);
+        filter(cat);
+      });
+    });
+
+    // init
+    updateCounts();
+    filter("all");
+  </script>
 </body>
 </html>
