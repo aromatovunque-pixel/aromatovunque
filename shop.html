@@ -3,190 +3,549 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Azioni della settimana</title>
+  <title>Aromat Ovunque | Azioni settimanali</title>
 
   <style>
-    :root { color-scheme: dark; }
-
-    body{
-      margin:0;
-      background:#0b0b0b;
-      color:#fff;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    :root{
+      --bg:#0b0b0b;
+      --panel:#111214;
+      --panel2:#16181c;
+      --line:rgba(255,255,255,.08);
+      --text:#ffffff;
+      --muted:rgba(255,255,255,.72);
+      --muted2:rgba(255,255,255,.55);
+      --accent:#22c55e;
+      --radius:18px;
+      --shadow: 0 22px 70px rgba(0,0,0,.55);
     }
 
-    header{
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1200px 700px at 50% -20%, #163a1f, var(--bg));
+      color:var(--text);
+    }
+
+    /* Header */
+    .topbar{
       position: sticky;
       top: 0;
-      z-index: 50;
-      padding: 10px 14px;
-      background: rgba(11,11,11,.88);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,.08);
+      z-index: 100;
+      background: rgba(11,11,11,.75);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 14px;
+      display:flex;
+      align-items:center;
+      gap: 12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      color:var(--text);
+      font-weight: 900;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+    .brand-badge{
+      width:34px; height:34px; border-radius:10px;
+      background: linear-gradient(135deg, #facc15, #22c55e);
+      box-shadow: 0 10px 30px rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    .navlinks{
+      display:flex;
+      gap:12px;
+      margin-left: 8px;
+      flex-wrap:wrap;
+    }
+    .navlinks a{
+      color:var(--muted2);
+      text-decoration:none;
+      font-weight:700;
+      font-size:13px;
+      padding:8px 10px;
+      border-radius:12px;
+    }
+    .navlinks a:hover{ background: rgba(255,255,255,.06); color:var(--text); }
+
+    .search{
+      margin-left:auto;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex: 1;
+      max-width: 520px;
+    }
+    .search input{
+      width:100%;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding: 11px 12px;
+      border-radius: 14px;
+      outline:none;
+      font-weight:600;
+    }
+    .search input::placeholder{ color: rgba(255,255,255,.45); }
+    .pill{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.85);
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-weight:800;
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    /* Layout */
+    .page{
+      max-width: 1200px;
+      margin: 18px auto 40px;
+      padding: 0 14px;
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      gap: 16px;
+    }
+
+    /* Sidebar */
+    .sidebar{
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+      height: fit-content;
+    }
+    .side-title{
+      font-weight: 900;
+      font-size: 15px;
+      margin: 2px 0 10px;
+      letter-spacing:.2px;
+    }
+    .side-sub{
+      color: var(--muted2);
+      font-size: 12px;
+      margin: 0 0 12px;
+    }
+    .side-group{
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+      margin-top: 12px;
+    }
+    .side-group h3{
+      margin:0 0 10px;
+      font-size: 13px;
+      letter-spacing:.2px;
+      color: rgba(255,255,255,.9);
+    }
+    .side-list{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+    }
+    .side-item{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.82);
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .side-item span{
+      color: rgba(255,255,255,.5);
+      font-weight: 800;
+      font-size: 12px;
     }
 
-    header a{
-      color:#fff;
-      text-decoration:none;
-      opacity:.85;
+    /* Main */
+    .main{
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+    }
+
+    .crumbs{
+      color: rgba(255,255,255,.55);
       font-weight:700;
-      font-size:14px;
-    }
-
-    header .title{
-      font-weight:900;
-      font-size:14px;
+      font-size: 12px;
       letter-spacing:.2px;
-      opacity:.9;
+    }
+    .hgroup{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+    }
+    .hgroup h1{
+      margin:0;
+      font-size: 26px;
+      letter-spacing:.2px;
+    }
+    .hgroup .range{
+      color: rgba(255,255,255,.65);
+      font-weight:800;
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
     }
 
-    /* Contenitore immagine + hotspot */
-    .wrap{
+    /* Cards grid */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card{
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      display:flex;
+      flex-direction:column;
+      min-height: 360px;
+      position:relative;
+    }
+
+    .imgbox{
+      background: rgba(255,255,255,.06);
+      padding: 16px;
       display:grid;
       place-items:center;
-      padding: 14px;
+      height: 240px;
     }
-
-    .poster{
-      position: relative;
-      width: min(980px, 100%);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 30px 100px rgba(0,0,0,.55);
-      border: 1px solid rgba(255,255,255,.08);
-    }
-
-    .poster img{
-      width:100%;
-      height:auto;
+    .imgbox img{
+      max-width: 100%;
+      max-height: 210px;
+      width: auto;
+      height: auto;
       display:block;
+      filter: drop-shadow(0 18px 22px rgba(0,0,0,.35));
       user-select:none;
       -webkit-user-drag:none;
-      pointer-events:none; /* così non “ruba” i tap ai bottoni */
     }
 
-    /* Hotspot “fisico” */
-    .hotspot{
-      position:absolute;
-      left: var(--x);
-      top: var(--y);
-      transform: translate(-50%,-50%);
-      width: 42px;
-      height: 42px;
-      border-radius: 999px;
+    .meta{
+      padding: 14px 14px 16px;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      flex:1;
+    }
+    .name{
+      font-weight: 900;
+      letter-spacing:.2px;
+      line-height: 1.1;
+      font-size: 15px;
+    }
+    .desc{
+      color: var(--muted2);
+      font-weight: 650;
+      font-size: 12px;
+      line-height: 1.25;
+      min-height: 30px;
+    }
 
-      background: radial-gradient(circle at 30% 30%, #ffffff, #d1d5db 35%, #111827 70%);
-      border: 2px solid rgba(255,255,255,.55);
+    .actions{
+      margin-top:auto;
+      display:flex;
+      justify-content:center;
+    }
 
-      box-shadow:
-        0 10px 22px rgba(0,0,0,.55),
-        0 0 0 6px rgba(34,197,94,.18),
-        0 0 22px rgba(34,197,94,.35);
-
-      display:grid;
-      place-items:center;
-
+    /* Pulsante “fisico” che si illumina */
+    .btn{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 16px;
+      background: radial-gradient(circle at 30% 25%, #ffffff, #d1d5db 38%, #111827 78%);
+      border: 2px solid rgba(255,255,255,.5);
       text-decoration:none;
-      cursor:pointer;
-      z-index: 10;
+      font-weight: 1000;
+      letter-spacing:.2px;
+      color: #071b0f;
+      box-shadow:
+        0 14px 28px rgba(0,0,0,.45),
+        0 0 0 7px rgba(34,197,94,.14),
+        0 0 28px rgba(34,197,94,.35);
       -webkit-tap-highlight-color: transparent;
+      position:relative;
+      overflow:hidden;
     }
-
-    /* “LED” al centro */
-    .hotspot::after{
+    .btn::before{
       content:"";
       width: 10px;
       height: 10px;
       border-radius: 999px;
-      background: #22c55e;
-      box-shadow: 0 0 10px rgba(34,197,94,.9);
-      opacity: .95;
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(34,197,94,.95);
+      display:inline-block;
+      flex:0 0 auto;
     }
-
-    /* Effetto luce quando ci passi o tocchi */
-    .hotspot:hover,
-    .hotspot:focus-visible{
+    .btn:hover,
+    .btn:focus-visible{
+      outline:none;
       box-shadow:
-        0 10px 22px rgba(0,0,0,.55),
-        0 0 0 8px rgba(34,197,94,.22),
-        0 0 34px rgba(34,197,94,.55);
-      outline: none;
+        0 14px 28px rgba(0,0,0,.45),
+        0 0 0 10px rgba(34,197,94,.22),
+        0 0 44px rgba(34,197,94,.65);
     }
-
-    .hotspot:active{
-      transform: translate(-50%,-50%) scale(.96);
+    .btn:active{
+      transform: scale(.985);
       box-shadow:
-        0 8px 18px rgba(0,0,0,.55),
-        0 0 0 10px rgba(34,197,94,.26),
-        0 0 40px rgba(34,197,94,.70);
+        0 10px 22px rgba(0,0,0,.45),
+        0 0 0 12px rgba(34,197,94,.25),
+        0 0 52px rgba(34,197,94,.75);
     }
 
-    /* Pulsazione “accendi” */
-    .pulse{
-      animation: pulse 1.6s infinite;
+    /* Badge "Nuovo" o simili (facoltativo) */
+    .tag{
+      position:absolute;
+      top: 12px;
+      left: 12px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.9);
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing:.3px;
+      backdrop-filter: blur(10px);
     }
 
-    @keyframes pulse{
-      0%   { box-shadow: 0 10px 22px rgba(0,0,0,.55), 0 0 0 6px rgba(34,197,94,.14), 0 0 20px rgba(34,197,94,.35); }
-      50%  { box-shadow: 0 10px 22px rgba(0,0,0,.55), 0 0 0 10px rgba(34,197,94,.24), 0 0 40px rgba(34,197,94,.70); }
-      100% { box-shadow: 0 10px 22px rgba(0,0,0,.55), 0 0 0 6px rgba(34,197,94,.14), 0 0 20px rgba(34,197,94,.35); }
+    /* Responsive */
+    @media (max-width: 1000px){
+      .page{ grid-template-columns: 1fr; }
+      .sidebar{ order:2; }
+      .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .search{ max-width: none; }
     }
 
-    /* Mobile: bottoni un filo più piccoli */
-    @media (max-width: 520px){
-      .hotspot{ width: 36px; height: 36px; }
-      .hotspot::after{ width: 9px; height: 9px; }
+    @media (max-width: 560px){
+      .navlinks{ display:none; }
+      .grid{ grid-template-columns: 1fr; }
+      .card{ min-height: 340px; }
+      .imgbox{ height: 220px; }
+      .imgbox img{ max-height: 190px; }
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <a href="index.html">← Home</a>
-    <div class="title">Azioni della settimana</div>
-    <a href="shop.html" style="opacity:.6;">Refresh</a>
-  </header>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html" aria-label="Home">
+        <span class="brand-badge" aria-hidden="true"></span>
+        Aromat Ovunque
+      </a>
 
-  <div class="wrap">
-    <div class="poster">
-      <!-- IMMAGINE IDENTICA ALLA TUA FOTO -->
-      <img src="Shop.png" alt="Azioni della settimana" />
+      <nav class="navlinks" aria-label="Menu">
+        <a href="shop.html">Azioni settimanali</a>
+        <a href="index.html">Home</a>
+      </nav>
 
-      <!--
-        HOTSPOT (pulsanti)
-        Nota: le coordinate sono percentuali (x,y) sulla foto.
-        Se vuoi spostarli: cambia --x e --y.
-        I link (href) li colleghiamo alle foto prodotto più avanti.
-      -->
-
-      <!-- Carta igienica (in alto a destra) -->
-      <a class="hotspot pulse" style="--x:82%; --y:24%;" href="#" aria-label="Carta igienica"></a>
-
-      <!-- Profumo (zona centro-destra) -->
-      <a class="hotspot pulse" style="--x:78%; --y:54%;" href="#" aria-label="Profumo"></a>
-
-      <!-- Sigarette (zona alto-sinistra) -->
-      <a class="hotspot pulse" style="--x:22%; --y:34%;" href="#" aria-label="Sigarette"></a>
-
-      <!-- Gelato (zona centro-sinistra) -->
-      <a class="hotspot pulse" style="--x:22%; --y:63%;" href="#" aria-label="Gelato"></a>
-
-      <!-- Cola (basso-sinistra) -->
-      <a class="hotspot pulse" style="--x:18%; --y:87%;" href="#" aria-label="Cola"></a>
-
-      <!-- Caffè (basso centro-sinistra) -->
-      <a class="hotspot pulse" style="--x:40%; --y:87%;" href="#" aria-label="Caffè"></a>
-
-      <!-- Dentifricio (basso centro-destra) -->
-      <a class="hotspot pulse" style="--x:64%; --y:87%;" href="#" aria-label="Dentifricio"></a>
-
-      <!-- Detersivo (basso-destra) -->
-      <a class="hotspot pulse" style="--x:86%; --y:87%;" href="#" aria-label="Detersivo"></a>
+      <div class="search">
+        <input type="search" placeholder="Cerca prodotti (non fa niente, per ora)" aria-label="Cerca" />
+        <div class="pill">Settimana</div>
+      </div>
     </div>
+  </div>
+
+  <div class="page">
+    <!-- Sidebar “stile catalogo” -->
+    <aside class="sidebar">
+      <div class="side-title">Azioni della settimana</div>
+      <div class="side-sub">Solo prodotti. Niente prezzi. Niente stress.</div>
+
+      <div class="side-group">
+        <h3>Categorie</h3>
+        <div class="side-list">
+          <div class="side-item">Bevande <span>1</span></div>
+          <div class="side-item">Caffè <span>1</span></div>
+          <div class="side-item">Dolci <span>1</span></div>
+          <div class="side-item">Cura persona <span>1</span></div>
+          <div class="side-item">Casa <span>2</span></div>
+          <div class="side-item">Extra <span>3</span></div>
+        </div>
+      </div>
+
+      <div class="side-group">
+        <h3>Info</h3>
+        <div class="side-list">
+          <div class="side-item">Aggiornamento <span>sett.</span></div>
+          <div class="side-item">Disponibilità <span>demo</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="crumbs">Home › Azioni della settimana</div>
+
+      <div class="hgroup">
+        <h1>Azioni settimanali</h1>
+        <div class="range">27.01 – 04.02.2026</div>
+      </div>
+
+      <section class="grid" aria-label="Prodotti in azione">
+        <!-- Sigarette -->
+        <article class="card">
+          <div class="tag">TOP</div>
+          <div class="imgbox">
+            <img src="sigarette.png" alt="Sigarette Aromat" />
+          </div>
+          <div class="meta">
+            <div class="name">Sigarette Aromat</div>
+            <div class="desc">Per chi ama il rischio. Il sito no, quello è stabile.</div>
+            <div class="actions">
+              <a class="btn" href="#" aria-label="Apri sigarette">Apri</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Carta igienica -->
+        <article class="card">
+          <div class="tag">CASA</div>
+          <div class="imgbox">
+            <img src="carta.png" alt="Carta igienica Aromat" />
+          </div>
+          <div class="meta">
+            <div class="name">Carta igienica Aromat</div>
+            <div class="desc">Piacevolmente insaporita. Sì, lo so.</div>
+            <div class="actions">
+              <a class="btn" href="#" aria-label="Apri carta igienica">Apri</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Profumo -->
+        <article class="card">
+          <div class="tag">UOMO</div>
+          <div class="imgbox">
+            <img src="profumo.png" alt="Eau de Toilette Aromat" />
+          </div>
+          <div class="meta">
+            <div class="name">Eau de Toilette</div>
+            <div class="desc">Profumo “Aromat”. Coraggio vero.</div>
+            <div class="actions">
+              <a class="btn" href="#" aria-label="Apri profumo">Apri</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- CocaCola -->
+        <article class="card">
+          <div class="tag">BEVANDE</div>
+          <div class="imgbox">
+            <img src="cocacola.png" alt="Coca-Cola Aromat" />
+          </div>
+          <div class="meta">
+            <div class="name">Coca-Cola Aromat</div>
+            <div class="desc">Perché le scelte semplici non ti interessano.</div>
+            <div class="actions">
+              <a class="btn" href="#" aria-label="Apri coca cola">Apri</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Cioccolato -->
+        <article class="card">
+          <div class="tag">DOLCI</div>
+          <div class="imgbox">
+            <img src="cioccolato.png" alt="Cioccolato fondente Aromat" />
+          </div>
+          <div class="meta">
+            <div class="name">Cioccolato fondente</div>
+            <div class="desc">Fondente e testardo. Come il progetto.</div>
+            <div class="actions">
+              <a class="btn" href="#" aria-label="Apri cioccolato">Apri</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Dentifricio -->
+        <article class="card">
+          <div class="tag">CURA</div>
+          <div class="imgbox">
+            <img src="dentifricio.png" alt="Dentifricio Aromat" />
+          </div>
+          <div class="meta">
+            <div class="name">Dentifricio all’Aromat</div>
+            <div class="desc">Alito potente. Zero compromessi.</div>
+            <div class="actions">
+              <a class="btn" href="#" aria-label="Apri dentifricio">Apri</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Gelato -->
+        <article class="card">
+          <div class="tag">FREDDO</div>
+          <div class="imgbox">
+            <img src="gelato.png" alt="Gelato Aromat Supreme" />
+          </div>
+          <div class="meta">
+            <div class="name">Gelato Aromat Supreme</div>
+            <div class="desc">Dolce, cremoso, inspiegabile.</div>
+            <div class="actions">
+              <a class="btn" href="#" aria-label="Apri gelato">Apri</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Detersivo -->
+        <article class="card">
+          <div class="tag">CASA</div>
+          <div class="imgbox">
+            <img src="lava.png" alt="Detersivo Aromat" />
+          </div>
+          <div class="meta">
+            <div class="name">Detersivo Aromat</div>
+            <div class="desc">Pulisce & profuma. Almeno lui mantiene le promesse.</div>
+            <div class="actions">
+              <a class="btn" href="#" aria-label="Apri detersivo">Apri</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Caffè -->
+        <article class="card">
+          <div class="tag">CAFFÈ</div>
+          <div class="imgbox">
+            <img src="caffe.png" alt="Capsule caffè Aromat" />
+          </div>
+          <div class="meta">
+            <div class="name">Capsule Espresso</div>
+            <div class="desc">Compatibili, forti, inevitabili.</div>
+            <div class="actions">
+              <a class="btn" href="#" aria-label="Apri capsule caffè">Apri</a>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
   </div>
 </body>
 </html>
