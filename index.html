@@ -10,9 +10,6 @@
       --yellow:#ffdd00;
       --green:#1fa34a;
       --red:#e11d2e;
-
-      --ink:#ffffff;
-      --muted:rgba(255,255,255,.75);
     }
 
     *{ box-sizing:border-box; }
@@ -23,15 +20,12 @@
       min-height:100vh;
       display:grid;
       place-items:center;
-      text-align:center;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--ink);
+      color:#fff;
 
-      /* IMMAGINE HERO */
       background: url("Hero.jpg") center center / cover no-repeat fixed;
     }
 
-    /* overlay per leggibilità */
     body::before{
       content:"";
       position:fixed;
@@ -49,66 +43,64 @@
       z-index:1;
       max-width:720px;
       padding:36px 28px 30px;
+      text-align:center;
+
+      /* QUESTO È IL FIX */
+      margin-top:120px;
     }
 
     h1{
       margin:0 0 14px;
       font-size:42px;
-      letter-spacing:-.02em;
     }
 
     .claim{
       margin:0 0 26px;
       font-size:18px;
-      color:var(--muted);
+      opacity:.85;
       font-weight:600;
     }
 
     .btn{
       display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding:14px 22px;
+      padding:14px 24px;
       border-radius:999px;
-      border:none;
       background: linear-gradient(135deg,
-        rgba(255,221,0,.95) 0%,
-        rgba(31,163,74,.90) 55%,
-        rgba(225,29,46,.90) 100%);
+        var(--yellow),
+        var(--green),
+        var(--red));
       color:#0e1410;
       font-weight:900;
       text-decoration:none;
-      box-shadow: 0 14px 28px rgba(0,0,0,.35);
-      transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+      box-shadow:0 14px 28px rgba(0,0,0,.4);
+      transition: all .15s ease;
     }
 
     .btn:hover{
       transform: translateY(-2px);
-      filter: brightness(1.05) saturate(1.1);
-      box-shadow: 0 20px 36px rgba(0,0,0,.45);
+      filter: brightness(1.1);
     }
 
     .btn:active{
-      transform: translateY(1px) scale(.99);
-      box-shadow: 0 10px 20px rgba(0,0,0,.35);
+      transform: translateY(1px) scale(.98);
     }
 
     .disclaimer{
       margin-top:34px;
       font-size:12px;
       line-height:1.45;
-      color:rgba(255,255,255,.65);
+      opacity:.7;
     }
 
     .disclaimer span{
       display:block;
       margin-top:6px;
-      color:rgba(255,255,255,.55);
+      opacity:.6;
     }
 
-    /* mobile: niente background fixed */
     @media (max-width:600px){
       body{ background-attachment: scroll; }
+      .card{ margin-top:90px; }
       h1{ font-size:34px; }
       .claim{ font-size:16px; }
     }
