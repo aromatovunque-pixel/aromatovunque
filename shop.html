@@ -270,53 +270,66 @@
       justify-content:center;
     }
 
-    /* Pulsante “fisico” che si illumina */
-    .btn{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap: 10px;
-      width: 100%;
-      padding: 12px 12px;
-      border-radius: 16px;
-      background: radial-gradient(circle at 30% 25%, #ffffff, #d1d5db 38%, #111827 78%);
-      border: 2px solid rgba(255,255,255,.5);
-      text-decoration:none;
-      font-weight: 1000;
-      letter-spacing:.2px;
-      color: #071b0f;
-      box-shadow:
-        0 14px 28px rgba(0,0,0,.45),
-        0 0 0 7px rgba(34,197,94,.14),
-        0 0 28px rgba(34,197,94,.35);
-      -webkit-tap-highlight-color: transparent;
-      position:relative;
-      overflow:hidden;
-    }
-    .btn::before{
-      content:"";
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 12px rgba(34,197,94,.95);
-      display:inline-block;
-      flex:0 0 auto;
-    }
-    .btn:hover,
-    .btn:focus-visible{
-      outline:none;
-      box-shadow:
-        0 14px 28px rgba(0,0,0,.45),
-        0 0 0 10px rgba(34,197,94,.22),
-        0 0 44px rgba(34,197,94,.65);
-    }
-    .btn:active{
-      transform: scale(.985);
-      box-shadow:
-        0 10px 22px rgba(0,0,0,.45),
-        0 0 0 12px rgba(34,197,94,.25),
-        0 0 52px rgba(34,197,94,.75);
+    /* Bottone piccolo Aromat */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:110px;
+  padding:10px 14px;
+  border-radius:14px;
+
+  font-weight:900;
+  font-size:13px;
+  letter-spacing:.3px;
+  text-decoration:none;
+  color:#0b0b0b;
+
+  background:
+    linear-gradient(
+      135deg,
+      #facc15 0%,
+      #22c55e 50%,
+      #ef4444 100%
+    );
+  background-size:300% 300%;
+  background-position:0% 50%;
+
+  border:2px solid rgba(255,255,255,.65);
+
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.7),
+    0 6px 14px rgba(0,0,0,.45);
+
+  transition:
+    background-position .35s ease,
+    box-shadow .2s ease,
+    transform .1s ease;
+}
+
+/* Hover: sfondo animato */
+.btn:hover{
+  background-position:100% 50%;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.9),
+    0 10px 22px rgba(0,0,0,.55);
+}
+
+/* Click / tap: effetto premuto */
+.btn:active{
+  transform: translateY(2px) scale(.97);
+  box-shadow:
+    inset 0 4px 8px rgba(0,0,0,.35),
+    0 4px 8px rgba(0,0,0,.45);
+}
+
+/* Mobile: feedback anche senza hover */
+@media (hover:none){
+  .btn:active{
+    background-position:100% 50%;
+  }
+}
+
     }
 
     /* Badge "Nuovo" o simili (facoltativo) */
