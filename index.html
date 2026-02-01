@@ -27,14 +27,26 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color:var(--ink);
 
+      /* IMMAGINE HERO */
+      background: url("Hero.jpg") center center / cover no-repeat fixed;
+    }
+
+    /* overlay per leggibilità */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
       background:
-        radial-gradient(1200px 600px at 50% 20%, rgba(255,221,0,.22), transparent 65%),
-        radial-gradient(1200px 600px at 20% 80%, rgba(31,163,74,.18), transparent 65%),
-        radial-gradient(1200px 600px at 80% 80%, rgba(225,29,46,.16), transparent 65%),
-        #0b0b0b;
+        radial-gradient(1200px 600px at 50% 20%, rgba(255,221,0,.18), transparent 65%),
+        radial-gradient(1200px 600px at 20% 80%, rgba(31,163,74,.16), transparent 65%),
+        radial-gradient(1200px 600px at 80% 80%, rgba(225,29,46,.14), transparent 65%),
+        rgba(0,0,0,.55);
+      z-index:0;
     }
 
     .card{
+      position:relative;
+      z-index:1;
       max-width:720px;
       padding:36px 28px 30px;
     }
@@ -94,7 +106,9 @@
       color:rgba(255,255,255,.55);
     }
 
+    /* mobile: niente background fixed */
     @media (max-width:600px){
+      body{ background-attachment: scroll; }
       h1{ font-size:34px; }
       .claim{ font-size:16px; }
     }
