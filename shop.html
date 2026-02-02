@@ -11,14 +11,14 @@
       --denner-yellow:#ffd400;
       --aromat-green:#1fa34a;
 
-      --bg:#f4f6f7;
+      --bg:#f6f7f9;
       --panel:#ffffff;
       --ink:#111827;
       --muted:#6b7280;
-      --line:rgba(17,24,39,.12);
+      --line:rgba(17,24,39,.10);
 
-      --shadow: 0 16px 36px rgba(17,24,39,.12);
-      --shadow2: 0 10px 24px rgba(17,24,39,.10);
+      --shadow: 0 14px 36px rgba(17,24,39,.10);
+      --shadow2: 0 8px 20px rgba(17,24,39,.08);
       --radius: 18px;
     }
 
@@ -29,9 +29,9 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(900px 500px at 12% 0%, rgba(255,212,0,.22), transparent 60%),
-        radial-gradient(900px 500px at 88% 10%, rgba(31,163,74,.18), transparent 60%),
-        radial-gradient(900px 500px at 60% 95%, rgba(225,29,46,.12), transparent 60%),
+        radial-gradient(900px 540px at 18% -10%, rgba(255,212,0,.18), transparent 60%),
+        radial-gradient(900px 540px at 88% 0%, rgba(31,163,74,.12), transparent 60%),
+        radial-gradient(900px 540px at 60% 105%, rgba(225,29,46,.09), transparent 60%),
         var(--bg);
     }
 
@@ -40,8 +40,8 @@
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(255,255,255,.86);
-      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,.82);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--line);
     }
     .topbarInner{
@@ -66,6 +66,7 @@
       width: 14px; height: 14px; border-radius: 6px;
       background: linear-gradient(135deg, var(--denner-yellow), var(--aromat-green), var(--denner-red));
       box-shadow: 0 0 0 4px rgba(17,24,39,.06);
+      flex: 0 0 auto;
     }
 
     .actions{
@@ -88,7 +89,7 @@
       color: var(--ink);
       text-decoration:none;
       font-weight: 900;
-      box-shadow: 0 6px 16px rgba(17,24,39,.08);
+      box-shadow: 0 6px 16px rgba(17,24,39,.07);
       transition: transform .12s ease, filter .12s ease;
       cursor:pointer;
     }
@@ -106,11 +107,12 @@
     .badgeWeek{
       padding: 9px 12px;
       border-radius: 999px;
-      background: linear-gradient(135deg, rgba(255,212,0,.35), rgba(31,163,74,.22), rgba(225,29,46,.16));
+      background: #fff;
       border: 1px solid rgba(17,24,39,.12);
       font-weight: 950;
       color: rgba(17,24,39,.88);
       white-space:nowrap;
+      box-shadow: 0 6px 16px rgba(17,24,39,.06);
     }
 
     /* Layout */
@@ -119,7 +121,7 @@
       margin: 0 auto;
       padding: 16px 14px 26px;
       display:grid;
-      grid-template-columns: 260px 1fr;
+      grid-template-columns: 270px 1fr;
       gap: 16px;
     }
 
@@ -129,7 +131,7 @@
 
     /* Sidebar */
     aside{
-      background: var(--panel);
+      background: rgba(255,255,255,.88);
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow2);
@@ -138,7 +140,6 @@
       position: sticky;
       top: 70px;
     }
-
     @media (max-width: 980px){
       aside{ position: relative; top:auto; }
     }
@@ -162,7 +163,7 @@
       color: var(--ink);
       cursor:pointer;
       font-weight: 900;
-      transition: transform .12s ease, background .15s ease, box-shadow .15s ease, border-color .15s ease;
+      transition: transform .12s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
       margin-bottom: 10px;
     }
     .catBtn:hover{
@@ -172,8 +173,9 @@
     }
     .catBtn:active{ transform: translateY(1px); }
     .catBtn.active{
-      border-color: rgba(255,212,0,.55);
-      box-shadow: 0 0 0 4px rgba(255,212,0,.20);
+      border-color: rgba(255,212,0,.60);
+      box-shadow: 0 0 0 4px rgba(255,212,0,.18);
+      background: rgba(255,212,0,.08);
     }
 
     .count{
@@ -190,17 +192,12 @@
     }
 
     /* Main */
-    main{
-      background: transparent;
-    }
-
     .crumb{
       font-size: 13px;
       color: rgba(17,24,39,.55);
       margin: 2px 2px 8px;
       font-weight: 800;
     }
-
     .headRow{
       display:flex;
       align-items:flex-end;
@@ -221,7 +218,7 @@
       font-size: 14px;
     }
 
-    /* Cards grid */
+    /* Grid */
     .grid{
       display:grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -234,42 +231,50 @@
       .grid{ grid-template-columns: 1fr; }
     }
 
+    /* Card (modern white retail) */
     .card{
       background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      overflow:hidden;
+      border: 1px solid rgba(17,24,39,.10);
+      border-radius: 22px;
       box-shadow: var(--shadow);
+      overflow:hidden;
       display:flex;
       flex-direction:column;
-      min-height: 390px;
+      min-height: 410px;
       position: relative;
-      transform: translateZ(0);
       transition: transform .14s ease, box-shadow .14s ease, filter .14s ease;
     }
     .card:hover{
       transform: translateY(-2px);
-      box-shadow: 0 20px 44px rgba(17,24,39,.14);
+      box-shadow: 0 20px 46px rgba(17,24,39,.14);
       filter: saturate(1.03);
     }
 
-    /* "Denner-ish" media area without ugly white tile */
+    /* The key fix: unified "product stage" */
     .media{
-      height: 220px;
       position: relative;
-      background:
-        radial-gradient(420px 220px at 50% 35%, rgba(255,212,0,.18), rgba(31,163,74,.10) 45%, rgba(225,29,46,.08) 75%, rgba(17,24,39,.02)),
-        linear-gradient(to bottom, rgba(17,24,39,.02), rgba(17,24,39,.06));
-      display:grid;
-      place-items:center;
+      height: 250px;
       padding: 16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      /* subtle stage background to integrate png/jpg */
+      background:
+        radial-gradient(220px 120px at 50% 52%, rgba(17,24,39,.08), transparent 60%),
+        linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,1));
     }
 
-    .media::after{
-      content:"";
+    /* soft rounded "light plate" so images sit on something modern (not a white sheet) */
+    .stage{
       position:absolute;
-      inset:0;
-      background: linear-gradient(to bottom, rgba(255,255,255,.00), rgba(255,255,255,.00) 55%, rgba(17,24,39,.06));
+      inset: 14px 14px 18px 14px;
+      border-radius: 18px;
+      background:
+        radial-gradient(420px 240px at 50% 40%, rgba(255,212,0,.16), rgba(31,163,74,.10) 55%, rgba(225,29,46,.07) 80%, rgba(17,24,39,.02)),
+        linear-gradient(to bottom, rgba(255,255,255,1), rgba(245,246,248,1));
+      border: 1px solid rgba(17,24,39,.06);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.65);
       pointer-events:none;
     }
 
@@ -277,17 +282,21 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
-      filter: drop-shadow(0 18px 20px rgba(17,24,39,.25));
+      padding: 12px;
       position: relative;
-      z-index:1;
+      z-index: 1;
+
+      /* makes it look embedded instead of pasted */
+      filter: drop-shadow(0 18px 18px rgba(17,24,39,.20));
+      transform: translateZ(0);
     }
 
     .tag{
       position:absolute;
-      top: 12px; left: 12px;
+      top: 16px; left: 16px;
       z-index: 2;
       padding: 7px 10px;
-      border-radius: 12px;
+      border-radius: 999px;
       font-weight: 950;
       font-size: 12px;
       letter-spacing:.3px;
@@ -296,9 +305,10 @@
       border: 1px solid rgba(255,255,255,.22);
     }
 
+    /* Denner-ish discount badge (yellow) */
     .discount{
       position:absolute;
-      top: 12px; right: 12px;
+      top: 16px; right: 16px;
       z-index: 2;
       padding: 10px 12px;
       border-radius: 14px;
@@ -307,13 +317,13 @@
       letter-spacing:.2px;
       background: var(--denner-yellow);
       color:#111827;
-      box-shadow: 0 16px 26px rgba(17,24,39,.18);
+      box-shadow: 0 16px 26px rgba(17,24,39,.14);
       transform: rotate(-2deg);
       border: 1px solid rgba(17,24,39,.12);
     }
 
     .body{
-      padding: 14px 14px 16px;
+      padding: 14px 16px 16px;
       display:flex;
       flex-direction:column;
       gap: 8px;
@@ -327,7 +337,7 @@
     }
     .desc{
       margin: 0;
-      color: rgba(17,24,39,.65);
+      color: rgba(17,24,39,.62);
       font-size: 13px;
       line-height: 1.35;
       font-weight: 700;
@@ -371,11 +381,14 @@
     .openBtn span{ position: relative; z-index:1; }
     .openBtn:hover{
       transform: translateY(-1px);
-      box-shadow: 0 14px 22px rgba(17,24,39,.14);
+      box-shadow: 0 14px 22px rgba(17,24,39,.12);
       filter: brightness(1.02);
     }
     .openBtn:hover::before{ opacity: 1; }
     .openBtn:active{ transform: translateY(1px) scale(.99); }
+
+    /* Hide helper */
+    .hidden{ display:none !important; }
 
     /* Modal */
     .modal{
@@ -431,13 +444,10 @@
       object-fit: contain;
       background: #fff;
     }
-
-    .hidden{ display:none !important; }
   </style>
 </head>
 
 <body>
-  <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbarInner">
       <div class="brand">
@@ -458,9 +468,7 @@
     </div>
   </div>
 
-  <!-- CONTENT -->
   <div class="wrap">
-    <!-- SIDEBAR -->
     <aside>
       <div class="sideTitle">Categorie</div>
 
@@ -493,7 +501,6 @@
       </button>
     </aside>
 
-    <!-- MAIN -->
     <main>
       <div class="crumb">Home › Azioni della settimana</div>
 
@@ -505,9 +512,10 @@
       </div>
 
       <section class="grid" id="grid">
-        <!-- Bevande -->
+        <!-- BEVANDE -->
         <article class="card" data-cat="bevande">
           <div class="media">
+            <div class="stage"></div>
             <div class="tag">BEVANDE</div>
             <div class="discount" data-discount></div>
             <img class="prodImg" src="coca.jpg" alt="Coca Aromat">
@@ -523,6 +531,7 @@
 
         <article class="card" data-cat="bevande">
           <div class="media">
+            <div class="stage"></div>
             <div class="tag">BEVANDE</div>
             <div class="discount" data-discount></div>
             <img class="prodImg" src="sciroppo.jpg" alt="Sciroppo Aromat">
@@ -536,12 +545,13 @@
           </div>
         </article>
 
-        <!-- Caffè -->
+        <!-- CAFFÈ -->
         <article class="card" data-cat="caffe">
           <div class="media">
+            <div class="stage"></div>
             <div class="tag">CAFFÈ</div>
             <div class="discount" data-discount></div>
-            <img class="prodImg" src="caffe.jpg" alt="Capsule Espresso Aromat">
+            <img class="prodImg" src="caffe.jpg" alt="Capsule Espresso">
           </div>
           <div class="body">
             <h3 class="title">Capsule Espresso</h3>
@@ -552,12 +562,13 @@
           </div>
         </article>
 
-        <!-- Dolci -->
+        <!-- DOLCI -->
         <article class="card" data-cat="dolci">
           <div class="media">
+            <div class="stage"></div>
             <div class="tag">DOLCI</div>
             <div class="discount" data-discount></div>
-            <img class="prodImg" src="cioccolato.jpg" alt="Cioccolato fondente Aromat">
+            <img class="prodImg" src="cioccolato.jpg" alt="Cioccolato fondente">
           </div>
           <div class="body">
             <h3 class="title">Cioccolato fondente</h3>
@@ -570,6 +581,7 @@
 
         <article class="card" data-cat="dolci">
           <div class="media">
+            <div class="stage"></div>
             <div class="tag">DOLCI</div>
             <div class="discount" data-discount></div>
             <img class="prodImg" src="gelato.jpg" alt="Gelato Aromat Supreme">
@@ -585,6 +597,7 @@
 
         <article class="card" data-cat="dolci">
           <div class="media">
+            <div class="stage"></div>
             <div class="tag">DOLCI</div>
             <div class="discount" data-discount></div>
             <img class="prodImg" src="aromella.jpg" alt="Aromella">
@@ -598,9 +611,10 @@
           </div>
         </article>
 
-        <!-- Cura persona -->
+        <!-- CURA -->
         <article class="card" data-cat="cura">
           <div class="media">
+            <div class="stage"></div>
             <div class="tag">CURA</div>
             <div class="discount" data-discount></div>
             <img class="prodImg" src="dentifricio.jpg" alt="Dentifricio all'Aromat">
@@ -616,6 +630,7 @@
 
         <article class="card" data-cat="cura">
           <div class="media">
+            <div class="stage"></div>
             <div class="tag">CURA</div>
             <div class="discount" data-discount></div>
             <img class="prodImg" src="deodorante.jpg" alt="Deodorante Aromat">
@@ -631,9 +646,10 @@
 
         <article class="card" data-cat="cura">
           <div class="media">
+            <div class="stage"></div>
             <div class="tag">CURA</div>
             <div class="discount" data-discount></div>
-            <img class="prodImg" src="profumo.jpg" alt="Eau de Toilette Aromat">
+            <img class="prodImg" src="profumo.jpg" alt="Eau de Toilette">
           </div>
           <div class="body">
             <h3 class="title">Eau de Toilette</h3>
@@ -644,9 +660,10 @@
           </div>
         </article>
 
-        <!-- Casa -->
+        <!-- CASA -->
         <article class="card" data-cat="casa">
           <div class="media">
+            <div class="stage"></div>
             <div class="tag">CASA</div>
             <div class="discount" data-discount></div>
             <img class="prodImg" src="carta.jpg" alt="Carta igienica Aromat">
@@ -660,9 +677,10 @@
           </div>
         </article>
 
-        <!-- Extra -->
+        <!-- EXTRA -->
         <article class="card" data-cat="extra">
           <div class="media">
+            <div class="stage"></div>
             <div class="tag">EXTRA</div>
             <div class="discount" data-discount></div>
             <img class="prodImg" src="sigarette.jpg" alt="Sigarette Aromat">
@@ -678,6 +696,7 @@
 
         <article class="card" data-cat="extra">
           <div class="media">
+            <div class="stage"></div>
             <div class="tag">EXTRA</div>
             <div class="discount" data-discount></div>
             <img class="prodImg" src="luganoghetta.jpg" alt="Luganoghetta Aromat">
@@ -694,7 +713,6 @@
     </main>
   </div>
 
-  <!-- MODAL -->
   <div class="modal" id="modal" aria-hidden="true">
     <div class="modalInner" role="dialog" aria-modal="true">
       <div class="modalTop">
@@ -714,7 +732,7 @@
       el.textContent = "-" + randDiscount() + "%";
     });
 
-    // Modal Apri immagine
+    // Modal
     const modal = document.getElementById("modal");
     const modalImg = document.getElementById("modalImg");
     const modalTitle = document.getElementById("modalTitle");
@@ -728,7 +746,6 @@
       modalTitle.textContent = title || "Prodotto";
       document.body.style.overflow = "hidden";
     }
-
     function closeModal(){
       modal.classList.remove("open");
       modal.setAttribute("aria-hidden","true");
@@ -752,7 +769,7 @@
       if(e.key === "Escape") closeModal();
     });
 
-    // Filtri categorie
+    // Filtri categorie + contatori
     const catBtns = Array.from(document.querySelectorAll(".catBtn"));
     const cards = Array.from(document.querySelectorAll(".card"));
 
@@ -766,7 +783,6 @@
         casa: 0,
         extra: 0
       };
-
       cards.forEach(c => {
         const cat = (c.dataset.cat || "extra");
         if(counts[cat] !== undefined) counts[cat]++;
