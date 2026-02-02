@@ -1,251 +1,247 @@
 <!doctype html>
 <html lang="it">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Aromat Ovunque* – Shop</title>
 
 <style>
-:root{
-  --yellow:#ffd400;
-  --green:#1fa34a;
-  --red:#e11d2e;
+  :root{
+    --yellow:#ffd400;
+    --green:#1fa34a;
+    --red:#e11d2e;
 
-  --bg:#f6f7f9;
-  --ink:#111827;
-  --muted:#6b7280;
-  --border:rgba(0,0,0,.12);
-}
+    --bg:#f6f7f9;
+    --card:#ffffff;
+    --ink:#111827;
+    --muted:#6b7280;
+    --line:rgba(0,0,0,.12);
+  }
 
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  background:
-    radial-gradient(900px 500px at 0% -10%, rgba(255,212,0,.22), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgba(31,163,74,.14), transparent 60%),
-    radial-gradient(900px 500px at 50% 120%, rgba(225,29,46,.12), transparent 60%),
-    var(--bg);
-  color:var(--ink);
-}
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    color:var(--ink);
+    background:
+      radial-gradient(900px 500px at 0% -10%, rgba(255,212,0,.22), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(31,163,74,.14), transparent 60%),
+      radial-gradient(900px 500px at 50% 120%, rgba(225,29,46,.12), transparent 60%),
+      var(--bg);
+  }
 
-/* HEADER */
-header{
-  position:sticky;
-  top:0;
-  z-index:10;
-  background:rgba(255,255,255,.85);
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--border);
-}
-.header-inner{
-  max-width:1200px;
-  margin:auto;
-  padding:12px 16px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-}
-.brand{font-weight:900}
-.actions{display:flex;gap:10px;flex-wrap:wrap}
-.actions a{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 14px;
-  border-radius:999px;
-  border:1px solid var(--border);
-  background:#fff;
-  font-weight:800;
-  text-decoration:none;
-  color:#000;
-  transition:transform .15s ease, box-shadow .15s ease;
-}
-.actions a:hover{transform:translateY(-1px);box-shadow:0 12px 18px rgba(0,0,0,.08)}
-.actions img{width:18px;height:18px}
+  /* Header */
+  header{
+    position:sticky; top:0; z-index:10;
+    background:rgba(255,255,255,.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .header-inner{
+    max-width:1200px; margin:0 auto;
+    padding:12px 16px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  .brand{font-weight:950; letter-spacing:.2px}
+  .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  .pill{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:8px 14px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:#fff;
+    text-decoration:none;
+    color:#000;
+    font-weight:900;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .pill:hover{transform:translateY(-1px); box-shadow:0 12px 18px rgba(0,0,0,.08)}
+  .pill img{width:18px; height:18px; display:block; border-radius:6px}
 
-/* LAYOUT */
-.wrapper{
-  max-width:1200px;
-  margin:auto;
-  padding:20px 16px;
-  display:grid;
-  grid-template-columns:260px 1fr;
-  gap:20px;
-}
-@media(max-width:900px){
-  .wrapper{grid-template-columns:1fr}
-}
+  /* Layout */
+  .wrap{
+    max-width:1200px; margin:0 auto;
+    padding:20px 16px 34px;
+    display:grid;
+    grid-template-columns:260px 1fr;
+    gap:20px;
+  }
+  @media(max-width:900px){
+    .wrap{grid-template-columns:1fr}
+  }
 
-/* SIDEBAR */
-aside{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:12px;
-}
-.toggle{
-  width:100%;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid var(--border);
-  background:linear-gradient(90deg, rgba(255,212,0,.25), rgba(31,163,74,.15), rgba(225,29,46,.12));
-  font-weight:900;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  cursor:pointer;
-  transition:transform .12s ease, box-shadow .12s ease;
-}
-.toggle:hover{transform:translateY(-1px);box-shadow:0 12px 18px rgba(0,0,0,.08)}
-.toggle span:last-child{
-  font-size:12px;
-  padding:4px 10px;
-  background:#fff;
-  border-radius:999px;
-  border:1px solid var(--border);
-}
-.catlist{
-  margin-top:10px;
-  overflow:hidden;
-  transition:max-height .25s ease, opacity .25s ease;
-  max-height:520px;
-  opacity:1;
-}
-aside.collapsed .catlist{
-  max-height:0;
-  opacity:0;
-}
-.catbtn{
-  width:100%;
-  margin-bottom:8px;
-  padding:10px 12px;
-  border-radius:14px;
-  border:1px solid var(--border);
-  background:#fff;
-  font-weight:900;
-  cursor:pointer;
-  transition:transform .12s ease, box-shadow .12s ease;
-}
-.catbtn:hover{transform:translateY(-1px);box-shadow:0 12px 18px rgba(0,0,0,.08)}
-.catbtn.active{
-  background:linear-gradient(90deg, rgba(255,212,0,.22), rgba(31,163,74,.14), rgba(225,29,46,.12));
-}
+  /* Sidebar */
+  aside{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:12px;
+  }
 
-/* MAIN */
-h1{margin:0 0 16px;font-size:28px}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:18px;
-}
-@media(max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.grid{grid-template-columns:1fr}}
+  .toggle{
+    width:100%;
+    padding:12px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:linear-gradient(90deg, rgba(255,212,0,.25), rgba(31,163,74,.15), rgba(225,29,46,.12));
+    font-weight:950;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .toggle:hover{transform:translateY(-1px); box-shadow:0 12px 18px rgba(0,0,0,.08)}
+  .toggle .state{
+    font-size:12px;
+    padding:4px 10px;
+    border-radius:999px;
+    background:#fff;
+    border:1px solid var(--line);
+  }
 
-/* CARD */
-.card{
-  background:#fff;
-  border-radius:22px;
-  padding:16px;
-  border:1px solid var(--border);
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  transition:transform .18s ease, box-shadow .18s ease;
-}
-.card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 18px 40px rgba(0,0,0,.14);
-}
+  .catlist{
+    margin-top:10px;
+    overflow:hidden;
+    max-height:700px;
+    opacity:1;
+    transition:max-height .25s ease, opacity .25s ease;
+  }
+  aside.collapsed .catlist{
+    max-height:0;
+    opacity:0;
+  }
 
-/* IMAGE STAGE (aggressive fade) */
-.stage{
-  position:relative;
-  height:220px;
-  border-radius:18px;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:
-    radial-gradient(65% 65% at 50% 35%, rgba(255,212,0,.22), transparent 62%),
-    radial-gradient(60% 60% at 30% 80%, rgba(31,163,74,.14), transparent 65%),
-    radial-gradient(70% 70% at 75% 85%, rgba(225,29,46,.12), transparent 65%);
-}
-.stage::after{
-  content:"";
-  position:absolute;
-  bottom:18px;
-  width:80%;
-  height:44px;
-  background:radial-gradient(ellipse, rgba(0,0,0,.25), transparent 70%);
-}
-.stage::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle at 50% 45%, transparent 30%, rgba(0,0,0,.15) 55%, rgba(0,0,0,.28) 100%);
-  pointer-events:none;
-}
-.stage img{
-  max-width:92%;
-  max-height:92%;
-  object-fit:contain;
-  z-index:1;
-  filter:drop-shadow(0 26px 34px rgba(0,0,0,.30));
+  .catbtn{
+    width:100%;
+    padding:10px 12px;
+    margin-bottom:8px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:#fff;
+    font-weight:950;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .catbtn:hover{transform:translateY(-1px); box-shadow:0 12px 18px rgba(0,0,0,.08)}
+  .catbtn.active{
+    background:linear-gradient(90deg, rgba(255,212,0,.22), rgba(31,163,74,.14), rgba(225,29,46,.12));
+  }
 
-  -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 40%, rgba(0,0,0,.5) 55%, transparent 72%);
-  mask-image: radial-gradient(circle at 50% 45%, #000 40%, rgba(0,0,0,.5) 55%, transparent 72%);
-  -webkit-mask-size:cover;
-  mask-size:cover;
-  -webkit-mask-repeat:no-repeat;
-  mask-repeat:no-repeat;
-}
+  /* Main */
+  h1{margin:0 0 16px; font-size:28px; letter-spacing:-.2px}
 
-/* TEXT */
-.card h3{margin:0;font-size:18px}
-.card p{margin:0;color:var(--muted);font-size:13px;line-height:1.35}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:18px;
+  }
+  @media(max-width:1100px){ .grid{grid-template-columns:repeat(2,1fr)} }
+  @media(max-width:600px){ .grid{grid-template-columns:1fr} }
 
-/* LABELS */
-.tag{
-  position:absolute;
-  top:14px;
-  left:14px;
-  background:#111;
-  color:#fff;
-  padding:6px 10px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:900;
-}
-.sale{
-  position:absolute;
-  top:14px;
-  right:14px;
-  background:var(--yellow);
-  padding:8px 12px;
-  border-radius:14px;
-  font-weight:900;
-}
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 18px 40px rgba(0,0,0,.14);
+  }
 
-/* BUTTON */
-.open{
-  margin-top:auto;
-  padding:10px 16px;
-  border-radius:999px;
-  text-align:center;
-  font-weight:900;
-  text-decoration:none;
-  color:#000;
-  border:2px solid var(--border);
-  background:#fff;
-}
-.open:hover{
-  background:linear-gradient(90deg,var(--yellow),var(--green),var(--red));
-}
+  /* Product image area: modern + aggressive fade */
+  .stage{
+    position:relative;
+    height:220px;
+    border-radius:18px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+      radial-gradient(65% 65% at 50% 35%, rgba(255,212,0,.22), transparent 62%),
+      radial-gradient(60% 60% at 30% 80%, rgba(31,163,74,.14), transparent 65%),
+      radial-gradient(70% 70% at 75% 85%, rgba(225,29,46,.12), transparent 65%),
+      #fff;
+  }
+  .stage::after{
+    content:"";
+    position:absolute;
+    bottom:18px;
+    width:80%;
+    height:44px;
+    background:radial-gradient(ellipse, rgba(0,0,0,.28), transparent 70%);
+  }
+  .stage::before{
+    /* vignetta: aiuta a “fondere” immagini difficili tipo Aromella */
+    content:"";
+    position:absolute;
+    inset:0;
+    background:radial-gradient(circle at 50% 45%, transparent 26%, rgba(0,0,0,.18) 52%, rgba(0,0,0,.30) 100%);
+    pointer-events:none;
+  }
+  .stage img{
+    max-width:92%;
+    max-height:92%;
+    object-fit:contain;
+    z-index:1;
+    filter:drop-shadow(0 26px 34px rgba(0,0,0,.30));
 
-.hidden{display:none}
+    /* sfumatura MOLTO aggressiva */
+    -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 38%, rgba(0,0,0,.55) 52%, transparent 70%);
+    mask-image: radial-gradient(circle at 50% 45%, #000 38%, rgba(0,0,0,.55) 52%, transparent 70%);
+    -webkit-mask-size:cover;
+    mask-size:cover;
+    -webkit-mask-repeat:no-repeat;
+    mask-repeat:no-repeat;
+  }
+
+  .tag{
+    position:absolute;
+    top:14px; left:14px;
+    background:#111;
+    color:#fff;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:950;
+    letter-spacing:.3px;
+    z-index:2;
+  }
+  .sale{
+    position:absolute;
+    top:14px; right:14px;
+    background:var(--yellow);
+    padding:8px 12px;
+    border-radius:14px;
+    font-weight:950;
+    z-index:2;
+  }
+
+  .card h3{margin:0; font-size:18px}
+  .card p{margin:0; color:var(--muted); font-size:13px; line-height:1.35}
+
+  .open{
+    margin-top:auto;
+    padding:10px 16px;
+    border-radius:999px;
+    text-align:center;
+    font-weight:950;
+    text-decoration:none;
+    color:#000;
+    border:2px solid var(--line);
+    background:#fff;
+  }
+  .open:hover{
+    background:linear-gradient(90deg,var(--yellow),var(--green),var(--red));
+  }
+
+  .hidden{display:none}
 </style>
 </head>
 
@@ -255,22 +251,23 @@ h1{margin:0 0 16px;font-size:28px}
   <div class="header-inner">
     <div class="brand">Aromat Ovunque*</div>
     <div class="actions">
-      <a href="index.html">Home</a>
-      <a href="https://www.instagram.com/aromatovunque.ch?igsh=cHMxaHVyOWZmNTkz" target="_blank" rel="noopener">
-        <img src="insta.jpg" alt="">Instagram
+      <a class="pill" href="index.html">Home</a>
+      <a class="pill" href="https://www.instagram.com/aromatovunque.ch?igsh=cHMxaHVyOWZmNTkz" target="_blank" rel="noopener">
+        <img src="insta.jpg" alt="Instagram"> Instagram
       </a>
+      <span class="pill" style="cursor:default;">Rabadan 2026</span>
     </div>
   </div>
 </header>
 
-<div class="wrapper">
+<div class="wrap">
   <aside id="sidebar">
-    <button class="toggle" id="toggleCats" type="button">
+    <button class="toggle" id="toggleCats" type="button" aria-controls="catlist" aria-expanded="true">
       <span>Categorie</span>
-      <span id="toggleLabel">Chiudi</span>
+      <span class="state" id="toggleLabel">Chiudi</span>
     </button>
 
-    <div class="catlist">
+    <div class="catlist" id="catlist">
       <button class="catbtn active" data-filter="all">Tutti</button>
       <button class="catbtn" data-filter="bevande">Bevande</button>
       <button class="catbtn" data-filter="caffe">Caffè</button>
@@ -288,169 +285,172 @@ h1{margin:0 0 16px;font-size:28px}
     <section class="grid" id="grid">
 
       <!-- BEVANDE -->
-      <div class="card" data-cat="bevande">
+      <article class="card" data-cat="bevande">
         <div class="stage">
-          <div class="tag">BEVANDE</div><div class="sale">-35%</div>
+          <span class="tag">BEVANDE</span><span class="sale" data-sale></span>
           <img src="coca.jpg" alt="Coca Aromat">
         </div>
         <h3>Coca Aromat</h3>
         <p>Perché le scelte semplici non ti interessano.</p>
         <a class="open" href="coca.jpg">Apri</a>
-      </div>
+      </article>
 
-      <div class="card" data-cat="bevande">
+      <article class="card" data-cat="bevande">
         <div class="stage">
-          <div class="tag">BEVANDE</div><div class="sale">-37%</div>
+          <span class="tag">BEVANDE</span><span class="sale" data-sale></span>
           <img src="sciroppo.jpg" alt="Sciroppo Aromat">
         </div>
         <h3>Sciroppo Aromat</h3>
         <p>Dolcezza che non perdona.</p>
         <a class="open" href="sciroppo.jpg">Apri</a>
-      </div>
+      </article>
 
       <!-- CAFFÈ -->
-      <div class="card" data-cat="caffe">
+      <article class="card" data-cat="caffe">
         <div class="stage">
-          <div class="tag">CAFFÈ</div><div class="sale">-30%</div>
+          <span class="tag">CAFFÈ</span><span class="sale" data-sale></span>
           <img src="caffe.jpg" alt="Capsule Espresso">
         </div>
         <h3>Capsule Espresso</h3>
         <p>Compatibili, forti, inevitabili.</p>
         <a class="open" href="caffe.jpg">Apri</a>
-      </div>
+      </article>
 
       <!-- DOLCI -->
-      <div class="card" data-cat="dolci">
+      <article class="card" data-cat="dolci">
         <div class="stage">
-          <div class="tag">DOLCI</div><div class="sale">-28%</div>
+          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
           <img src="cioccolato.jpg" alt="Cioccolato fondente">
         </div>
         <h3>Cioccolato fondente</h3>
         <p>Forte, testardo. Come il progetto.</p>
         <a class="open" href="cioccolato.jpg">Apri</a>
-      </div>
+      </article>
 
-      <div class="card" data-cat="dolci">
+      <article class="card" data-cat="dolci">
         <div class="stage">
-          <div class="tag">DOLCI</div><div class="sale">-41%</div>
+          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
           <img src="gelato.jpg" alt="Gelato Aromat Supreme">
         </div>
         <h3>Gelato Aromat Supreme</h3>
         <p>Dolce, cremoso, inspiegabile.</p>
         <a class="open" href="gelato.jpg">Apri</a>
-      </div>
+      </article>
 
-      <div class="card" data-cat="dolci">
+      <article class="card" data-cat="dolci">
         <div class="stage">
-          <div class="tag">DOLCI</div><div class="sale">-29%</div>
+          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
           <img src="aromella.jpg" alt="Aromella">
         </div>
         <h3>Aromella</h3>
         <p>Spalmabile. Non fare domande.</p>
         <a class="open" href="aromella.jpg">Apri</a>
-      </div>
+      </article>
 
       <!-- CURA -->
-      <div class="card" data-cat="cura">
+      <article class="card" data-cat="cura">
         <div class="stage">
-          <div class="tag">CURA</div><div class="sale">-25%</div>
+          <span class="tag">CURA</span><span class="sale" data-sale></span>
           <img src="dentifricio.jpg" alt="Dentifricio all'Aromat">
         </div>
         <h3>Dentifricio all’Aromat</h3>
         <p>Alito potente. Zero compromessi.</p>
         <a class="open" href="dentifricio.jpg">Apri</a>
-      </div>
+      </article>
 
-      <div class="card" data-cat="cura">
+      <article class="card" data-cat="cura">
         <div class="stage">
-          <div class="tag">CURA</div><div class="sale">-22%</div>
+          <span class="tag">CURA</span><span class="sale" data-sale></span>
           <img src="profumo.jpg" alt="Eau de Toilette">
         </div>
         <h3>Eau de Toilette</h3>
         <p>Profumo “Aromat”. Coraggio vero.</p>
         <a class="open" href="profumo.jpg">Apri</a>
-      </div>
+      </article>
 
-      <div class="card" data-cat="cura">
+      <article class="card" data-cat="cura">
         <div class="stage">
-          <div class="tag">CURA</div><div class="sale">-49%</div>
+          <span class="tag">CURA</span><span class="sale" data-sale></span>
           <img src="deodorante.jpg" alt="Deodorante Aromat">
         </div>
         <h3>Deodorante Aromat</h3>
         <p>48h. O più. Chi lo sa.</p>
         <a class="open" href="deodorante.jpg">Apri</a>
-      </div>
+      </article>
 
       <!-- CASA -->
-      <div class="card" data-cat="casa">
+      <article class="card" data-cat="casa">
         <div class="stage">
-          <div class="tag">CASA</div><div class="sale">-40%</div>
+          <span class="tag">CASA</span><span class="sale" data-sale></span>
           <img src="carta.jpg" alt="Carta igienica">
         </div>
         <h3>Carta igienica Aromat</h3>
         <p>Piacevolmente insaporita. Sì, lo so.</p>
         <a class="open" href="carta.jpg">Apri</a>
-      </div>
+      </article>
 
       <!-- EXTRA -->
-      <div class="card" data-cat="extra">
+      <article class="card" data-cat="extra">
         <div class="stage">
-          <div class="tag">EXTRA</div><div class="sale">-33%</div>
+          <span class="tag">EXTRA</span><span class="sale" data-sale></span>
           <img src="sigarette.jpg" alt="Sigarette Aromat">
         </div>
         <h3>Sigarette Aromat</h3>
         <p>Per chi ama il rischio. Il sito no, quello è stabile.</p>
         <a class="open" href="sigarette.jpg">Apri</a>
-      </div>
+      </article>
 
       <!-- CARNE -->
-      <div class="card" data-cat="carne">
+      <article class="card" data-cat="carne">
         <div class="stage">
-          <div class="tag">CARNE</div><div class="sale">-44%</div>
+          <span class="tag">CARNE</span><span class="sale" data-sale></span>
           <img src="luganighetta.jpg" alt="Luganighetta Aromat">
         </div>
         <h3>Luganighetta Aromat</h3>
         <p>Spirale perfetta. Decisioni discutibili.</p>
         <a class="open" href="luganighetta.jpg">Apri</a>
-      </div>
+      </article>
 
     </section>
   </main>
 </div>
 
 <script>
-const sidebar=document.getElementById("sidebar");
-const toggle=document.getElementById("toggleCats");
-const label=document.getElementById("toggleLabel");
+  // Toggle categorie (visibile, funziona)
+  const sidebar = document.getElementById("sidebar");
+  const toggle = document.getElementById("toggleCats");
+  const label = document.getElementById("toggleLabel");
 
-toggle.onclick=()=>{
-  sidebar.classList.toggle("collapsed");
-  label.textContent=sidebar.classList.contains("collapsed")?"Apri":"Chiudi";
-};
+  function setCollapsed(on){
+    sidebar.classList.toggle("collapsed", on);
+    label.textContent = on ? "Apri" : "Chiudi";
+    toggle.setAttribute("aria-expanded", String(!on));
+  }
+  toggle.addEventListener("click", () => setCollapsed(!sidebar.classList.contains("collapsed")));
 
-const buttons=document.querySelectorAll(".catbtn");
-const cards=document.querySelectorAll(".card");
+  // Mobile: parte chiuso
+  if (window.matchMedia("(max-width: 900px)").matches) setCollapsed(true);
 
-buttons.forEach(b=>{
-  b.onclick=()=>{
-    buttons.forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    const f=b.dataset.filter;
-    cards.forEach(c=>{
-      c.classList.toggle("hidden", f!=="all" && c.dataset.cat!==f);
+  // Filtri
+  const buttons = Array.from(document.querySelectorAll(".catbtn"));
+  const cards = Array.from(document.querySelectorAll(".card"));
+
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      buttons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const f = btn.dataset.filter;
+      cards.forEach(c => c.classList.toggle("hidden", f !== "all" && c.dataset.cat !== f));
+
+      // dopo filtro su mobile richiudi
+      if (window.matchMedia("(max-width: 900px)").matches) setCollapsed(true);
     });
-    if(window.innerWidth<900){
-      sidebar.classList.add("collapsed");
-      label.textContent="Apri";
-    }
-  };
-});
+  });
 
-// Mobile: parte chiuso
-if(window.innerWidth<900){
-  sidebar.classList.add("collapsed");
-  label.textContent="Apri";
-}
+  // Sconti random 20–50% su tutte le card
+  function rand(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+  document.querySelectorAll("[data-sale]").forEach(el => el.textContent = "-" + rand(20, 50) + "%");
 </script>
 
 </body>
