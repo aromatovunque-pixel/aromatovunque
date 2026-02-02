@@ -1,152 +1,403 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aromat Ovunque*</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aromat Ovunque* – Shop</title>
 
-  <style>
-    :root{
-      --yellow:#ffdd00;
-      --green:#1fa34a;
-      --red:#e11d2e;
-    }
+<style>
+:root{
+  --yellow:#ffd400;
+  --green:#1fa34a;
+  --red:#e11d2e;
+  --ink:#111;
+  --muted:#555;
+  --line:rgba(0,0,0,.12);
+}
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+*{box-sizing:border-box}
 
-    body{
-      margin:0;
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:#fff;
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  color:var(--ink);
 
-      background: url("Hero.jpg") center center / cover no-repeat fixed;
-      overflow:hidden;
-    }
+  /* SFONDO BRILLANTINO */
+  background:
+    radial-gradient(800px 500px at 10% -10%, rgba(255,212,0,.55), transparent 60%),
+    radial-gradient(700px 500px at 90% 0%, rgba(31,163,74,.35), transparent 65%),
+    radial-gradient(900px 600px at 50% 110%, rgba(225,29,46,.30), transparent 60%),
+    linear-gradient(180deg,#fff 0%, #fdf7ea 60%, #fff 100%);
+}
 
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      background:
-        radial-gradient(1200px 600px at 50% 20%, rgba(255,221,0,.18), transparent 65%),
-        radial-gradient(1200px 600px at 20% 80%, rgba(31,163,74,.16), transparent 65%),
-        radial-gradient(1200px 600px at 80% 80%, rgba(225,29,46,.14), transparent 65%),
-        rgba(0,0,0,.55);
-      z-index:0;
-    }
+/* HEADER */
+header{
+  position:sticky; top:0; z-index:10;
+  background:rgba(255,255,255,.9);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.header-inner{
+  max-width:1200px;
+  margin:auto;
+  padding:12px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+.brand{
+  font-weight:900;
+}
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.pill{
+  padding:8px 14px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;
+  text-decoration:none;
+  font-weight:800;
+  color:#000;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.pill img{
+  width:18px;
+  height:18px;
+}
 
-    /* ---------- ANIMAZIONI ---------- */
+/* LAYOUT */
+.wrap{
+  max-width:1200px;
+  margin:auto;
+  padding:22px 16px 40px;
+  display:grid;
+  grid-template-columns:260px 1fr;
+  gap:20px;
+}
+@media(max-width:900px){
+  .wrap{grid-template-columns:1fr}
+}
 
-    @keyframes fadeUp {
-      from{
-        opacity:0;
-        transform: translateY(26px);
-      }
-      to{
-        opacity:1;
-        transform: translateY(0);
-      }
-    }
+/* SIDEBAR */
+aside{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:12px;
+}
+.toggle{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:linear-gradient(90deg,
+    rgba(255,212,0,.4),
+    rgba(31,163,74,.3),
+    rgba(225,29,46,.25)
+  );
+  font-weight:900;
+  cursor:pointer;
+}
+.catlist{
+  margin-top:10px;
+}
+.catbtn{
+  width:100%;
+  margin-bottom:8px;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+.catbtn.active{
+  background:linear-gradient(90deg,
+    rgba(255,212,0,.35),
+    rgba(31,163,74,.25),
+    rgba(225,29,46,.20)
+  );
+}
 
-    .card{
-      position:relative;
-      z-index:1;
-      max-width:720px;
-      padding:36px 28px 30px;
-      text-align:center;
-      margin-top:120px;
-    }
+/* MAIN */
+h1{
+  margin:0 0 18px;
+  font-size:28px;
+}
 
-    .animate{
-      opacity:0;
-      animation: fadeUp .8s ease forwards;
-    }
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
 
-    .delay-1{ animation-delay:.2s; }
-    .delay-2{ animation-delay:.45s; }
-    .delay-3{ animation-delay:.7s; }
-    .delay-4{ animation-delay:1s; }
+/* CARD */
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  transition:.2s ease;
+}
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 25px 50px rgba(0,0,0,.18);
+}
 
-    h1{
-      margin:0 0 14px;
-      font-size:42px;
-    }
+/* IMMAGINE MODERNA */
+.stage{
+  position:relative;
+  height:220px;
+  border-radius:18px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,212,0,.45), transparent 60%),
+    radial-gradient(circle at 30% 80%, rgba(31,163,74,.30), transparent 65%),
+    radial-gradient(circle at 70% 85%, rgba(225,29,46,.28), transparent 65%);
+}
+.stage::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle, transparent 30%, rgba(0,0,0,.45) 80%);
+}
+.stage img{
+  max-width:90%;
+  max-height:90%;
+  z-index:1;
+  filter:drop-shadow(0 28px 40px rgba(0,0,0,.4));
+  -webkit-mask-image:radial-gradient(circle,#000 45%,transparent 75%);
+  mask-image:radial-gradient(circle,#000 45%,transparent 75%);
+}
 
-    .claim{
-      margin:0 0 26px;
-      font-size:18px;
-      opacity:.85;
-      font-weight:600;
-    }
+/* TAG + SCONTO */
+.tag{
+  position:absolute;
+  top:12px; left:12px;
+  background:#111;
+  color:#fff;
+  font-size:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-weight:900;
+  z-index:2;
+}
+.sale{
+  position:absolute;
+  top:12px; right:12px;
+  background:var(--yellow);
+  padding:6px 10px;
+  border-radius:14px;
+  font-weight:900;
+  z-index:2;
+}
 
-    .btn{
-      display:inline-flex;
-      padding:14px 26px;
-      border-radius:999px;
-      background: linear-gradient(135deg,
-        var(--yellow),
-        var(--green),
-        var(--red));
-      color:#0e1410;
-      font-weight:900;
-      text-decoration:none;
-      box-shadow:0 14px 28px rgba(0,0,0,.4);
-      transition: transform .15s ease, filter .15s ease;
-    }
+.card h3{margin:0;font-size:18px}
+.card p{margin:0;font-size:13px;color:var(--muted)}
 
-    .btn:hover{
-      transform: translateY(-2px);
-      filter: brightness(1.1);
-    }
+.open{
+  margin-top:auto;
+  text-align:center;
+  padding:10px;
+  border-radius:999px;
+  font-weight:900;
+  border:2px solid var(--line);
+  text-decoration:none;
+  color:#000;
+}
+.open:hover{
+  background:linear-gradient(90deg,var(--yellow),var(--green),var(--red));
+}
 
-    .btn:active{
-      transform: translateY(1px) scale(.98);
-    }
-
-    .disclaimer{
-      margin-top:34px;
-      font-size:12px;
-      line-height:1.45;
-      opacity:.7;
-    }
-
-    .disclaimer span{
-      display:block;
-      margin-top:6px;
-      opacity:.6;
-    }
-
-    @media (max-width:600px){
-      body{ background-attachment: scroll; }
-      .card{ margin-top:90px; }
-      h1{ font-size:34px; }
-      .claim{ font-size:16px; }
-    }
-  </style>
+/* UTIL */
+.hidden{display:none}
+</style>
 </head>
 
 <body>
-  <div class="card">
-    <h1 class="animate delay-1">Aromat Ovunque*</h1>
 
-    <p class="claim animate delay-2">
-      Stay strong. Stay Aromat.
-    </p>
-
-    <div class="animate delay-3">
-      <a class="btn" href="shop.html">Entra</a>
-    </div>
-
-    <div class="disclaimer animate delay-4">
-      * Questo sito è stato realizzato esclusivamente a scopo di intrattenimento e satira.
-      I prodotti rappresentati sono frutto di fantasia e non corrispondono a prodotti reali
-      né alle loro caratteristiche commerciali.
-      <span>Buon Carnevale a tutti.</span>
+<header>
+  <div class="header-inner">
+    <div class="brand">Aromat Ovunque*</div>
+    <div class="actions">
+      <a class="pill" href="index.html">Home</a>
+      <a class="pill" href="https://www.instagram.com/aromatovunque.ch?igsh=cHMxaHVyOWZmNTkz" target="_blank">
+        <img src="insta.jpg" alt="">Instagram
+      </a>
+      <span class="pill">Rabadan 2026</span>
     </div>
   </div>
+</header>
+
+<div class="wrap">
+
+<aside>
+  <button class="toggle">Categorie</button>
+  <div class="catlist">
+    <button class="catbtn active" data-f="all">Tutti</button>
+    <button class="catbtn" data-f="bevande">Bevande</button>
+    <button class="catbtn" data-f="caffe">Caffè</button>
+    <button class="catbtn" data-f="dolci">Dolci</button>
+    <button class="catbtn" data-f="cura">Cura</button>
+    <button class="catbtn" data-f="casa">Casa</button>
+    <button class="catbtn" data-f="carne">Carne</button>
+    <button class="catbtn" data-f="extra">Extra</button>
+  </div>
+</aside>
+
+<main>
+<h1>Azioni settimanali – Rabadan 2026</h1>
+
+<section class="grid">
+
+<!-- ELENCO PRODOTTI (tutti) -->
+
+<!-- BEVANDE -->
+<div class="card" data-cat="bevande">
+  <div class="stage"><span class="tag">BEVANDE</span><span class="sale">-34%</span>
+    <img src="coca.jpg">
+  </div>
+  <h3>Coca Aromat</h3>
+  <p>Scelte discutibili.</p>
+  <a class="open" href="coca.jpg">Apri</a>
+</div>
+
+<div class="card" data-cat="bevande">
+  <div class="stage"><span class="tag">BEVANDE</span><span class="sale">-27%</span>
+    <img src="sciroppo.jpg">
+  </div>
+  <h3>Sciroppo Aromat</h3>
+  <p>Dolcezza estrema.</p>
+  <a class="open" href="sciroppo.jpg">Apri</a>
+</div>
+
+<!-- CAFFÈ -->
+<div class="card" data-cat="caffe">
+  <div class="stage"><span class="tag">CAFFÈ</span><span class="sale">-41%</span>
+    <img src="caffe.jpg">
+  </div>
+  <h3>Capsule Espresso</h3>
+  <p>Scelte definitive.</p>
+  <a class="open" href="caffe.jpg">Apri</a>
+</div>
+
+<!-- DOLCI -->
+<div class="card" data-cat="dolci">
+  <div class="stage"><span class="tag">DOLCI</span><span class="sale">-49%</span>
+    <img src="cioccolato.jpg">
+  </div>
+  <h3>Cioccolato fondente</h3>
+  <p>90%. Nessuna scusa.</p>
+  <a class="open" href="cioccolato.jpg">Apri</a>
+</div>
+
+<div class="card" data-cat="dolci">
+  <div class="stage"><span class="tag">DOLCI</span><span class="sale">-31%</span>
+    <img src="gelato.jpg">
+  </div>
+  <h3>Gelato Aromat</h3>
+  <p>Inspiegabile.</p>
+  <a class="open" href="gelato.jpg">Apri</a>
+</div>
+
+<div class="card" data-cat="dolci">
+  <div class="stage"><span class="tag">DOLCI</span><span class="sale">-23%</span>
+    <img src="aromella.jpg">
+  </div>
+  <h3>Aromella</h3>
+  <p>Non chiedere.</p>
+  <a class="open" href="aromella.jpg">Apri</a>
+</div>
+
+<!-- CURA -->
+<div class="card" data-cat="cura">
+  <div class="stage"><span class="tag">CURA</span><span class="sale">-44%</span>
+    <img src="dentifricio.jpg">
+  </div>
+  <h3>Dentifricio Aromat</h3>
+  <p>Alito memorabile.</p>
+  <a class="open" href="dentifricio.jpg">Apri</a>
+</div>
+
+<div class="card" data-cat="cura">
+  <div class="stage"><span class="tag">CURA</span><span class="sale">-38%</span>
+    <img src="profumo.jpg">
+  </div>
+  <h3>Eau de Toilette</h3>
+  <p>Coraggio puro.</p>
+  <a class="open" href="profumo.jpg">Apri</a>
+</div>
+
+<div class="card" data-cat="cura">
+  <div class="stage"><span class="tag">CURA</span><span class="sale">-29%</span>
+    <img src="deodorante.jpg">
+  </div>
+  <h3>Deodorante Aromat</h3>
+  <p>48h. Forse.</p>
+  <a class="open" href="deodorante.jpg">Apri</a>
+</div>
+
+<!-- CASA -->
+<div class="card" data-cat="casa">
+  <div class="stage"><span class="tag">CASA</span><span class="sale">-40%</span>
+    <img src="carta.jpg">
+  </div>
+  <h3>Carta igienica</h3>
+  <p>Esperienza sensoriale.</p>
+  <a class="open" href="carta.jpg">Apri</a>
+</div>
+<!-- EXTRA -->
+<div class="card" data-cat="extra">
+  <div class="stage"><span class="tag">EXTRA</span><span class="sale">-33%</span>
+    <img src="sigarette.jpg">
+  </div>
+  <h3>Sigarette Aromat</h3>
+  <p>Decisioni forti.</p>
+  <a class="open" href="sigarette.jpg">Apri</a>
+</div>
+
+<!-- CARNE -->
+<div class="card" data-cat="carne">
+  <div class="stage"><span class="tag">CARNE</span><span class="sale">-28%</span>
+    <img src="luganighetta.jpg">
+  </div>
+  <h3>Luganighetta Aromat</h3>
+  <p>Spirale morale.</p>
+  <a class="open" href="luganighetta.jpg">Apri</a>
+</div>
+
+</section>
+</main>
+</div>
+
+<script>
+const btns=document.querySelectorAll(".catbtn");
+const cards=document.querySelectorAll(".card");
+btns.forEach(b=>{
+  b.onclick=()=>{
+    btns.forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    const f=b.dataset.f;
+    cards.forEach(c=>{
+      c.classList.toggle("hidden",f!=="all" && c.dataset.cat!==f);
+    });
+  }
+});
+</script>
+
 </body>
 </html>
