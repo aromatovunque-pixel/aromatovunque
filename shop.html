@@ -1,820 +1,388 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aromat Ovunque* – Azioni settimanali</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aromat Ovunque* – Azioni settimanali</title>
 
-  <style>
-    :root{
-      --denner-red:#e11d2e;
-      --denner-yellow:#ffd400;
-      --aromat-green:#1fa34a;
+<style>
+:root{
+  --yellow:#ffd400;
+  --green:#1fa34a;
+  --red:#e11d2e;
+  --bg:#f7f8fa;
+  --ink:#111827;
+  --muted:#6b7280;
+}
 
-      --bg:#f6f7f9;
-      --panel:#ffffff;
-      --ink:#111827;
-      --muted:#6b7280;
-      --line:rgba(17,24,39,.10);
+*{box-sizing:border-box}
 
-      --shadow: 0 14px 36px rgba(17,24,39,.10);
-      --shadow2: 0 8px 20px rgba(17,24,39,.08);
-      --radius: 18px;
-    }
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:var(--bg);
+  color:var(--ink);
+}
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(900px 540px at 18% -10%, rgba(255,212,0,.18), transparent 60%),
-        radial-gradient(900px 540px at 88% 0%, rgba(31,163,74,.12), transparent 60%),
-        radial-gradient(900px 540px at 60% 105%, rgba(225,29,46,.09), transparent 60%),
-        var(--bg);
-    }
+/* TOP BAR */
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:#fff;
+  border-bottom:1px solid rgba(0,0,0,.08);
+  backdrop-filter:saturate(120%) blur(8px);
+}
+.header-inner{
+  max-width:1200px;
+  margin:auto;
+  padding:12px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+.brand{font-weight:900}
+.header-actions{display:flex;gap:10px;flex-wrap:wrap}
+.header-actions a{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 14px;
+  border-radius:999px;
+  text-decoration:none;
+  font-weight:800;
+  border:1px solid rgba(0,0,0,.12);
+  color:#000;
+  background:#fff;
+  transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.header-actions a:hover{
+  transform:translateY(-1px);
+  box-shadow:0 10px 18px rgba(0,0,0,.08);
+  border-color:rgba(0,0,0,.18);
+}
+.header-actions img{width:18px;height:18px}
 
-    /* Top bar */
-    .topbar{
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(255,255,255,.82);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--line);
-    }
-    .topbarInner{
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 12px 14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-    }
+/* LAYOUT */
+.wrapper{
+  max-width:1200px;
+  margin:auto;
+  padding:20px 16px;
+  display:grid;
+  grid-template-columns:260px 1fr;
+  gap:20px;
+}
+@media(max-width:900px){
+  .wrapper{grid-template-columns:1fr}
+}
 
-    .brand{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      font-weight: 950;
-      letter-spacing: .2px;
-      white-space:nowrap;
-    }
-    .brandMark{
-      width: 14px; height: 14px; border-radius: 6px;
-      background: linear-gradient(135deg, var(--denner-yellow), var(--aromat-green), var(--denner-red));
-      box-shadow: 0 0 0 4px rgba(17,24,39,.06);
-      flex: 0 0 auto;
-    }
+/* SIDEBAR */
+aside{
+  background:#fff;
+  border-radius:18px;
+  padding:14px;
+  border:1px solid rgba(0,0,0,.08);
+}
+aside button{
+  width:100%;
+  padding:10px 12px;
+  margin-bottom:8px;
+  border-radius:14px;
+  border:1px solid rgba(0,0,0,.12);
+  background:#fff;
+  font-weight:800;
+  cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
+}
+aside button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 10px 16px rgba(0,0,0,.08);
+}
+aside button.active{
+  background:rgba(255,212,0,.15);
+  border-color:var(--yellow);
+}
 
-    .actions{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
 
-    .btnTop{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap: 8px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: #fff;
-      color: var(--ink);
-      text-decoration:none;
-      font-weight: 900;
-      box-shadow: 0 6px 16px rgba(17,24,39,.07);
-      transition: transform .12s ease, filter .12s ease;
-      cursor:pointer;
-    }
-    .btnTop:hover{ transform: translateY(-1px); filter: brightness(1.02); }
-    .btnTop:active{ transform: translateY(1px) scale(.99); }
+/* CARD */
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:16px;
+  border:1px solid rgba(0,0,0,.08);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  position:relative;
 
-    .btnInstaImg{
-      width: 18px;
-      height: 18px;
-      border-radius: 6px;
-      object-fit: cover;
-      box-shadow: 0 0 0 3px rgba(17,24,39,.06);
-    }
+  /* micro motion */
+  transform:translateY(0);
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, opacity .18s ease;
+  box-shadow:0 10px 26px rgba(0,0,0,.06);
+}
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 18px 42px rgba(0,0,0,.12);
+  border-color:rgba(0,0,0,.14);
+}
 
-    .badgeWeek{
-      padding: 9px 12px;
-      border-radius: 999px;
-      background: #fff;
-      border: 1px solid rgba(17,24,39,.12);
-      font-weight: 950;
-      color: rgba(17,24,39,.88);
-      white-space:nowrap;
-      box-shadow: 0 6px 16px rgba(17,24,39,.06);
-    }
+/* MODERN IMAGE STAGE (NO WHITE BOX) */
+.product-stage{
+  position:relative;
+  height:220px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border-radius:18px;
 
-    /* Layout */
-    .wrap{
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 16px 14px 26px;
-      display:grid;
-      grid-template-columns: 270px 1fr;
-      gap: 16px;
-    }
+  /* subtle colored “ambient” background */
+  background:
+    radial-gradient(60% 60% at 50% 35%, rgba(255,212,0,.22), transparent 60%),
+    radial-gradient(55% 55% at 35% 70%, rgba(31,163,74,.14), transparent 65%),
+    radial-gradient(70% 70% at 70% 75%, rgba(225,29,46,.10), transparent 65%);
+}
+.product-stage::after{
+  /* floor / soft base */
+  content:"";
+  position:absolute;
+  bottom:18px;
+  width:82%;
+  height:44px;
+  background:radial-gradient(ellipse at center, rgba(0,0,0,.18), transparent 72%);
+  filter:blur(.2px);
+  opacity:.85;
+}
+.product-stage img{
+  max-height:92%;
+  max-width:92%;
+  object-fit:contain;
+  z-index:1;
 
-    @media (max-width: 980px){
-      .wrap{ grid-template-columns: 1fr; }
-    }
+  /* modern cutout look */
+  filter:drop-shadow(0 22px 26px rgba(0,0,0,.22));
+  transform:translateY(0) scale(1);
+  transition:transform .22s ease, filter .22s ease;
+}
+.card:hover .product-stage img{
+  transform:translateY(-6px) scale(1.03);
+  filter:drop-shadow(0 28px 30px rgba(0,0,0,.28));
+}
 
-    /* Sidebar */
-    aside{
-      background: rgba(255,255,255,.88);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow2);
-      padding: 14px;
-      height: fit-content;
-      position: sticky;
-      top: 70px;
-    }
-    @media (max-width: 980px){
-      aside{ position: relative; top:auto; }
-    }
+/* BADGES */
+.category{
+  position:absolute;
+  top:14px;
+  left:14px;
+  background:#111;
+  color:#fff;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.3px;
+}
+.discount{
+  position:absolute;
+  top:14px;
+  right:14px;
+  background:var(--yellow);
+  padding:8px 12px;
+  border-radius:14px;
+  font-weight:950;
+  box-shadow:0 10px 18px rgba(0,0,0,.12);
+  transform:translateY(0);
+  animation:badgeBreath 2.6s ease-in-out infinite;
+}
+@keyframes badgeBreath{
+  0%,100%{ transform:translateY(0) scale(1); }
+  50%{ transform:translateY(-1px) scale(1.02); }
+}
 
-    .sideTitle{
-      font-weight: 950;
-      margin: 4px 6px 12px;
-      letter-spacing:.2px;
-    }
+/* TEXT */
+.card h3{margin:0;font-size:18px}
+.card p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+}
 
-    .catBtn{
-      width:100%;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
-      padding: 11px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(17,24,39,.12);
-      background: #fff;
-      color: var(--ink);
-      cursor:pointer;
-      font-weight: 900;
-      transition: transform .12s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
-      margin-bottom: 10px;
-    }
-    .catBtn:hover{
-      transform: translateY(-1px);
-      box-shadow: 0 10px 18px rgba(17,24,39,.08);
-      border-color: rgba(17,24,39,.18);
-    }
-    .catBtn:active{ transform: translateY(1px); }
-    .catBtn.active{
-      border-color: rgba(255,212,0,.60);
-      box-shadow: 0 0 0 4px rgba(255,212,0,.18);
-      background: rgba(255,212,0,.08);
-    }
+/* BUTTON */
+.card a{
+  position:relative;
+  overflow:hidden;
+  margin-top:auto;
+  text-align:center;
+  padding:10px 16px;
+  border-radius:999px;
+  font-weight:950;
+  text-decoration:none;
+  color:#000;
+  border:2px solid rgba(0,0,0,.12);
+  background:#fff;
+  transition:transform .12s ease, box-shadow .12s ease, background .18s ease;
+}
+.card a::before{
+  /* subtle shimmer */
+  content:"";
+  position:absolute;
+  inset:-40% auto -40% -60%;
+  width:40%;
+  transform:skewX(-18deg);
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+  opacity:0;
+}
+.card:hover a::before{
+  opacity:1;
+  animation:shimmer 1.1s ease forwards;
+}
+@keyframes shimmer{
+  from{ left:-60%; }
+  to{ left:120%; }
+}
+.card a:hover{
+  background:linear-gradient(90deg,var(--yellow),var(--green),var(--red));
+  box-shadow:0 14px 26px rgba(0,0,0,.10);
+}
+.card a:active{
+  transform:translateY(1px) scale(.99);
+}
 
-    .count{
-      min-width: 28px;
-      height: 22px;
-      padding: 0 8px;
-      border-radius: 999px;
-      display:grid;
-      place-items:center;
-      font-size: 12px;
-      background: rgba(17,24,39,.06);
-      color: rgba(17,24,39,.75);
-      font-weight: 950;
-    }
-
-    /* Main */
-    .crumb{
-      font-size: 13px;
-      color: rgba(17,24,39,.55);
-      margin: 2px 2px 8px;
-      font-weight: 800;
-    }
-    .headRow{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap: 12px;
-      flex-wrap:wrap;
-      margin-bottom: 12px;
-    }
-    h1{
-      margin:0;
-      font-size: 28px;
-      letter-spacing: .2px;
-    }
-    .sub{
-      margin: 6px 0 0;
-      color: rgba(17,24,39,.60);
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    /* Grid */
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-    @media (max-width: 1200px){
-      .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-    @media (max-width: 680px){
-      .grid{ grid-template-columns: 1fr; }
-    }
-
-    /* Card (modern white retail) */
-    .card{
-      background: var(--panel);
-      border: 1px solid rgba(17,24,39,.10);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      display:flex;
-      flex-direction:column;
-      min-height: 410px;
-      position: relative;
-      transition: transform .14s ease, box-shadow .14s ease, filter .14s ease;
-    }
-    .card:hover{
-      transform: translateY(-2px);
-      box-shadow: 0 20px 46px rgba(17,24,39,.14);
-      filter: saturate(1.03);
-    }
-
-    /* The key fix: unified "product stage" */
-    .media{
-      position: relative;
-      height: 250px;
-      padding: 16px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-
-      /* subtle stage background to integrate png/jpg */
-      background:
-        radial-gradient(220px 120px at 50% 52%, rgba(17,24,39,.08), transparent 60%),
-        linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,1));
-    }
-
-    /* soft rounded "light plate" so images sit on something modern (not a white sheet) */
-    .stage{
-      position:absolute;
-      inset: 14px 14px 18px 14px;
-      border-radius: 18px;
-      background:
-        radial-gradient(420px 240px at 50% 40%, rgba(255,212,0,.16), rgba(31,163,74,.10) 55%, rgba(225,29,46,.07) 80%, rgba(17,24,39,.02)),
-        linear-gradient(to bottom, rgba(255,255,255,1), rgba(245,246,248,1));
-      border: 1px solid rgba(17,24,39,.06);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.65);
-      pointer-events:none;
-    }
-
-    .prodImg{
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      padding: 12px;
-      position: relative;
-      z-index: 1;
-
-      /* makes it look embedded instead of pasted */
-      filter: drop-shadow(0 18px 18px rgba(17,24,39,.20));
-      transform: translateZ(0);
-    }
-
-    .tag{
-      position:absolute;
-      top: 16px; left: 16px;
-      z-index: 2;
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-weight: 950;
-      font-size: 12px;
-      letter-spacing:.3px;
-      background: rgba(17,24,39,.78);
-      color:#fff;
-      border: 1px solid rgba(255,255,255,.22);
-    }
-
-    /* Denner-ish discount badge (yellow) */
-    .discount{
-      position:absolute;
-      top: 16px; right: 16px;
-      z-index: 2;
-      padding: 10px 12px;
-      border-radius: 14px;
-      font-weight: 1000;
-      font-size: 14px;
-      letter-spacing:.2px;
-      background: var(--denner-yellow);
-      color:#111827;
-      box-shadow: 0 16px 26px rgba(17,24,39,.14);
-      transform: rotate(-2deg);
-      border: 1px solid rgba(17,24,39,.12);
-    }
-
-    .body{
-      padding: 14px 16px 16px;
-      display:flex;
-      flex-direction:column;
-      gap: 8px;
-      flex: 1;
-    }
-    .title{
-      font-weight: 1000;
-      font-size: 18px;
-      letter-spacing: .15px;
-      margin: 0;
-    }
-    .desc{
-      margin: 0;
-      color: rgba(17,24,39,.62);
-      font-size: 13px;
-      line-height: 1.35;
-      font-weight: 700;
-    }
-
-    .footerRow{
-      margin-top:auto;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding-top: 10px;
-    }
-
-    /* Tricolor "Apri" button */
-    .openBtn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 10px 16px;
-      min-width: 118px;
-      border-radius: 999px;
-      border: 2px solid rgba(17,24,39,.12);
-      background: #fff;
-      color: #111827;
-      font-weight: 1000;
-      text-decoration:none;
-      cursor:pointer;
-      user-select:none;
-      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
-      position: relative;
-      overflow:hidden;
-    }
-    .openBtn::before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background: linear-gradient(135deg, var(--denner-yellow), var(--aromat-green), var(--denner-red));
-      opacity: 0;
-      transition: opacity .12s ease;
-    }
-    .openBtn span{ position: relative; z-index:1; }
-    .openBtn:hover{
-      transform: translateY(-1px);
-      box-shadow: 0 14px 22px rgba(17,24,39,.12);
-      filter: brightness(1.02);
-    }
-    .openBtn:hover::before{ opacity: 1; }
-    .openBtn:active{ transform: translateY(1px) scale(.99); }
-
-    /* Hide helper */
-    .hidden{ display:none !important; }
-
-    /* Modal */
-    .modal{
-      position: fixed;
-      inset: 0;
-      display:none;
-      place-items:center;
-      padding: 18px;
-      background: rgba(17,24,39,.70);
-      z-index: 9999;
-    }
-    .modal.open{ display:grid; }
-
-    .modalInner{
-      width:min(980px, 96vw);
-      max-height: 92vh;
-      border-radius: 18px;
-      overflow:hidden;
-      background: #fff;
-      border: 1px solid rgba(17,24,39,.14);
-      box-shadow: 0 30px 80px rgba(17,24,39,.35);
-    }
-    .modalTop{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
-      padding: 12px 14px;
-      background: rgba(17,24,39,.04);
-      border-bottom: 1px solid rgba(17,24,39,.10);
-    }
-    .modalTitle{
-      font-weight: 950;
-      letter-spacing:.2px;
-      color: rgba(17,24,39,.88);
-    }
-    .closeBtn{
-      border: 1px solid rgba(17,24,39,.12);
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: #fff;
-      color: var(--ink);
-      cursor:pointer;
-      font-weight: 950;
-    }
-    .closeBtn:hover{ background: rgba(17,24,39,.04); }
-
-    .modalImg{
-      display:block;
-      width: 100%;
-      height: 100%;
-      max-height: calc(92vh - 54px);
-      object-fit: contain;
-      background: #fff;
-    }
-  </style>
+/* filter animations */
+.hidden{display:none}
+.card.enter{
+  opacity:0;
+  transform:translateY(8px);
+}
+.card.enter.show{
+  opacity:1;
+  transform:translateY(0);
+}
+</style>
 </head>
 
 <body>
-  <div class="topbar">
-    <div class="topbarInner">
-      <div class="brand">
-        <div class="brandMark"></div>
-        <div>Aromat Ovunque*</div>
-      </div>
 
-      <div class="actions">
-        <a class="btnTop" href="index.html">Home</a>
-
-        <a class="btnTop" href="https://www.instagram.com/aromatovunque.ch?igsh=cHMxaHVyOWZmNTkz" target="_blank" rel="noopener">
-          <img class="btnInstaImg" src="insta.jpg" alt="Instagram">
-          <span>Instagram</span>
-        </a>
-
-        <div class="badgeWeek">Carnevale Rabadan 2026</div>
-      </div>
+<header>
+  <div class="header-inner">
+    <div class="brand">Aromat Ovunque*</div>
+    <div class="header-actions">
+      <a href="index.html">Home</a>
+      <a href="https://www.instagram.com/aromatovunque.ch?igsh=cHMxaHVyOWZmNTkz" target="_blank" rel="noopener">
+        <img src="insta.jpg" alt="">Instagram
+      </a>
+      <a href="#" aria-disabled="true">Carnevale Rabadan 2026</a>
     </div>
   </div>
+</header>
 
-  <div class="wrap">
-    <aside>
-      <div class="sideTitle">Categorie</div>
+<div class="wrapper">
+  <aside>
+    <button class="active" data-filter="all">Tutti</button>
+    <button data-filter="bevande">Bevande</button>
+    <button data-filter="dolci">Dolci</button>
+    <button data-filter="cura">Cura persona</button>
+    <button data-filter="casa">Casa</button>
+    <button data-filter="carne">Carne</button>
+    <button data-filter="extra">Extra</button>
+  </aside>
 
-      <button class="catBtn active" data-filter="all">
-        <span>Tutti</span><span class="count" id="count-all">0</span>
-      </button>
+  <section class="grid" id="grid">
 
-      <button class="catBtn" data-filter="bevande">
-        <span>Bevande</span><span class="count" id="count-bevande">0</span>
-      </button>
-
-      <button class="catBtn" data-filter="caffe">
-        <span>Caffè</span><span class="count" id="count-caffe">0</span>
-      </button>
-
-      <button class="catBtn" data-filter="dolci">
-        <span>Dolci</span><span class="count" id="count-dolci">0</span>
-      </button>
-
-      <button class="catBtn" data-filter="cura">
-        <span>Cura persona</span><span class="count" id="count-cura">0</span>
-      </button>
-
-      <button class="catBtn" data-filter="casa">
-        <span>Casa</span><span class="count" id="count-casa">0</span>
-      </button>
-
-      <button class="catBtn" data-filter="extra">
-        <span>Extra</span><span class="count" id="count-extra">0</span>
-      </button>
-    </aside>
-
-    <main>
-      <div class="crumb">Home › Azioni della settimana</div>
-
-      <div class="headRow">
-        <div>
-          <h1>Azioni settimanali</h1>
-          <p class="sub">Sconti random dal 20% al 50% (perché sì).</p>
-        </div>
+    <!-- CARNE -->
+    <div class="card" data-cat="carne">
+      <div class="category">CARNE</div>
+      <div class="discount">-42%</div>
+      <div class="product-stage">
+        <img src="luganighetta.jpg" alt="Luganighetta Aromat">
       </div>
-
-      <section class="grid" id="grid">
-        <!-- BEVANDE -->
-        <article class="card" data-cat="bevande">
-          <div class="media">
-            <div class="stage"></div>
-            <div class="tag">BEVANDE</div>
-            <div class="discount" data-discount></div>
-            <img class="prodImg" src="coca.jpg" alt="Coca Aromat">
-          </div>
-          <div class="body">
-            <h3 class="title">Coca Aromat</h3>
-            <p class="desc">Perché le scelte semplici non ti interessano.</p>
-            <div class="footerRow">
-              <a class="openBtn" href="#" data-img="coca.jpg"><span>Apri</span></a>
-            </div>
-          </div>
-        </article>
-
-        <article class="card" data-cat="bevande">
-          <div class="media">
-            <div class="stage"></div>
-            <div class="tag">BEVANDE</div>
-            <div class="discount" data-discount></div>
-            <img class="prodImg" src="sciroppo.jpg" alt="Sciroppo Aromat">
-          </div>
-          <div class="body">
-            <h3 class="title">Sciroppo Aromat</h3>
-            <p class="desc">Dolcezza sospetta, finale all’aglio. Tradizione.</p>
-            <div class="footerRow">
-              <a class="openBtn" href="#" data-img="sciroppo.jpg"><span>Apri</span></a>
-            </div>
-          </div>
-        </article>
-
-        <!-- CAFFÈ -->
-        <article class="card" data-cat="caffe">
-          <div class="media">
-            <div class="stage"></div>
-            <div class="tag">CAFFÈ</div>
-            <div class="discount" data-discount></div>
-            <img class="prodImg" src="caffe.jpg" alt="Capsule Espresso">
-          </div>
-          <div class="body">
-            <h3 class="title">Capsule Espresso</h3>
-            <p class="desc">Compatibili, forti, inevitabili.</p>
-            <div class="footerRow">
-              <a class="openBtn" href="#" data-img="caffe.jpg"><span>Apri</span></a>
-            </div>
-          </div>
-        </article>
-
-        <!-- DOLCI -->
-        <article class="card" data-cat="dolci">
-          <div class="media">
-            <div class="stage"></div>
-            <div class="tag">DOLCI</div>
-            <div class="discount" data-discount></div>
-            <img class="prodImg" src="cioccolato.jpg" alt="Cioccolato fondente">
-          </div>
-          <div class="body">
-            <h3 class="title">Cioccolato fondente</h3>
-            <p class="desc">Forte, testardo. Come il progetto.</p>
-            <div class="footerRow">
-              <a class="openBtn" href="#" data-img="cioccolato.jpg"><span>Apri</span></a>
-            </div>
-          </div>
-        </article>
-
-        <article class="card" data-cat="dolci">
-          <div class="media">
-            <div class="stage"></div>
-            <div class="tag">DOLCI</div>
-            <div class="discount" data-discount></div>
-            <img class="prodImg" src="gelato.jpg" alt="Gelato Aromat Supreme">
-          </div>
-          <div class="body">
-            <h3 class="title">Gelato Aromat Supreme</h3>
-            <p class="desc">Dolce, cremoso, inspiegabile.</p>
-            <div class="footerRow">
-              <a class="openBtn" href="#" data-img="gelato.jpg"><span>Apri</span></a>
-            </div>
-          </div>
-        </article>
-
-        <article class="card" data-cat="dolci">
-          <div class="media">
-            <div class="stage"></div>
-            <div class="tag">DOLCI</div>
-            <div class="discount" data-discount></div>
-            <img class="prodImg" src="aromella.jpg" alt="Aromella">
-          </div>
-          <div class="body">
-            <h3 class="title">Aromella</h3>
-            <p class="desc">Spalmabile. Non chiedere come. Goditela.</p>
-            <div class="footerRow">
-              <a class="openBtn" href="#" data-img="aromella.jpg"><span>Apri</span></a>
-            </div>
-          </div>
-        </article>
-
-        <!-- CURA -->
-        <article class="card" data-cat="cura">
-          <div class="media">
-            <div class="stage"></div>
-            <div class="tag">CURA</div>
-            <div class="discount" data-discount></div>
-            <img class="prodImg" src="dentifricio.jpg" alt="Dentifricio all'Aromat">
-          </div>
-          <div class="body">
-            <h3 class="title">Dentifricio all’Aromat</h3>
-            <p class="desc">Alito potente. Zero compromessi.</p>
-            <div class="footerRow">
-              <a class="openBtn" href="#" data-img="dentifricio.jpg"><span>Apri</span></a>
-            </div>
-          </div>
-        </article>
-
-        <article class="card" data-cat="cura">
-          <div class="media">
-            <div class="stage"></div>
-            <div class="tag">CURA</div>
-            <div class="discount" data-discount></div>
-            <img class="prodImg" src="deodorante.jpg" alt="Deodorante Aromat">
-          </div>
-          <div class="body">
-            <h3 class="title">Deodorante Aromat</h3>
-            <p class="desc">48h di coraggio. E zero alcool, a quanto pare.</p>
-            <div class="footerRow">
-              <a class="openBtn" href="#" data-img="deodorante.jpg"><span>Apri</span></a>
-            </div>
-          </div>
-        </article>
-
-        <article class="card" data-cat="cura">
-          <div class="media">
-            <div class="stage"></div>
-            <div class="tag">CURA</div>
-            <div class="discount" data-discount></div>
-            <img class="prodImg" src="profumo.jpg" alt="Eau de Toilette">
-          </div>
-          <div class="body">
-            <h3 class="title">Eau de Toilette</h3>
-            <p class="desc">Profumo “Aromat”. Coraggio vero.</p>
-            <div class="footerRow">
-              <a class="openBtn" href="#" data-img="profumo.jpg"><span>Apri</span></a>
-            </div>
-          </div>
-        </article>
-
-        <!-- CASA -->
-        <article class="card" data-cat="casa">
-          <div class="media">
-            <div class="stage"></div>
-            <div class="tag">CASA</div>
-            <div class="discount" data-discount></div>
-            <img class="prodImg" src="carta.jpg" alt="Carta igienica Aromat">
-          </div>
-          <div class="body">
-            <h3 class="title">Carta igienica Aromat</h3>
-            <p class="desc">Piacevolmente insaporita. Sì, lo so.</p>
-            <div class="footerRow">
-              <a class="openBtn" href="#" data-img="carta.jpg"><span>Apri</span></a>
-            </div>
-          </div>
-        </article>
-
-        <!-- EXTRA -->
-        <article class="card" data-cat="extra">
-          <div class="media">
-            <div class="stage"></div>
-            <div class="tag">EXTRA</div>
-            <div class="discount" data-discount></div>
-            <img class="prodImg" src="sigarette.jpg" alt="Sigarette Aromat">
-          </div>
-          <div class="body">
-            <h3 class="title">Sigarette Aromat</h3>
-            <p class="desc">Per chi ama il rischio. (Il sito no, quello è stabile.)</p>
-            <div class="footerRow">
-              <a class="openBtn" href="#" data-img="sigarette.jpg"><span>Apri</span></a>
-            </div>
-          </div>
-        </article>
-
-        <article class="card" data-cat="extra">
-          <div class="media">
-            <div class="stage"></div>
-            <div class="tag">EXTRA</div>
-            <div class="discount" data-discount></div>
-            <img class="prodImg" src="luganoghetta.jpg" alt="Luganoghetta Aromat">
-          </div>
-          <div class="body">
-            <h3 class="title">Luganoghetta Aromat</h3>
-            <p class="desc">Una spirale di scelte discutibili. Magnifica.</p>
-            <div class="footerRow">
-              <a class="openBtn" href="#" data-img="luganoghetta.jpg"><span>Apri</span></a>
-            </div>
-          </div>
-        </article>
-      </section>
-    </main>
-  </div>
-
-  <div class="modal" id="modal" aria-hidden="true">
-    <div class="modalInner" role="dialog" aria-modal="true">
-      <div class="modalTop">
-        <div class="modalTitle" id="modalTitle">Prodotto</div>
-        <button class="closeBtn" id="closeBtn">Chiudi</button>
-      </div>
-      <img class="modalImg" id="modalImg" alt="">
+      <h3>Luganighetta Aromat</h3>
+      <p>Spirale perfetta. Decisioni discutibili.</p>
+      <a href="luganighetta.jpg">Apri</a>
     </div>
-  </div>
 
-  <script>
-    // Sconti random 20-50%
-    function randDiscount(){
-      return Math.floor(Math.random() * (50 - 20 + 1)) + 20;
-    }
-    document.querySelectorAll("[data-discount]").forEach(el => {
-      el.textContent = "-" + randDiscount() + "%";
+    <!-- DOLCI -->
+    <div class="card" data-cat="dolci">
+      <div class="category">DOLCI</div>
+      <div class="discount">-29%</div>
+      <div class="product-stage">
+        <img src="aromella.jpg" alt="Aromella">
+      </div>
+      <h3>Aromella</h3>
+      <p>Spalmabile. Non fare domande.</p>
+      <a href="aromella.jpg">Apri</a>
+    </div>
+
+    <!-- BEVANDE -->
+    <div class="card" data-cat="bevande">
+      <div class="category">BEVANDE</div>
+      <div class="discount">-35%</div>
+      <div class="product-stage">
+        <img src="sciroppo.jpg" alt="Sciroppo Aromat">
+      </div>
+      <h3>Sciroppo Aromat</h3>
+      <p>Dolcezza che non perdona.</p>
+      <a href="sciroppo.jpg">Apri</a>
+    </div>
+
+    <!-- CURA -->
+    <div class="card" data-cat="cura">
+      <div class="category">CURA</div>
+      <div class="discount">-49%</div>
+      <div class="product-stage">
+        <img src="deodorante.jpg" alt="Deodorante Aromat">
+      </div>
+      <h3>Deodorante Aromat</h3>
+      <p>48h. O più. Chi lo sa.</p>
+      <a href="deodorante.jpg">Apri</a>
+    </div>
+
+  </section>
+</div>
+
+<script>
+const buttons = document.querySelectorAll("aside button");
+const cards = Array.from(document.querySelectorAll(".card"));
+
+function animateVisible(list){
+  list.forEach((c, i) => {
+    c.classList.add("enter");
+    c.classList.remove("show");
+    // stagger
+    setTimeout(() => c.classList.add("show"), 40 + i * 55);
+    // cleanup
+    setTimeout(() => c.classList.remove("enter","show"), 450 + i * 55);
+  });
+}
+
+buttons.forEach(b=>{
+  b.addEventListener("click",()=>{
+    buttons.forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+
+    const f = b.dataset.filter;
+    const visible = [];
+
+    cards.forEach(c=>{
+      const show = (f==="all" || c.dataset.cat===f);
+      c.classList.toggle("hidden", !show);
+      if(show) visible.push(c);
     });
 
-    // Modal
-    const modal = document.getElementById("modal");
-    const modalImg = document.getElementById("modalImg");
-    const modalTitle = document.getElementById("modalTitle");
-    const closeBtn = document.getElementById("closeBtn");
+    animateVisible(visible);
+  });
+});
+</script>
 
-    function openModal(src, title){
-      modal.classList.add("open");
-      modal.setAttribute("aria-hidden","false");
-      modalImg.src = src;
-      modalImg.alt = title || "Prodotto";
-      modalTitle.textContent = title || "Prodotto";
-      document.body.style.overflow = "hidden";
-    }
-    function closeModal(){
-      modal.classList.remove("open");
-      modal.setAttribute("aria-hidden","true");
-      modalImg.src = "";
-      document.body.style.overflow = "";
-    }
-
-    document.addEventListener("click", (e) => {
-      const btn = e.target.closest(".openBtn");
-      if(btn){
-        e.preventDefault();
-        const img = btn.dataset.img;
-        const title = btn.closest(".card")?.querySelector(".title")?.textContent || "Prodotto";
-        openModal(img, title);
-      }
-      if(e.target === modal) closeModal();
-    });
-
-    closeBtn.addEventListener("click", closeModal);
-    document.addEventListener("keydown", (e) => {
-      if(e.key === "Escape") closeModal();
-    });
-
-    // Filtri categorie + contatori
-    const catBtns = Array.from(document.querySelectorAll(".catBtn"));
-    const cards = Array.from(document.querySelectorAll(".card"));
-
-    function updateCounts(){
-      const counts = {
-        all: cards.length,
-        bevande: 0,
-        caffe: 0,
-        dolci: 0,
-        cura: 0,
-        casa: 0,
-        extra: 0
-      };
-      cards.forEach(c => {
-        const cat = (c.dataset.cat || "extra");
-        if(counts[cat] !== undefined) counts[cat]++;
-      });
-
-      document.getElementById("count-all").textContent = counts.all;
-      document.getElementById("count-bevande").textContent = counts.bevande;
-      document.getElementById("count-caffe").textContent = counts.caffe;
-      document.getElementById("count-dolci").textContent = counts.dolci;
-      document.getElementById("count-cura").textContent = counts.cura;
-      document.getElementById("count-casa").textContent = counts.casa;
-      document.getElementById("count-extra").textContent = counts.extra;
-    }
-
-    function applyFilter(filter){
-      cards.forEach(card => {
-        const cat = (card.dataset.cat || "extra");
-        const show = (filter === "all") || (cat === filter);
-        card.classList.toggle("hidden", !show);
-      });
-    }
-
-    catBtns.forEach(btn => {
-      btn.addEventListener("click", () => {
-        catBtns.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        applyFilter(btn.dataset.filter);
-      });
-    });
-
-    updateCounts();
-    applyFilter("all");
-  </script>
 </body>
 </html>
