@@ -3,22 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aromat Ovunque – Azioni settimanali</title>
+  <title>Aromat Ovunque* – Azioni settimanali</title>
 
   <style>
     :root{
-      --red:#e11d2e;
+      --bg0:#070a07;
+      --card:#121412;
+      --muted:rgba(255,255,255,.72);
+      --muted2:rgba(255,255,255,.55);
+
       --yellow:#ffdd00;
       --green:#1fa34a;
+      --red:#e11d2e;
 
-      --ink:#101112;
-      --muted:#5d6167;
-      --card:#ffffff;
-      --line:#e7e7ea;
-
-      --shadow: 0 14px 40px rgba(16,17,18,.14);
-      --shadow2: 0 10px 24px rgba(16,17,18,.10);
-      --radius: 18px;
+      --ring: rgba(255,221,0,.35);
+      --shadow: 0 18px 40px rgba(0,0,0,.55);
+      --radius: 22px;
     }
 
     *{ box-sizing:border-box; }
@@ -27,604 +27,737 @@
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--ink);
+      color:#fff;
       background:
-        radial-gradient(900px 500px at 20% 0%, rgba(255,221,0,.22), transparent 65%),
-        radial-gradient(900px 500px at 80% 0%, rgba(31,163,74,.16), transparent 65%),
-        radial-gradient(900px 700px at 50% 110%, rgba(225,29,46,.12), transparent 65%),
-        #fafafa;
+        radial-gradient(1000px 600px at 20% 10%, rgba(255,221,0,.10), transparent 60%),
+        radial-gradient(900px 600px at 80% 20%, rgba(31,163,74,.10), transparent 60%),
+        radial-gradient(900px 600px at 60% 90%, rgba(225,29,46,.09), transparent 60%),
+        var(--bg0);
     }
 
-    /* ===== layout ===== */
-    .app{
+    /* layout */
+    .shell{
       min-height:100vh;
       display:grid;
-      grid-template-columns: 280px 1fr;
-    }
-    @media (max-width: 980px){
-      .app{ grid-template-columns: 1fr; }
+      grid-template-columns: 270px 1fr;
+      gap: 18px;
+      padding: 18px;
     }
 
-    /* ===== sidebar ===== */
-    .sidebar{
-      position:sticky;
-      top:0;
-      height:100vh;
-      padding:18px 14px;
-      border-right:1px solid var(--line);
-      background: rgba(255,255,255,.78);
-      backdrop-filter: blur(10px);
-    }
     @media (max-width: 980px){
-      .sidebar{
-        position:relative;
-        height:auto;
-        border-right:none;
-        border-bottom:1px solid var(--line);
-      }
+      .shell{ grid-template-columns: 1fr; }
+    }
+
+    /* top bar */
+    .topbar{
+      grid-column: 1 / -1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(18,20,18,.68);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.06);
+      backdrop-filter: blur(10px);
     }
 
     .brand{
       display:flex;
       align-items:center;
-      gap:10px;
-      padding:10px 10px 12px;
+      gap: 12px;
+      font-weight: 900;
+      letter-spacing:.2px;
     }
-    .logoDot{
-      width:14px; height:14px;
-      border-radius:999px;
+    .brandDot{
+      width: 18px; height: 18px; border-radius: 6px;
       background: linear-gradient(135deg, var(--yellow), var(--green), var(--red));
-      box-shadow: 0 6px 18px rgba(0,0,0,.18);
-    }
-    .brand strong{ font-size:16px; letter-spacing:.2px; }
-    .brand small{
-      display:block;
-      margin-top:2px;
-      color:var(--muted);
-      font-weight:700;
-      font-size:12px;
+      box-shadow: 0 0 0 4px rgba(255,255,255,.05);
     }
 
-    .sectionTitle{
-      margin:12px 10px 8px;
-      font-size:12px;
-      color:var(--muted);
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.08em;
+    .navlinks{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap:wrap;
     }
 
-    .catList{ display:grid; gap:10px; padding:0 10px; }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.25);
+      color: rgba(255,255,255,.88);
+      text-decoration:none;
+      font-weight: 700;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .15s ease, filter .15s ease, background .15s ease;
+      white-space:nowrap;
+    }
+    .pill:hover{ transform: translateY(-1px); filter: brightness(1.08); }
+    .pill:active{ transform: translateY(1px) scale(.99); }
+
+    .pillStrong{
+      border: 0;
+      background: linear-gradient(135deg, var(--yellow), var(--green), var(--red));
+      color:#101410;
+      box-shadow: 0 14px 26px rgba(0,0,0,.45);
+    }
+
+    .dateBadge{
+      font-weight: 900;
+      letter-spacing:.2px;
+      opacity:.9;
+    }
+
+    /* sidebar */
+    aside{
+      border-radius: 18px;
+      background: rgba(18,20,18,.68);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.06);
+      backdrop-filter: blur(10px);
+      padding: 14px;
+      height: fit-content;
+      position: sticky;
+      top: 18px;
+    }
+
+    @media (max-width: 980px){
+      aside{ position: relative; top:auto; }
+    }
+
+    .sideTitle{
+      font-size: 14px;
+      letter-spacing:.2px;
+      opacity:.85;
+      margin: 4px 6px 12px;
+      font-weight: 900;
+    }
 
     .catBtn{
-      appearance:none;
-      border:1px solid var(--line);
-      background:#fff;
-      border-radius:14px;
-      padding:12px 12px;
+      width:100%;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      font-weight:1000;
-      color:#1b1d20;
+      gap: 10px;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.20);
+      color: rgba(255,255,255,.9);
       cursor:pointer;
-      box-shadow: 0 8px 18px rgba(0,0,0,.06);
-      text-align:left;
-      width:100%;
-      transition: transform .12s ease, box-shadow .18s ease, border-color .18s ease;
-    }
-
-    .catBtn .count{
-      font-size:12px;
-      color:#fff;
-      background:#1b1d20;
-      padding:2px 8px;
-      border-radius:999px;
-      font-weight:1000;
-      min-width:26px;
-      text-align:center;
+      font-weight: 800;
+      transition: transform .12s ease, background .15s ease, border-color .15s ease;
+      margin-bottom: 10px;
     }
 
     .catBtn:hover{
-      border-color: rgba(225,29,46,.35);
-      box-shadow: 0 12px 22px rgba(225,29,46,.10);
       transform: translateY(-1px);
+      background: rgba(0,0,0,.28);
+      border-color: rgba(255,255,255,.14);
+    }
+    .catBtn:active{ transform: translateY(1px); }
+
+    .count{
+      min-width: 28px;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      display:grid;
+      place-items:center;
+      font-size: 12px;
+      background: rgba(255,255,255,.10);
+      color: rgba(255,255,255,.85);
+      font-weight: 900;
     }
 
     .catBtn.active{
-      border-color: rgba(31,163,74,.45);
-      box-shadow: 0 14px 26px rgba(31,163,74,.14);
-      background:
-        linear-gradient(135deg, rgba(255,221,0,.22), rgba(31,163,74,.12)),
-        #fff;
+      border: 1px solid rgba(255,221,0,.38);
+      box-shadow: 0 0 0 3px rgba(255,221,0,.12);
     }
 
-    /* ===== main ===== */
-    .main{ padding:18px 22px 40px; }
-
-    .topbar{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:14px;
-      padding:10px 6px 14px;
-      flex-wrap:wrap;
-    }
-
-    .crumbs{ color:var(--muted); font-weight:800; font-size:12px; }
-    .crumbs b{ color:#1b1d20; }
-
-    h1{ margin:6px 0 0; font-size:34px; letter-spacing:-.02em; }
-
-    .topActions{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-left:auto;
-      flex-wrap:wrap;
-    }
-
-    .homeBtn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid rgba(0,0,0,.10);
-      background:#fff;
-      color:#111;
-      font-weight:1100;
-      text-decoration:none;
-      box-shadow: var(--shadow2);
-      white-space:nowrap;
-      transition: transform .12s ease, box-shadow .18s ease;
-    }
-    .homeBtn:hover{ transform: translateY(-1px); box-shadow: 0 14px 26px rgba(0,0,0,.12); }
-    .homeBtn:active{ transform: translateY(1px) scale(.99); }
-
-    .datePill{
-      border:1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.85);
-      backdrop-filter: blur(10px);
-      padding:10px 14px;
-      border-radius:999px;
-      font-weight:1100;
-      font-size:13px;
-      box-shadow: var(--shadow2);
-      white-space:nowrap;
-    }
-    .datePill .tag{
-      display:inline-block;
-      margin-right:8px;
-      padding:4px 10px;
-      border-radius:999px;
-      background: linear-gradient(135deg, rgba(255,221,0,.95), rgba(31,163,74,.90));
-      color:#0e1510;
-      font-weight:1200;
-      font-size:12px;
-    }
-
-    /* Instagram come immagine */
-    .igImg{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding:6px;
-      border-radius:999px;
-      background:#fff;
-      border:1px solid rgba(0,0,0,.10);
-      box-shadow: var(--shadow2);
-      transition: transform .12s ease, box-shadow .18s ease;
-    }
-    .igImg img{
-      width:34px;
-      height:34px;
-      object-fit:contain;
-      display:block;
-      border-radius:8px;
-    }
-    .igImg:hover{ transform: translateY(-1px); box-shadow: 0 14px 26px rgba(0,0,0,.16); }
-    .igImg:active{ transform: translateY(1px) scale(.98); }
-
-    .grid{
-      margin-top:12px;
-      display:grid;
-      grid-template-columns: repeat(3, minmax(240px, 1fr));
-      gap:18px;
-    }
-    @media (max-width: 1180px){
-      .grid{ grid-template-columns: repeat(2, minmax(240px, 1fr)); }
-    }
-    @media (max-width: 650px){
-      .main{ padding:16px 14px 34px; }
-      .grid{ grid-template-columns: 1fr; }
-      h1{ font-size:28px; }
-      .datePill{ font-size:12px; }
-    }
-
-    /* ===== card ===== */
-    .card{
-      position:relative;
-      border-radius: var(--radius);
-      background: var(--card);
-      border:1px solid var(--line);
+    /* main */
+    main{
+      border-radius: 18px;
+      background: rgba(18,20,18,.40);
       box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.06);
+      backdrop-filter: blur(10px);
+      padding: 16px;
       overflow:hidden;
+    }
+
+    .crumb{
+      font-size: 13px;
+      opacity:.65;
+      margin: 2px 2px 10px;
+    }
+
+    .hrow{
       display:flex;
-      flex-direction:column;
-      min-height: 410px;
+      align-items:baseline;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+      margin-bottom: 14px;
     }
-    .card:hover{
-      transform: translateY(-2px);
-      box-shadow: 0 18px 46px rgba(16,17,18,.18);
-      transition: .18s ease;
+
+    h1{
+      margin:0;
+      font-size: 28px;
+      letter-spacing:.2px;
     }
-    .card.is-hidden{ display:none; }
+
+    .week{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.10);
+      font-weight: 900;
+      opacity:.9;
+    }
+
+    /* grid cards */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 1200px){
+      .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 680px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border-radius: var(--radius);
+      overflow:hidden;
+      background: rgba(10,12,10,.65);
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 16px 36px rgba(0,0,0,.45);
+      position: relative;
+      transform: translateZ(0);
+    }
 
     .imgWrap{
-      position:relative;
-      height: 230px;
+      height: 210px;
+      background: radial-gradient(400px 200px at 50% 40%, rgba(255,255,255,.09), rgba(0,0,0,.20));
       display:grid;
       place-items:center;
-      overflow:hidden;
-      background:
-        radial-gradient(140px 140px at 28% 20%, rgba(255,221,0,.22), transparent 60%),
-        radial-gradient(220px 220px at 80% 30%, rgba(31,163,74,.18), transparent 65%),
-        radial-gradient(260px 260px at 50% 105%, rgba(225,29,46,.14), transparent 70%),
-        linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.08));
+      position: relative;
     }
-    .imgWrap::before{
+
+    .imgWrap::after{
       content:"";
       position:absolute;
       inset:0;
-      background: radial-gradient(circle at 50% 40%, transparent 0 58%, rgba(0,0,0,.18) 100%);
+      background: linear-gradient(to bottom, rgba(0,0,0,.15), rgba(0,0,0,.55));
       pointer-events:none;
     }
 
-    /* maschera per attenuare il “foglio bianco” nei packshot */
-    .imgWrap img{
-      width:min(88%, 360px);
-      height: 88%;
-      object-fit:contain;
-      display:block;
-      filter: drop-shadow(0 14px 22px rgba(0,0,0,.25)) saturate(1.05) contrast(1.05);
-      transform: translateY(6px);
-      transition: transform .22s ease, filter .22s ease;
-
-      -webkit-mask-image: radial-gradient(closest-side, #000 74%, transparent 100%);
-      mask-image: radial-gradient(closest-side, #000 74%, transparent 100%);
+    .prodImg{
+      width: 78%;
+      height: 78%;
+      object-fit: contain;
+      filter: drop-shadow(0 18px 22px rgba(0,0,0,.55));
+      position: relative;
+      z-index: 1;
     }
-    .card:hover .imgWrap img{
-      transform: translateY(2px) scale(1.04);
-      filter: drop-shadow(0 18px 26px rgba(0,0,0,.28)) saturate(1.10) contrast(1.08);
+
+    .badge{
+      position:absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 2;
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-weight: 950;
+      font-size: 12px;
+      letter-spacing:.3px;
+      background: rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.14);
     }
 
     .discount{
       position:absolute;
-      left:14px;
-      top:14px;
-      display:inline-flex;
-      align-items:baseline;
-      gap:6px;
-      padding:10px 12px;
-      border-radius:14px;
-      background: var(--red);
-      color:#fff;
-      font-weight:1200;
-      box-shadow: 0 14px 24px rgba(225,29,46,.25);
-      border: 2px solid rgba(255,255,255,.55);
-    }
-    .discount .pct{ font-size:26px; line-height:1; letter-spacing:-.02em; }
-    .discount .off{ font-size:13px; opacity:.95; font-weight:1100; }
-    .discount .flag{
-      margin-left:6px;
-      font-size:11px;
-      font-weight:1200;
-      color:#1b1d20;
-      background: var(--yellow);
-      padding:4px 8px;
-      border-radius:999px;
-      border:1px solid rgba(0,0,0,.10);
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-weight: 950;
+      font-size: 13px;
+      background: #ffd400;
+      color:#101410;
+      box-shadow: 0 14px 24px rgba(0,0,0,.45);
+      transform: rotate(-2deg);
     }
 
-    .meta{
-      padding:14px 16px 16px;
-      display:grid;
-      gap:8px;
+    .body{
+      padding: 14px 14px 16px;
+      background: rgba(0,0,0,.30);
     }
-    .kicker{
-      font-size:12px;
-      font-weight:1200;
-      letter-spacing:.08em;
-      color:#1b1d20;
-      text-transform:uppercase;
-      opacity:.75;
-    }
+
     .title{
-      font-size:18px;
-      font-weight:1200;
-      margin:0;
-      letter-spacing:-.01em;
+      margin: 2px 0 6px;
+      font-size: 18px;
+      font-weight: 950;
+      letter-spacing:.2px;
     }
+
     .desc{
-      margin:0;
-      color:var(--muted);
-      font-weight:900;
-      line-height:1.35;
-      font-size:13px;
-      min-height: 36px;
+      margin: 0 0 14px;
+      color: var(--muted);
+      opacity:.9;
+      font-size: 13px;
+      line-height: 1.35;
     }
 
-    .actions{ margin-top:8px; display:flex; align-items:center; justify-content:flex-start; }
-
-    .btn{
+    /* button "Apri" tri-color */
+    .openBtn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      padding:10px 14px;
+      gap: 10px;
+      min-width: 120px;
+      padding: 10px 14px;
       border-radius: 999px;
-      border: 2px solid rgba(0,0,0,.12);
-      background: linear-gradient(135deg,
-        rgba(255,221,0,.95) 0%,
-        rgba(31,163,74,.90) 55%,
-        rgba(225,29,46,.90) 100%);
-      color:#0e1410;
-      font-weight:1200;
+      border: 2px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.10);
+      color:#fff;
+      font-weight: 950;
       text-decoration:none;
-      box-shadow: 0 10px 18px rgba(0,0,0,.12);
-      width: 118px;
+      cursor:pointer;
       user-select:none;
-      transition: transform .12s ease, box-shadow .18s ease, filter .18s ease;
+      transition: transform .14s ease, filter .14s ease, background .14s ease, box-shadow .14s ease;
+      position: relative;
+      overflow:hidden;
     }
-    .btn:hover{
-      filter: brightness(1.05) saturate(1.08);
-      box-shadow: 0 14px 24px rgba(0,0,0,.16);
+
+    .openBtn::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: linear-gradient(135deg, var(--yellow), var(--green), var(--red));
+      opacity:0;
+      transition: opacity .14s ease;
+    }
+
+    .openBtn span{
+      position: relative;
+      z-index:1;
+    }
+
+    .openBtn:hover{
       transform: translateY(-1px);
+      filter: brightness(1.06);
+      box-shadow: 0 12px 20px rgba(0,0,0,.35);
     }
-    .btn:active{
-      transform: translateY(1px) scale(.99);
-      box-shadow: 0 8px 16px rgba(0,0,0,.12);
+
+    .openBtn:hover::before{ opacity:1; }
+    .openBtn:active{ transform: translateY(1px) scale(.99); }
+
+    /* modal */
+    .modal{
+      position: fixed;
+      inset: 0;
+      display:none;
+      place-items:center;
+      padding: 18px;
+      background: rgba(0,0,0,.72);
+      z-index: 9999;
     }
-    .btn:focus{
-      outline: 3px solid rgba(255,221,0,.55);
-      outline-offset: 2px;
+    .modal.open{ display:grid; }
+
+    .modalInner{
+      width:min(920px, 96vw);
+      max-height: 92vh;
+      border-radius: 18px;
+      overflow:hidden;
+      background: #0b0d0b;
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 30px 80px rgba(0,0,0,.65);
     }
+
+    .modalTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,.06);
+    }
+
+    .modalTitle{
+      font-weight: 950;
+      letter-spacing:.2px;
+      opacity:.95;
+    }
+
+    .closeBtn{
+      border:0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.10);
+      color:#fff;
+      cursor:pointer;
+      font-weight: 950;
+    }
+    .closeBtn:hover{ background: rgba(255,255,255,.14); }
+
+    .modalImg{
+      display:block;
+      width: 100%;
+      height: 100%;
+      max-height: calc(92vh - 54px);
+      object-fit: contain;
+      background: #0b0d0b;
+    }
+
+    /* hide cards when filtered */
+    .hidden{ display:none !important; }
   </style>
 </head>
 
 <body>
-  <div class="app">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+  <div class="shell">
+    <header class="topbar">
       <div class="brand">
-        <div class="logoDot"></div>
-        <div>
-          <strong>Aromat Ovunque</strong>
-          <small>Azioni settimanali</small>
+        <div class="brandDot"></div>
+        <div>Aromat Ovunque*</div>
+      </div>
+
+      <nav class="navlinks">
+        <a class="pill" href="index.html">Home</a>
+        <div class="pill">
+          <span>Azioni settimanali</span>
+          <span class="dateBadge">Rabadan 2026</span>
         </div>
-      </div>
+      </nav>
+    </header>
 
-      <div class="sectionTitle">Categorie</div>
+    <aside>
+      <div class="sideTitle">Categorie</div>
 
-      <div class="catList">
-        <button class="catBtn active" data-filter="all" type="button">
-          Tutti <span class="count" data-count="all">0</span>
-        </button>
-        <button class="catBtn" data-filter="bevande" type="button">
-          Bevande <span class="count" data-count="bevande">0</span>
-        </button>
-        <button class="catBtn" data-filter="caffe" type="button">
-          Caffè <span class="count" data-count="caffe">0</span>
-        </button>
-        <button class="catBtn" data-filter="dolci" type="button">
-          Dolci <span class="count" data-count="dolci">0</span>
-        </button>
-        <button class="catBtn" data-filter="cura" type="button">
-          Cura persona <span class="count" data-count="cura">0</span>
-        </button>
-        <button class="catBtn" data-filter="casa" type="button">
-          Casa <span class="count" data-count="casa">0</span>
-        </button>
-        <button class="catBtn" data-filter="extra" type="button">
-          Extra <span class="count" data-count="extra">0</span>
-        </button>
-      </div>
+      <button class="catBtn active" data-filter="all">
+        <span>Tutti</span><span class="count" id="count-all">0</span>
+      </button>
+
+      <button class="catBtn" data-filter="bevande">
+        <span>Bevande</span><span class="count" id="count-bevande">0</span>
+      </button>
+
+      <button class="catBtn" data-filter="caffe">
+        <span>Caffè</span><span class="count" id="count-caffe">0</span>
+      </button>
+
+      <button class="catBtn" data-filter="dolci">
+        <span>Dolci</span><span class="count" id="count-dolci">0</span>
+      </button>
+
+      <button class="catBtn" data-filter="cura">
+        <span>Cura persona</span><span class="count" id="count-cura">0</span>
+      </button>
+
+      <button class="catBtn" data-filter="casa">
+        <span>Casa</span><span class="count" id="count-casa">0</span>
+      </button>
+
+      <button class="catBtn" data-filter="extra">
+        <span>Extra</span><span class="count" id="count-extra">0</span>
+      </button>
     </aside>
 
-    <!-- MAIN -->
-    <main class="main">
-      <div class="topbar">
-        <div>
-          <div class="crumbs"><b>Home</b> › Azioni della settimana</div>
-          <h1>Azioni settimanali</h1>
-        </div>
+    <main>
+      <div class="crumb">Home › Azioni della settimana</div>
 
-        <div class="topActions">
-          <a class="homeBtn" href="index.html">Home</a>
-
-          <a class="igImg"
-             href="https://www.instagram.com/aromatovunque.ch?igsh=cHMxaHVyOWZmNTkz"
-             target="_blank"
-             rel="noopener">
-            <img src="insta.jpg" alt="Instagram Aromat Ovunque">
-          </a>
-
-          <div class="datePill">
-            <span class="tag">Rabadan 2026</span>
-            12–17 Febbraio 2026
-          </div>
-        </div>
+      <div class="hrow">
+        <h1>Azioni settimanali</h1>
+        <div class="week">Carnevale Rabadan 2026</div>
       </div>
 
       <section class="grid" id="grid">
-        <!-- Nota: data-cat serve per i filtri -->
-
-        <article class="card" data-cat="extra">
+        <!-- PRODOTTI ORIGINALI -->
+        <article class="card" data-cat="top">
           <div class="imgWrap">
-            <div class="discount"><span class="pct">35%</span><span class="off">di sconto</span><span class="flag">TOP</span></div>
-            <img src="sigarette.jpg" alt="Sigarette Aromat">
+            <div class="badge">TOP</div>
+            <div class="discount">-35%</div>
+            <img class="prodImg" src="sigarette.jpg" alt="Sigarette Aromat">
           </div>
-          <div class="meta">
-            <div class="kicker">TOP</div>
-            <h3 class="title">Sigarette Aromat</h3>
-            <p class="desc">Per chi ama il rischio.</p>
-            <div class="actions">
-              <a class="btn" href="sigarette.jpg" target="_blank" rel="noopener">Apri</a>
-            </div>
+          <div class="body">
+            <div class="title">Sigarette Aromat</div>
+            <p class="desc">Per chi ama il rischio. Il sito no, quello è stabile.</p>
+            <a class="openBtn" href="#" data-img="sigarette.jpg"><span>Apri</span></a>
           </div>
         </article>
 
         <article class="card" data-cat="casa">
           <div class="imgWrap">
-            <div class="discount"><span class="pct">22%</span><span class="off">di sconto</span><span class="flag">CASA</span></div>
-            <img src="carta.jpg" alt="Carta igienica Aromat">
+            <div class="badge">CASA</div>
+            <div class="discount">-25%</div>
+            <img class="prodImg" src="carta.jpg" alt="Carta igienica Aromat">
           </div>
-          <div class="meta">
-            <div class="kicker">CASA</div>
-            <h3 class="title">Carta igienica Aromat</h3>
+          <div class="body">
+            <div class="title">Carta igienica Aromat</div>
             <p class="desc">Piacevolmente insaporita. Sì, lo so.</p>
-            <div class="actions">
-              <a class="btn" href="carta.jpg" target="_blank" rel="noopener">Apri</a>
-            </div>
+            <a class="openBtn" href="#" data-img="carta.jpg"><span>Apri</span></a>
           </div>
         </article>
 
-        <article class="card" data-cat="cura">
+        <article class="card" data-cat="uomo">
           <div class="imgWrap">
-            <div class="discount"><span class="pct">48%</span><span class="off">di sconto</span><span class="flag">UOMO</span></div>
-            <img src="profumo.jpg" alt="Eau de Toilette Aromat">
+            <div class="badge">UOMO</div>
+            <div class="discount">-45%</div>
+            <img class="prodImg" src="profumo.jpg" alt="Eau de Toilette Aromat">
           </div>
-          <div class="meta">
-            <div class="kicker">UOMO</div>
-            <h3 class="title">Eau de Toilette</h3>
-            <p class="desc">Profumo “Aromat”. Per l'uomo che deve chiedere.</p>
-            <div class="actions">
-              <a class="btn" href="profumo.jpg" target="_blank" rel="noopener">Apri</a>
-            </div>
+          <div class="body">
+            <div class="title">Eau de Toilette</div>
+            <p class="desc">Profumo “Aromat”. Coraggio vero.</p>
+            <a class="openBtn" href="#" data-img="profumo.jpg"><span>Apri</span></a>
           </div>
         </article>
 
         <article class="card" data-cat="bevande">
           <div class="imgWrap">
-            <div class="discount"><span class="pct">29%</span><span class="off">di sconto</span><span class="flag">BEV</span></div>
-            <img src="coca.jpg" alt="Coca Aromat">
+            <div class="badge">BEVANDE</div>
+            <div class="discount">-30%</div>
+            <img class="prodImg" src="coca.jpg" alt="Coca Aromat">
           </div>
-          <div class="meta">
-            <div class="kicker">BEVANDE</div>
-            <h3 class="title">Coca Aromat</h3>
-            <p class="desc">Coca cola zero cosa?.</p>
-            <div class="actions">
-              <a class="btn" href="coca.jpg" target="_blank" rel="noopener">Apri</a>
-            </div>
+          <div class="body">
+            <div class="title">Coca Aromat</div>
+            <p class="desc">Perché le scelte semplici non ti interessano.</p>
+            <a class="openBtn" href="#" data-img="coca.jpg"><span>Apri</span></a>
           </div>
         </article>
 
         <article class="card" data-cat="dolci">
           <div class="imgWrap">
-            <div class="discount"><span class="pct">50%</span><span class="off">di sconto</span><span class="flag">DOLCI</span></div>
-            <img src="cioccolato.jpg" alt="Cioccolato fondente Aromat">
+            <div class="badge">DOLCI</div>
+            <div class="discount">-40%</div>
+            <img class="prodImg" src="cioccolato.jpg" alt="Cioccolato fondente Aromat">
           </div>
-          <div class="meta">
-            <div class="kicker">DOLCI</div>
-            <h3 class="title">Cioccolato fondente</h3>
-            <p class="desc">Forte, testardo. .</p>
-            <div class="actions">
-              <a class="btn" href="cioccolato.jpg" target="_blank" rel="noopener">Apri</a>
-            </div>
+          <div class="body">
+            <div class="title">Cioccolato fondente</div>
+            <p class="desc">Forte, testardo. Come il progetto.</p>
+            <a class="openBtn" href="#" data-img="cioccolato.jpg"><span>Apri</span></a>
           </div>
         </article>
 
         <article class="card" data-cat="cura">
           <div class="imgWrap">
-            <div class="discount"><span class="pct">26%</span><span class="off">di sconto</span><span class="flag">CURA</span></div>
-            <img src="dentifricio.jpg" alt="Dentifricio all'Aromat">
+            <div class="badge">CURA</div>
+            <div class="discount">-22%</div>
+            <img class="prodImg" src="dentifricio.jpg" alt="Dentifricio all'Aromat">
           </div>
-          <div class="meta">
-            <div class="kicker">CURA</div>
-            <h3 class="title">Dentifricio all’Aromat</h3>
+          <div class="body">
+            <div class="title">Dentifricio all’Aromat</div>
             <p class="desc">Alito potente. Zero compromessi.</p>
-            <div class="actions">
-              <a class="btn" href="dentifricio.jpg" target="_blank" rel="noopener">Apri</a>
-            </div>
+            <a class="openBtn" href="#" data-img="dentifricio.jpg"><span>Apri</span></a>
           </div>
         </article>
 
-        <article class="card" data-cat="dolci">
+        <article class="card" data-cat="freddo">
           <div class="imgWrap">
-            <div class="discount"><span class="pct">41%</span><span class="off">di sconto</span><span class="flag">FREDDO</span></div>
-            <img src="gelato.jpg" alt="Gelato Aromat Supreme">
+            <div class="badge">FREDDO</div>
+            <div class="discount">-28%</div>
+            <img class="prodImg" src="gelato.jpg" alt="Gelato Aromat Supreme">
           </div>
-          <div class="meta">
-            <div class="kicker">DOLCI</div>
-            <h3 class="title">Gelato Aromat Supreme</h3>
+          <div class="body">
+            <div class="title">Gelato Aromat Supreme</div>
             <p class="desc">Dolce, cremoso, inspiegabile.</p>
-            <div class="actions">
-              <a class="btn" href="gelato.jpg" target="_blank" rel="noopener">Apri</a>
-            </div>
+            <a class="openBtn" href="#" data-img="gelato.jpg"><span>Apri</span></a>
           </div>
         </article>
 
         <article class="card" data-cat="caffe">
           <div class="imgWrap">
-            <div class="discount"><span class="pct">33%</span><span class="off">di sconto</span><span class="flag">CAFFÈ</span></div>
-            <img src="caffe.jpg" alt="Capsule caffè Aromat">
+            <div class="badge">CAFFÈ</div>
+            <div class="discount">-33%</div>
+            <img class="prodImg" src="caffe.jpg" alt="Capsule caffè Aromat">
           </div>
-          <div class="meta">
-            <div class="kicker">CAFFÈ</div>
-            <h3 class="title">Capsule Espresso</h3>
-            <p class="desc">Compatibili, forti, evitabilissime</p>
-            <div class="actions">
-              <a class="btn" href="caffe.jpg" target="_blank" rel="noopener">Apri</a>
-            </div>
+          <div class="body">
+            <div class="title">Capsule Espresso</div>
+            <p class="desc">Compatibili, forti, inevitabili.</p>
+            <a class="openBtn" href="#" data-img="caffe.jpg"><span>Apri</span></a>
           </div>
         </article>
 
+        <!-- NUOVI PRODOTTI -->
+        <article class="card" data-cat="dolci">
+          <div class="imgWrap">
+            <div class="badge">DOLCI</div>
+            <div class="discount">-41%</div>
+            <img class="prodImg" src="aromella.jpg" alt="Aromella">
+          </div>
+          <div class="body">
+            <div class="title">Aromella</div>
+            <p class="desc">Spalmabile. Non chiedere come. Goditela.</p>
+            <a class="openBtn" href="#" data-img="aromella.jpg"><span>Apri</span></a>
+          </div>
+        </article>
+
+        <article class="card" data-cat="extra">
+          <div class="imgWrap">
+            <div class="badge">EXTRA</div>
+            <div class="discount">-27%</div>
+            <img class="prodImg" src="luganoghetta.jpg" alt="Luganoghetta Aromat">
+          </div>
+          <div class="body">
+            <div class="title">Luganoghetta Aromat</div>
+            <p class="desc">Una spirale di scelte discutibili. Magnifica.</p>
+            <a class="openBtn" href="#" data-img="luganoghetta.jpg"><span>Apri</span></a>
+          </div>
+        </article>
+
+        <article class="card" data-cat="bevande">
+          <div class="imgWrap">
+            <div class="badge">BEVANDE</div>
+            <div class="discount">-32%</div>
+            <img class="prodImg" src="sciroppo.jpg" alt="Sciroppo Aromat">
+          </div>
+          <div class="body">
+            <div class="title">Sciroppo Aromat</div>
+            <p class="desc">Dolcezza sospetta, finale all’aglio. Classico.</p>
+            <a class="openBtn" href="#" data-img="sciroppo.jpg"><span>Apri</span></a>
+          </div>
+        </article>
+
+        <article class="card" data-cat="cura">
+          <div class="imgWrap">
+            <div class="badge">CURA</div>
+            <div class="discount">-49%</div>
+            <img class="prodImg" src="deodorante.jpg" alt="Deodorante Aromat">
+          </div>
+          <div class="body">
+            <div class="title">Deodorante Aromat</div>
+            <p class="desc">48h di coraggio. E zero alcool, a quanto pare.</p>
+            <a class="openBtn" href="#" data-img="deodorante.jpg"><span>Apri</span></a>
+          </div>
+        </article>
       </section>
     </main>
   </div>
 
+  <!-- Modal immagine -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modalInner" role="dialog" aria-modal="true">
+      <div class="modalTop">
+        <div class="modalTitle" id="modalTitle">Prodotto</div>
+        <button class="closeBtn" id="closeBtn">Chiudi</button>
+      </div>
+      <img class="modalImg" id="modalImg" alt="">
+    </div>
+  </div>
+
   <script>
-    // filtro categorie + conteggi
-    const buttons = Array.from(document.querySelectorAll(".catBtn"));
-    const cards   = Array.from(document.querySelectorAll(".card"));
-    const counts  = Array.from(document.querySelectorAll("[data-count]"));
+    // Modal apri immagine
+    const modal = document.getElementById("modal");
+    const modalImg = document.getElementById("modalImg");
+    const modalTitle = document.getElementById("modalTitle");
+    const closeBtn = document.getElementById("closeBtn");
+
+    function openModal(src, title){
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden","false");
+      modalImg.src = src;
+      modalImg.alt = title || "Prodotto";
+      modalTitle.textContent = title || "Prodotto";
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal(){
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden","true");
+      modalImg.src = "";
+      document.body.style.overflow = "";
+    }
+
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".openBtn");
+      if(btn){
+        e.preventDefault();
+        const img = btn.dataset.img;
+        const title = btn.closest(".card")?.querySelector(".title")?.textContent || "Prodotto";
+        openModal(img, title);
+      }
+      if(e.target === modal) closeModal();
+    });
+
+    closeBtn.addEventListener("click", closeModal);
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape") closeModal();
+    });
+
+    // Filtri categorie
+    const catBtns = Array.from(document.querySelectorAll(".catBtn"));
+    const cards = Array.from(document.querySelectorAll(".card"));
+
+    const catMap = (cat) => {
+      // Normalizziamo alcune categorie "speciali" che esistono nelle card
+      // e le facciamo rientrare nelle voci del menu
+      if(cat === "top") return "extra";   // TOP lo trattiamo come Extra
+      if(cat === "uomo") return "cura";   // Uomo lo mettiamo sotto Cura persona
+      if(cat === "freddo") return "dolci"; // Freddo lo mettiamo sotto Dolci
+      return cat;
+    };
 
     function updateCounts(){
-      const map = { all: cards.length };
-      for (const c of cards){
-        const cat = (c.dataset.cat || "").trim();
-        map[cat] = (map[cat] || 0) + 1;
-      }
-      for (const el of counts){
-        const key = el.getAttribute("data-count");
-        el.textContent = map[key] || 0;
-      }
+      const counts = {
+        all: cards.length,
+        bevande: 0,
+        caffe: 0,
+        dolci: 0,
+        cura: 0,
+        casa: 0,
+        extra: 0
+      };
+
+      cards.forEach(c => {
+        const raw = c.dataset.cat || "extra";
+        const cat = catMap(raw);
+        if(counts[cat] !== undefined) counts[cat]++;
+      });
+
+      document.getElementById("count-all").textContent = counts.all;
+      document.getElementById("count-bevande").textContent = counts.bevande;
+      document.getElementById("count-caffe").textContent = counts.caffe;
+      document.getElementById("count-dolci").textContent = counts.dolci;
+      document.getElementById("count-cura").textContent = counts.cura;
+      document.getElementById("count-casa").textContent = counts.casa;
+      document.getElementById("count-extra").textContent = counts.extra;
     }
 
-    function setActive(btn){
-      buttons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
+    function applyFilter(filter){
+      cards.forEach(card => {
+        const cat = catMap(card.dataset.cat || "extra");
+        const show = (filter === "all") || (cat === filter);
+        card.classList.toggle("hidden", !show);
+      });
     }
 
-    function filter(cat){
-      for (const c of cards){
-        const ccat = (c.dataset.cat || "").trim();
-        const show = (cat === "all") || (ccat === cat);
-        c.classList.toggle("is-hidden", !show);
-      }
-    }
-
-    buttons.forEach(btn => {
+    catBtns.forEach(btn => {
       btn.addEventListener("click", () => {
-        const cat = btn.dataset.filter;
-        setActive(btn);
-        filter(cat);
+        catBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const f = btn.dataset.filter;
+        applyFilter(f);
       });
     });
 
     updateCounts();
-    filter("all");
+    applyFilter("all");
   </script>
 </body>
 </html>
