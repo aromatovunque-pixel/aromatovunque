@@ -3,72 +3,90 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aromat Ovunque* – Azioni settimanali</title>
+<title>Aromat Ovunque* – Azioni</title>
 
 <style>
 :root{
   --yellow:#ffd400;
   --green:#1fa34a;
   --red:#e11d2e;
-  --bg:#f7f8fa;
+
+  --bg:#f6f7f9;
+  --card:#ffffff;
   --ink:#111827;
   --muted:#6b7280;
+
+  --border:rgba(0,0,0,.10);
+  --shadow:0 14px 30px rgba(0,0,0,.10);
 }
 
 *{box-sizing:border-box}
+html,body{height:100%}
 
 body{
   margin:0;
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  background:var(--bg);
   color:var(--ink);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(255,212,0,.18), transparent 60%),
+    radial-gradient(900px 500px at 110% 10%, rgba(31,163,74,.12), transparent 55%),
+    radial-gradient(1000px 700px at 50% 120%, rgba(225,29,46,.10), transparent 55%),
+    var(--bg);
 }
 
-/* TOP BAR */
+/* Top bar */
 header{
   position:sticky;
   top:0;
   z-index:10;
-  background:#fff;
-  border-bottom:1px solid rgba(0,0,0,.08);
-  backdrop-filter:saturate(120%) blur(8px);
+  background:rgba(255,255,255,.82);
+  border-bottom:1px solid var(--border);
+  backdrop-filter: blur(10px) saturate(140%);
 }
 .header-inner{
   max-width:1200px;
   margin:auto;
   padding:12px 16px;
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
   gap:12px;
 }
-.brand{font-weight:900}
-.header-actions{display:flex;gap:10px;flex-wrap:wrap}
-.header-actions a{
+.brand{
+  font-weight:950;
+  letter-spacing:.2px;
+}
+.header-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.pill{
   display:inline-flex;
   align-items:center;
   gap:8px;
   padding:8px 14px;
   border-radius:999px;
   text-decoration:none;
-  font-weight:800;
-  border:1px solid rgba(0,0,0,.12);
-  color:#000;
-  background:#fff;
+  color:#111;
+  background:rgba(255,255,255,.9);
+  border:1px solid var(--border);
+  font-weight:850;
   transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
 }
-.header-actions a:hover{
+.pill:hover{
   transform:translateY(-1px);
-  box-shadow:0 10px 18px rgba(0,0,0,.08);
-  border-color:rgba(0,0,0,.18);
+  box-shadow:0 14px 26px rgba(0,0,0,.08);
+  border-color:rgba(0,0,0,.16);
 }
-.header-actions img{width:18px;height:18px}
+.pill img{width:18px;height:18px;display:block}
 
-/* LAYOUT */
+/* Layout */
 .wrapper{
   max-width:1200px;
   margin:auto;
-  padding:20px 16px;
+  padding:20px 16px 34px;
   display:grid;
   grid-template-columns:260px 1fr;
   gap:20px;
@@ -77,109 +95,153 @@ header{
   .wrapper{grid-template-columns:1fr}
 }
 
-/* SIDEBAR */
+/* Sidebar */
 aside{
-  background:#fff;
+  background:rgba(255,255,255,.85);
+  border:1px solid var(--border);
   border-radius:18px;
   padding:14px;
-  border:1px solid rgba(0,0,0,.08);
+  box-shadow:0 10px 24px rgba(0,0,0,.06);
 }
-aside button{
+.aside-title{
+  font-weight:950;
+  margin:2px 0 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.count-pill{
+  font-size:12px;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:#fff;
+  color:#111;
+  font-weight:900;
+}
+.catbtn{
   width:100%;
   padding:10px 12px;
   margin-bottom:8px;
   border-radius:14px;
-  border:1px solid rgba(0,0,0,.12);
+  border:1px solid var(--border);
   background:#fff;
-  font-weight:800;
+  font-weight:900;
   cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
   transition:transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
 }
-aside button:hover{
+.catbtn:hover{
   transform:translateY(-1px);
-  box-shadow:0 10px 16px rgba(0,0,0,.08);
+  box-shadow:0 12px 18px rgba(0,0,0,.08);
 }
-aside button.active{
-  background:rgba(255,212,0,.15);
-  border-color:var(--yellow);
+.catbtn.active{
+  background:linear-gradient(90deg, rgba(255,212,0,.22), rgba(31,163,74,.12), rgba(225,29,46,.10));
+  border-color:rgba(0,0,0,.18);
+}
+.badge-n{
+  min-width:34px;
+  text-align:center;
+  font-size:12px;
+  padding:4px 9px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.9);
+  font-weight:950;
 }
 
-/* GRID */
+/* Main */
+.main-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+h1{
+  margin:0;
+  font-size:28px;
+  letter-spacing:-.2px;
+}
+.range{
+  font-weight:900;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.85);
+}
+
+/* Grid */
 .grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(3, 1fr);
   gap:18px;
 }
 @media(max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.grid{grid-template-columns:1fr}}
 
-/* CARD */
+/* Card */
 .card{
-  background:#fff;
+  position:relative;
+  background:rgba(255,255,255,.92);
+  border:1px solid var(--border);
   border-radius:22px;
   padding:16px;
-  border:1px solid rgba(0,0,0,.08);
+  box-shadow:var(--shadow);
   display:flex;
   flex-direction:column;
   gap:12px;
-  position:relative;
-
-  /* micro motion */
   transform:translateY(0);
   transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, opacity .18s ease;
-  box-shadow:0 10px 26px rgba(0,0,0,.06);
 }
 .card:hover{
   transform:translateY(-4px);
-  box-shadow:0 18px 42px rgba(0,0,0,.12);
-  border-color:rgba(0,0,0,.14);
+  box-shadow:0 20px 44px rgba(0,0,0,.14);
+  border-color:rgba(0,0,0,.16);
 }
 
-/* MODERN IMAGE STAGE (NO WHITE BOX) */
-.product-stage{
+/* Image stage (NO white old box) */
+.stage{
   position:relative;
-  height:220px;
+  height:230px;
+  border-radius:18px;
+  overflow:hidden;
   display:flex;
   align-items:center;
   justify-content:center;
-  overflow:hidden;
-  border-radius:18px;
 
-  /* subtle colored “ambient” background */
   background:
-    radial-gradient(60% 60% at 50% 35%, rgba(255,212,0,.22), transparent 60%),
-    radial-gradient(55% 55% at 35% 70%, rgba(31,163,74,.14), transparent 65%),
-    radial-gradient(70% 70% at 70% 75%, rgba(225,29,46,.10), transparent 65%);
+    radial-gradient(60% 60% at 50% 35%, rgba(255,212,0,.20), transparent 60%),
+    radial-gradient(55% 55% at 35% 75%, rgba(31,163,74,.12), transparent 65%),
+    radial-gradient(70% 70% at 70% 80%, rgba(225,29,46,.10), transparent 65%);
 }
-.product-stage::after{
-  /* floor / soft base */
+.stage::after{
   content:"";
   position:absolute;
   bottom:18px;
   width:82%;
-  height:44px;
+  height:46px;
   background:radial-gradient(ellipse at center, rgba(0,0,0,.18), transparent 72%);
-  filter:blur(.2px);
-  opacity:.85;
+  opacity:.9;
 }
-.product-stage img{
-  max-height:92%;
+.stage img{
   max-width:92%;
+  max-height:92%;
   object-fit:contain;
   z-index:1;
-
-  /* modern cutout look */
-  filter:drop-shadow(0 22px 26px rgba(0,0,0,.22));
+  filter:drop-shadow(0 24px 30px rgba(0,0,0,.22));
   transform:translateY(0) scale(1);
   transition:transform .22s ease, filter .22s ease;
 }
-.card:hover .product-stage img{
+.card:hover .stage img{
   transform:translateY(-6px) scale(1.03);
-  filter:drop-shadow(0 28px 30px rgba(0,0,0,.28));
+  filter:drop-shadow(0 30px 34px rgba(0,0,0,.28));
 }
 
-/* BADGES */
-.category{
+/* Labels */
+.tag{
   position:absolute;
   top:14px;
   left:14px;
@@ -188,10 +250,10 @@ aside button.active{
   padding:6px 10px;
   border-radius:999px;
   font-size:12px;
-  font-weight:900;
+  font-weight:950;
   letter-spacing:.3px;
 }
-.discount{
+.sale{
   position:absolute;
   top:14px;
   right:14px;
@@ -200,7 +262,6 @@ aside button.active{
   border-radius:14px;
   font-weight:950;
   box-shadow:0 10px 18px rgba(0,0,0,.12);
-  transform:translateY(0);
   animation:badgeBreath 2.6s ease-in-out infinite;
 }
 @keyframes badgeBreath{
@@ -208,7 +269,7 @@ aside button.active{
   50%{ transform:translateY(-1px) scale(1.02); }
 }
 
-/* TEXT */
+/* Text */
 .card h3{margin:0;font-size:18px}
 .card p{
   margin:0;
@@ -217,11 +278,11 @@ aside button.active{
   line-height:1.35;
 }
 
-/* BUTTON */
-.card a{
+/* Button */
+.card a.open{
+  margin-top:auto;
   position:relative;
   overflow:hidden;
-  margin-top:auto;
   text-align:center;
   padding:10px 16px;
   border-radius:999px;
@@ -232,8 +293,7 @@ aside button.active{
   background:#fff;
   transition:transform .12s ease, box-shadow .12s ease, background .18s ease;
 }
-.card a::before{
-  /* subtle shimmer */
+.card a.open::before{
   content:"";
   position:absolute;
   inset:-40% auto -40% -60%;
@@ -242,7 +302,7 @@ aside button.active{
   background:linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
   opacity:0;
 }
-.card:hover a::before{
+.card:hover a.open::before{
   opacity:1;
   animation:shimmer 1.1s ease forwards;
 }
@@ -250,24 +310,18 @@ aside button.active{
   from{ left:-60%; }
   to{ left:120%; }
 }
-.card a:hover{
+.card a.open:hover{
   background:linear-gradient(90deg,var(--yellow),var(--green),var(--red));
   box-shadow:0 14px 26px rgba(0,0,0,.10);
 }
-.card a:active{
+.card a.open:active{
   transform:translateY(1px) scale(.99);
 }
 
-/* filter animations */
+/* Filter anim */
 .hidden{display:none}
-.card.enter{
-  opacity:0;
-  transform:translateY(8px);
-}
-.card.enter.show{
-  opacity:1;
-  transform:translateY(0);
-}
+.card.enter{opacity:0;transform:translateY(10px)}
+.card.enter.show{opacity:1;transform:translateY(0)}
 </style>
 </head>
 
@@ -277,91 +331,216 @@ aside button.active{
   <div class="header-inner">
     <div class="brand">Aromat Ovunque*</div>
     <div class="header-actions">
-      <a href="index.html">Home</a>
-      <a href="https://www.instagram.com/aromatovunque.ch?igsh=cHMxaHVyOWZmNTkz" target="_blank" rel="noopener">
-        <img src="insta.jpg" alt="">Instagram
+      <a class="pill" href="index.html">Home</a>
+      <a class="pill" href="https://www.instagram.com/aromatovunque.ch?igsh=cHMxaHVyOWZmNTkz" target="_blank" rel="noopener">
+        <img src="insta.jpg" alt="Instagram"> Instagram
       </a>
-      <a href="#" aria-disabled="true">Carnevale Rabadan 2026</a>
+      <span class="pill" style="cursor:default;">Carnevale Rabadan 2026</span>
     </div>
   </div>
 </header>
 
 <div class="wrapper">
   <aside>
-    <button class="active" data-filter="all">Tutti</button>
-    <button data-filter="bevande">Bevande</button>
-    <button data-filter="dolci">Dolci</button>
-    <button data-filter="cura">Cura persona</button>
-    <button data-filter="casa">Casa</button>
-    <button data-filter="carne">Carne</button>
-    <button data-filter="extra">Extra</button>
+    <div class="aside-title">
+      <span>Categorie</span>
+      <span class="count-pill" id="totalCount">0</span>
+    </div>
+
+    <button class="catbtn active" data-filter="all">
+      <span>Tutti</span><span class="badge-n" id="count-all">0</span>
+    </button>
+    <button class="catbtn" data-filter="bevande">
+      <span>Bevande</span><span class="badge-n" id="count-bevande">0</span>
+    </button>
+    <button class="catbtn" data-filter="caffe">
+      <span>Caffè</span><span class="badge-n" id="count-caffe">0</span>
+    </button>
+    <button class="catbtn" data-filter="dolci">
+      <span>Dolci</span><span class="badge-n" id="count-dolci">0</span>
+    </button>
+    <button class="catbtn" data-filter="cura">
+      <span>Cura persona</span><span class="badge-n" id="count-cura">0</span>
+    </button>
+    <button class="catbtn" data-filter="casa">
+      <span>Casa</span><span class="badge-n" id="count-casa">0</span>
+    </button>
+    <button class="catbtn" data-filter="carne">
+      <span>Carne</span><span class="badge-n" id="count-carne">0</span>
+    </button>
+    <button class="catbtn" data-filter="extra">
+      <span>Extra</span><span class="badge-n" id="count-extra">0</span>
+    </button>
   </aside>
 
-  <section class="grid" id="grid">
-
-    <!-- CARNE -->
-    <div class="card" data-cat="carne">
-      <div class="category">CARNE</div>
-      <div class="discount">-42%</div>
-      <div class="product-stage">
-        <img src="luganighetta.jpg" alt="Luganighetta Aromat">
-      </div>
-      <h3>Luganighetta Aromat</h3>
-      <p>Spirale perfetta. Decisioni discutibili.</p>
-      <a href="luganighetta.jpg">Apri</a>
+  <main>
+    <div class="main-head">
+      <h1>Azioni settimanali</h1>
+      <!-- Non invento date precise: lo lasciamo come label evento -->
+      <div class="range">Rabadan 2026</div>
     </div>
 
-    <!-- DOLCI -->
-    <div class="card" data-cat="dolci">
-      <div class="category">DOLCI</div>
-      <div class="discount">-29%</div>
-      <div class="product-stage">
-        <img src="aromella.jpg" alt="Aromella">
-      </div>
-      <h3>Aromella</h3>
-      <p>Spalmabile. Non fare domande.</p>
-      <a href="aromella.jpg">Apri</a>
-    </div>
+    <section class="grid" id="grid">
 
-    <!-- BEVANDE -->
-    <div class="card" data-cat="bevande">
-      <div class="category">BEVANDE</div>
-      <div class="discount">-35%</div>
-      <div class="product-stage">
-        <img src="sciroppo.jpg" alt="Sciroppo Aromat">
+      <!-- TOP / EXTRA -->
+      <div class="card" data-cat="extra">
+        <div class="tag">EXTRA</div>
+        <div class="sale">-33%</div>
+        <div class="stage"><img src="sigarette.jpg" alt="Sigarette Aromat"></div>
+        <h3>Sigarette Aromat</h3>
+        <p>Per chi ama il rischio. Il sito no, quello è stabile.</p>
+        <a class="open" href="sigarette.jpg">Apri</a>
       </div>
-      <h3>Sciroppo Aromat</h3>
-      <p>Dolcezza che non perdona.</p>
-      <a href="sciroppo.jpg">Apri</a>
-    </div>
 
-    <!-- CURA -->
-    <div class="card" data-cat="cura">
-      <div class="category">CURA</div>
-      <div class="discount">-49%</div>
-      <div class="product-stage">
-        <img src="deodorante.jpg" alt="Deodorante Aromat">
+      <!-- CASA -->
+      <div class="card" data-cat="casa">
+        <div class="tag">CASA</div>
+        <div class="sale">-40%</div>
+        <div class="stage"><img src="carta.jpg" alt="Carta igienica Aromat"></div>
+        <h3>Carta igienica Aromat</h3>
+        <p>Piacevolmente insaporita. Sì, lo so.</p>
+        <a class="open" href="carta.jpg">Apri</a>
       </div>
-      <h3>Deodorante Aromat</h3>
-      <p>48h. O più. Chi lo sa.</p>
-      <a href="deodorante.jpg">Apri</a>
-    </div>
 
-  </section>
+      <!-- CURA -->
+      <div class="card" data-cat="cura">
+        <div class="tag">CURA</div>
+        <div class="sale">-22%</div>
+        <div class="stage"><img src="profumo.jpg" alt="Eau de Toilette Aromat"></div>
+        <h3>Eau de Toilette</h3>
+        <p>Profumo “Aromat”. Coraggio vero.</p>
+        <a class="open" href="profumo.jpg">Apri</a>
+      </div>
+
+      <!-- BEVANDE -->
+      <div class="card" data-cat="bevande">
+        <div class="tag">BEVANDE</div>
+        <div class="sale">-35%</div>
+        <div class="stage"><img src="coca.jpg" alt="Coca Aromat"></div>
+        <h3>Coca Aromat</h3>
+        <p>Perché le scelte semplici non ti interessano.</p>
+        <a class="open" href="coca.jpg">Apri</a>
+      </div>
+
+      <!-- DOLCI -->
+      <div class="card" data-cat="dolci">
+        <div class="tag">DOLCI</div>
+        <div class="sale">-28%</div>
+        <div class="stage"><img src="cioccolato.jpg" alt="Cioccolato fondente Aromat"></div>
+        <h3>Cioccolato fondente</h3>
+        <p>Forte, testardo. Come il progetto.</p>
+        <a class="open" href="cioccolato.jpg">Apri</a>
+      </div>
+
+      <!-- CURA -->
+      <div class="card" data-cat="cura">
+        <div class="tag">CURA</div>
+        <div class="sale">-25%</div>
+        <div class="stage"><img src="dentifricio.jpg" alt="Dentifricio all'Aromat"></div>
+        <h3>Dentifricio all’Aromat</h3>
+        <p>Alito potente. Zero compromessi.</p>
+        <a class="open" href="dentifricio.jpg">Apri</a>
+      </div>
+
+      <!-- FREDDO / DOLCI -->
+      <div class="card" data-cat="dolci">
+        <div class="tag">DOLCI</div>
+        <div class="sale">-41%</div>
+        <div class="stage"><img src="gelato.jpg" alt="Gelato Aromat Supreme"></div>
+        <h3>Gelato Aromat Supreme</h3>
+        <p>Dolce, cremoso, inspiegabile.</p>
+        <a class="open" href="gelato.jpg">Apri</a>
+      </div>
+
+      <!-- CAFFÈ -->
+      <div class="card" data-cat="caffe">
+        <div class="tag">CAFFÈ</div>
+        <div class="sale">-30%</div>
+        <div class="stage"><img src="caffe.jpg" alt="Capsule Espresso Aromat"></div>
+        <h3>Capsule Espresso</h3>
+        <p>Compatibili, forti, inevitabili.</p>
+        <a class="open" href="caffe.jpg">Apri</a>
+      </div>
+
+      <!-- NUOVI PRODOTTI -->
+
+      <!-- DOLCI -->
+      <div class="card" data-cat="dolci">
+        <div class="tag">DOLCI</div>
+        <div class="sale">-29%</div>
+        <div class="stage"><img src="aromella.jpg" alt="Aromella"></div>
+        <h3>Aromella</h3>
+        <p>Spalmabile. Non fare domande. Goditela.</p>
+        <a class="open" href="aromella.jpg">Apri</a>
+      </div>
+
+      <!-- CARNE -->
+      <div class="card" data-cat="carne">
+        <div class="tag">CARNE</div>
+        <div class="sale">-44%</div>
+        <div class="stage"><img src="luganighetta.jpg" alt="Luganighetta Aromat"></div>
+        <h3>Luganighetta Aromat</h3>
+        <p>Spirale perfetta. Decisioni discutibili.</p>
+        <a class="open" href="luganighetta.jpg">Apri</a>
+      </div>
+
+      <!-- BEVANDE -->
+      <div class="card" data-cat="bevande">
+        <div class="tag">BEVANDE</div>
+        <div class="sale">-37%</div>
+        <div class="stage"><img src="sciroppo.jpg" alt="Sciroppo Aromat"></div>
+        <h3>Sciroppo Aromat</h3>
+        <p>Dolcezza che non perdona.</p>
+        <a class="open" href="sciroppo.jpg">Apri</a>
+      </div>
+
+      <!-- CURA -->
+      <div class="card" data-cat="cura">
+        <div class="tag">CURA</div>
+        <div class="sale">-49%</div>
+        <div class="stage"><img src="deodorante.jpg" alt="Deodorante Aromat"></div>
+        <h3>Deodorante Aromat</h3>
+        <p>48h. O più. Chi lo sa.</p>
+        <a class="open" href="deodorante.jpg">Apri</a>
+      </div>
+
+    </section>
+  </main>
 </div>
 
 <script>
-const buttons = document.querySelectorAll("aside button");
+const buttons = document.querySelectorAll(".catbtn");
 const cards = Array.from(document.querySelectorAll(".card"));
+
+function updateCounts(){
+  const counts = { all: cards.length };
+  cards.forEach(c=>{
+    const k = c.dataset.cat;
+    counts[k] = (counts[k] || 0) + 1;
+  });
+
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = val ?? 0;
+  };
+
+  set("totalCount", counts.all);
+  set("count-all", counts.all);
+  set("count-bevande", counts.bevande);
+  set("count-caffe", counts.caffe);
+  set("count-dolci", counts.dolci);
+  set("count-cura", counts.cura);
+  set("count-casa", counts.casa);
+  set("count-carne", counts.carne);
+  set("count-extra", counts.extra);
+}
 
 function animateVisible(list){
   list.forEach((c, i) => {
     c.classList.add("enter");
     c.classList.remove("show");
-    // stagger
     setTimeout(() => c.classList.add("show"), 40 + i * 55);
-    // cleanup
-    setTimeout(() => c.classList.remove("enter","show"), 450 + i * 55);
+    setTimeout(() => c.classList.remove("enter","show"), 520 + i * 55);
   });
 }
 
@@ -382,6 +561,8 @@ buttons.forEach(b=>{
     animateVisible(visible);
   });
 });
+
+updateCounts();
 </script>
 
 </body>
