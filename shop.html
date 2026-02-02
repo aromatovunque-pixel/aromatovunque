@@ -10,6 +10,7 @@
   --yellow:#ffd400;
   --green:#1fa34a;
   --red:#e11d2e;
+
   --bg:#f6f7f9;
   --ink:#111827;
   --muted:#6b7280;
@@ -44,9 +45,10 @@ header{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  gap:12px;
 }
 .brand{font-weight:900}
-.actions{display:flex;gap:10px}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
 .actions a{
   display:inline-flex;
   align-items:center;
@@ -58,7 +60,9 @@ header{
   font-weight:800;
   text-decoration:none;
   color:#000;
+  transition:transform .15s ease, box-shadow .15s ease;
 }
+.actions a:hover{transform:translateY(-1px);box-shadow:0 12px 18px rgba(0,0,0,.08)}
 .actions img{width:18px;height:18px}
 
 /* LAYOUT */
@@ -92,7 +96,9 @@ aside{
   justify-content:space-between;
   align-items:center;
   cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
 }
+.toggle:hover{transform:translateY(-1px);box-shadow:0 12px 18px rgba(0,0,0,.08)}
 .toggle span:last-child{
   font-size:12px;
   padding:4px 10px;
@@ -104,6 +110,8 @@ aside{
   margin-top:10px;
   overflow:hidden;
   transition:max-height .25s ease, opacity .25s ease;
+  max-height:520px;
+  opacity:1;
 }
 aside.collapsed .catlist{
   max-height:0;
@@ -118,7 +126,9 @@ aside.collapsed .catlist{
   background:#fff;
   font-weight:900;
   cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
 }
+.catbtn:hover{transform:translateY(-1px);box-shadow:0 12px 18px rgba(0,0,0,.08)}
 .catbtn.active{
   background:linear-gradient(90deg, rgba(255,212,0,.22), rgba(31,163,74,.14), rgba(225,29,46,.12));
 }
@@ -149,7 +159,7 @@ h1{margin:0 0 16px;font-size:28px}
   box-shadow:0 18px 40px rgba(0,0,0,.14);
 }
 
-/* IMAGE STAGE */
+/* IMAGE STAGE (aggressive fade) */
 .stage{
   position:relative;
   height:220px;
@@ -158,6 +168,10 @@ h1{margin:0 0 16px;font-size:28px}
   display:flex;
   align-items:center;
   justify-content:center;
+  background:
+    radial-gradient(65% 65% at 50% 35%, rgba(255,212,0,.22), transparent 62%),
+    radial-gradient(60% 60% at 30% 80%, rgba(31,163,74,.14), transparent 65%),
+    radial-gradient(70% 70% at 75% 85%, rgba(225,29,46,.12), transparent 65%);
 }
 .stage::after{
   content:"";
@@ -172,6 +186,7 @@ h1{margin:0 0 16px;font-size:28px}
   position:absolute;
   inset:0;
   background:radial-gradient(circle at 50% 45%, transparent 30%, rgba(0,0,0,.15) 55%, rgba(0,0,0,.28) 100%);
+  pointer-events:none;
 }
 .stage img{
   max-width:92%;
@@ -179,11 +194,18 @@ h1{margin:0 0 16px;font-size:28px}
   object-fit:contain;
   z-index:1;
   filter:drop-shadow(0 26px 34px rgba(0,0,0,.30));
+
   -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 40%, rgba(0,0,0,.5) 55%, transparent 72%);
   mask-image: radial-gradient(circle at 50% 45%, #000 40%, rgba(0,0,0,.5) 55%, transparent 72%);
+  -webkit-mask-size:cover;
   mask-size:cover;
+  -webkit-mask-repeat:no-repeat;
   mask-repeat:no-repeat;
 }
+
+/* TEXT */
+.card h3{margin:0;font-size:18px}
+.card p{margin:0;color:var(--muted);font-size:13px;line-height:1.35}
 
 /* LABELS */
 .tag{
@@ -207,10 +229,6 @@ h1{margin:0 0 16px;font-size:28px}
   font-weight:900;
 }
 
-/* TEXT */
-.card h3{margin:0;font-size:18px}
-.card p{margin:0;color:var(--muted);font-size:13px}
-
 /* BUTTON */
 .open{
   margin-top:auto;
@@ -221,6 +239,7 @@ h1{margin:0 0 16px;font-size:28px}
   text-decoration:none;
   color:#000;
   border:2px solid var(--border);
+  background:#fff;
 }
 .open:hover{
   background:linear-gradient(90deg,var(--yellow),var(--green),var(--red));
@@ -237,8 +256,8 @@ h1{margin:0 0 16px;font-size:28px}
     <div class="brand">Aromat Ovunque*</div>
     <div class="actions">
       <a href="index.html">Home</a>
-      <a href="https://www.instagram.com/aromatovunque.ch" target="_blank">
-        <img src="insta.jpg">Instagram
+      <a href="https://www.instagram.com/aromatovunque.ch?igsh=cHMxaHVyOWZmNTkz" target="_blank" rel="noopener">
+        <img src="insta.jpg" alt="">Instagram
       </a>
     </div>
   </div>
@@ -246,7 +265,7 @@ h1{margin:0 0 16px;font-size:28px}
 
 <div class="wrapper">
   <aside id="sidebar">
-    <button class="toggle" id="toggleCats">
+    <button class="toggle" id="toggleCats" type="button">
       <span>Categorie</span>
       <span id="toggleLabel">Chiudi</span>
     </button>
@@ -267,57 +286,108 @@ h1{margin:0 0 16px;font-size:28px}
     <h1>Azioni settimanali – Rabadan 2026</h1>
 
     <section class="grid" id="grid">
-      <!-- prodotti: TUTTI -->
-      <!-- ESEMPIO -->
+
+      <!-- BEVANDE -->
+      <div class="card" data-cat="bevande">
+        <div class="stage">
+          <div class="tag">BEVANDE</div><div class="sale">-35%</div>
+          <img src="coca.jpg" alt="Coca Aromat">
+        </div>
+        <h3>Coca Aromat</h3>
+        <p>Perché le scelte semplici non ti interessano.</p>
+        <a class="open" href="coca.jpg">Apri</a>
+      </div>
+
+      <div class="card" data-cat="bevande">
+        <div class="stage">
+          <div class="tag">BEVANDE</div><div class="sale">-37%</div>
+          <img src="sciroppo.jpg" alt="Sciroppo Aromat">
+        </div>
+        <h3>Sciroppo Aromat</h3>
+        <p>Dolcezza che non perdona.</p>
+        <a class="open" href="sciroppo.jpg">Apri</a>
+      </div>
+
+      <!-- CAFFÈ -->
+      <div class="card" data-cat="caffe">
+        <div class="stage">
+          <div class="tag">CAFFÈ</div><div class="sale">-30%</div>
+          <img src="caffe.jpg" alt="Capsule Espresso">
+        </div>
+        <h3>Capsule Espresso</h3>
+        <p>Compatibili, forti, inevitabili.</p>
+        <a class="open" href="caffe.jpg">Apri</a>
+      </div>
+
+      <!-- DOLCI -->
       <div class="card" data-cat="dolci">
-        <div class="tag">DOLCI</div><div class="sale">-29%</div>
-        <div class="stage"><img src="aromella.jpg"></div>
+        <div class="stage">
+          <div class="tag">DOLCI</div><div class="sale">-28%</div>
+          <img src="cioccolato.jpg" alt="Cioccolato fondente">
+        </div>
+        <h3>Cioccolato fondente</h3>
+        <p>Forte, testardo. Come il progetto.</p>
+        <a class="open" href="cioccolato.jpg">Apri</a>
+      </div>
+
+      <div class="card" data-cat="dolci">
+        <div class="stage">
+          <div class="tag">DOLCI</div><div class="sale">-41%</div>
+          <img src="gelato.jpg" alt="Gelato Aromat Supreme">
+        </div>
+        <h3>Gelato Aromat Supreme</h3>
+        <p>Dolce, cremoso, inspiegabile.</p>
+        <a class="open" href="gelato.jpg">Apri</a>
+      </div>
+
+      <div class="card" data-cat="dolci">
+        <div class="stage">
+          <div class="tag">DOLCI</div><div class="sale">-29%</div>
+          <img src="aromella.jpg" alt="Aromella">
+        </div>
         <h3>Aromella</h3>
         <p>Spalmabile. Non fare domande.</p>
         <a class="open" href="aromella.jpg">Apri</a>
       </div>
 
-      <div class="card" data-cat="carne">
-        <div class="tag">CARNE</div><div class="sale">-44%</div>
-        <div class="stage"><img src="luganighetta.jpg"></div>
-        <h3>Luganighetta Aromat</h3>
-        <p>Spirale perfetta.</p>
-        <a class="open" href="luganighetta.jpg">Apri</a>
+      <!-- CURA -->
+      <div class="card" data-cat="cura">
+        <div class="stage">
+          <div class="tag">CURA</div><div class="sale">-25%</div>
+          <img src="dentifricio.jpg" alt="Dentifricio all'Aromat">
+        </div>
+        <h3>Dentifricio all’Aromat</h3>
+        <p>Alito potente. Zero compromessi.</p>
+        <a class="open" href="dentifricio.jpg">Apri</a>
       </div>
 
-      <!-- gli altri sono IDENTICI nello schema -->
-    </section>
-  </main>
-</div>
+      <div class="card" data-cat="cura">
+        <div class="stage">
+          <div class="tag">CURA</div><div class="sale">-22%</div>
+          <img src="profumo.jpg" alt="Eau de Toilette">
+        </div>
+        <h3>Eau de Toilette</h3>
+        <p>Profumo “Aromat”. Coraggio vero.</p>
+        <a class="open" href="profumo.jpg">Apri</a>
+      </div>
 
-<script>
-const sidebar=document.getElementById("sidebar");
-const toggle=document.getElementById("toggleCats");
-const label=document.getElementById("toggleLabel");
+      <div class="card" data-cat="cura">
+        <div class="stage">
+          <div class="tag">CURA</div><div class="sale">-49%</div>
+          <img src="deodorante.jpg" alt="Deodorante Aromat">
+        </div>
+        <h3>Deodorante Aromat</h3>
+        <p>48h. O più. Chi lo sa.</p>
+        <a class="open" href="deodorante.jpg">Apri</a>
+      </div>
 
-toggle.onclick=()=>{
-  sidebar.classList.toggle("collapsed");
-  label.textContent=sidebar.classList.contains("collapsed")?"Apri":"Chiudi";
-};
-
-const buttons=document.querySelectorAll(".catbtn");
-const cards=document.querySelectorAll(".card");
-
-buttons.forEach(b=>{
-  b.onclick=()=>{
-    buttons.forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    const f=b.dataset.filter;
-    cards.forEach(c=>{
-      c.classList.toggle("hidden",f!=="all"&&c.dataset.cat!==f);
-    });
-    if(window.innerWidth<900){
-      sidebar.classList.add("collapsed");
-      label.textContent="Apri";
-    }
-  };
-});
-</script>
-
-</body>
-</html>
+      <!-- CASA -->
+      <div class="card" data-cat="casa">
+        <div class="stage">
+          <div class="tag">CASA</div><div class="sale">-40%</div>
+          <img src="carta.jpg" alt="Carta igienica">
+        </div>
+        <h3>Carta igienica Aromat</h3>
+        <p>Piacevolmente insaporita. Sì, lo so.</p>
+        <a class="open" href="carta.jpg">Apri</a>
+      </
