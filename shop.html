@@ -95,20 +95,27 @@ header{
   .wrapper{grid-template-columns:1fr}
 }
 
-/* Sidebar */
+/* Sidebar (collapsible) */
 aside{
   background:rgba(255,255,255,.85);
   border:1px solid var(--border);
   border-radius:18px;
-  padding:14px;
+  padding:12px;
   box-shadow:0 10px 24px rgba(0,0,0,.06);
 }
-.aside-title{
-  font-weight:950;
-  margin:2px 0 12px;
+.aside-top{
   display:flex;
   align-items:center;
   justify-content:space-between;
+  gap:10px;
+  padding:2px 2px 10px;
+}
+.aside-title{
+  font-weight:950;
+  margin:0;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 .count-pill{
   font-size:12px;
@@ -119,6 +126,39 @@ aside{
   color:#111;
   font-weight:900;
 }
+.toggle{
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:14px;
+  padding:10px 12px;
+  cursor:pointer;
+  font-weight:950;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.toggle:hover{transform:translateY(-1px);box-shadow:0 12px 18px rgba(0,0,0,.08)}
+.chev{
+  width:10px;height:10px;
+  border-right:2px solid #111;
+  border-bottom:2px solid #111;
+  transform:rotate(45deg);
+  transition:transform .18s ease;
+  margin-top:-2px;
+}
+aside.collapsed .chev{transform:rotate(-135deg)}
+.catlist{
+  overflow:hidden;
+  transition:max-height .22s ease, opacity .22s ease;
+  max-height:520px;
+  opacity:1;
+}
+aside.collapsed .catlist{
+  max-height:0;
+  opacity:.0;
+}
+
 .catbtn{
   width:100%;
   padding:10px 12px;
@@ -133,10 +173,7 @@ aside{
   justify-content:space-between;
   transition:transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
 }
-.catbtn:hover{
-  transform:translateY(-1px);
-  box-shadow:0 12px 18px rgba(0,0,0,.08);
-}
+.catbtn:hover{transform:translateY(-1px);box-shadow:0 12px 18px rgba(0,0,0,.08)}
 .catbtn.active{
   background:linear-gradient(90deg, rgba(255,212,0,.22), rgba(31,163,74,.12), rgba(225,29,46,.10));
   border-color:rgba(0,0,0,.18);
@@ -160,11 +197,7 @@ aside{
   gap:12px;
   margin-bottom:14px;
 }
-h1{
-  margin:0;
-  font-size:28px;
-  letter-spacing:-.2px;
-}
+h1{margin:0;font-size:28px;letter-spacing:-.2px}
 .range{
   font-weight:900;
   padding:8px 12px;
@@ -202,7 +235,7 @@ h1{
   border-color:rgba(0,0,0,.16);
 }
 
-/* Image stage (NO white old box) */
+/* Image stage (modern + fade edges) */
 .stage{
   position:relative;
   height:230px;
@@ -217,6 +250,8 @@ h1{
     radial-gradient(55% 55% at 35% 75%, rgba(31,163,74,.12), transparent 65%),
     radial-gradient(70% 70% at 70% 80%, rgba(225,29,46,.10), transparent 65%);
 }
+
+/* shadow under product */
 .stage::after{
   content:"";
   position:absolute;
@@ -226,6 +261,8 @@ h1{
   background:radial-gradient(ellipse at center, rgba(0,0,0,.18), transparent 72%);
   opacity:.9;
 }
+
+/* FADE MASK: sfuma i bordi dell'immagine (sparisce il “ritaglio”) */
 .stage img{
   max-width:92%;
   max-height:92%;
@@ -234,7 +271,24 @@ h1{
   filter:drop-shadow(0 24px 30px rgba(0,0,0,.22));
   transform:translateY(0) scale(1);
   transition:transform .22s ease, filter .22s ease;
+
+  -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 68%, transparent 90%);
+  mask-image: radial-gradient(circle at 50% 45%, #000 68%, transparent 90%);
+  -webkit-mask-repeat:no-repeat;
+  mask-repeat:no-repeat;
+  -webkit-mask-size:cover;
+  mask-size:cover;
 }
+
+/* fallback se il mask non piace: micro-vignetta sopra (non “old box”) */
+.stage::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 50% 45%, transparent 55%, rgba(0,0,0,.06) 78%, rgba(0,0,0,.12) 100%);
+  pointer-events:none;
+}
+
 .card:hover .stage img{
   transform:translateY(-6px) scale(1.03);
   filter:drop-shadow(0 30px 34px rgba(0,0,0,.28));
@@ -271,12 +325,7 @@ h1{
 
 /* Text */
 .card h3{margin:0;font-size:18px}
-.card p{
-  margin:0;
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.35;
-}
+.card p{margin:0;color:var(--muted);font-size:13px;line-height:1.35}
 
 /* Button */
 .card a.open{
@@ -306,17 +355,12 @@ h1{
   opacity:1;
   animation:shimmer 1.1s ease forwards;
 }
-@keyframes shimmer{
-  from{ left:-60%; }
-  to{ left:120%; }
-}
+@keyframes shimmer{from{left:-60%}to{left:120%}}
 .card a.open:hover{
   background:linear-gradient(90deg,var(--yellow),var(--green),var(--red));
   box-shadow:0 14px 26px rgba(0,0,0,.10);
 }
-.card a.open:active{
-  transform:translateY(1px) scale(.99);
-}
+.card a.open:active{transform:translateY(1px) scale(.99)}
 
 /* Filter anim */
 .hidden{display:none}
@@ -341,51 +385,54 @@ h1{
 </header>
 
 <div class="wrapper">
-  <aside>
-    <div class="aside-title">
-      <span>Categorie</span>
-      <span class="count-pill" id="totalCount">0</span>
+  <aside id="sidebar">
+    <div class="aside-top">
+      <div class="aside-title">Categorie <span class="count-pill" id="totalCount">0</span></div>
+      <button class="toggle" id="toggleCats" type="button" aria-expanded="true">
+        <span class="chev" aria-hidden="true"></span>
+        <span id="toggleLabel">Chiudi</span>
+      </button>
     </div>
 
-    <button class="catbtn active" data-filter="all">
-      <span>Tutti</span><span class="badge-n" id="count-all">0</span>
-    </button>
-    <button class="catbtn" data-filter="bevande">
-      <span>Bevande</span><span class="badge-n" id="count-bevande">0</span>
-    </button>
-    <button class="catbtn" data-filter="caffe">
-      <span>Caffè</span><span class="badge-n" id="count-caffe">0</span>
-    </button>
-    <button class="catbtn" data-filter="dolci">
-      <span>Dolci</span><span class="badge-n" id="count-dolci">0</span>
-    </button>
-    <button class="catbtn" data-filter="cura">
-      <span>Cura persona</span><span class="badge-n" id="count-cura">0</span>
-    </button>
-    <button class="catbtn" data-filter="casa">
-      <span>Casa</span><span class="badge-n" id="count-casa">0</span>
-    </button>
-    <button class="catbtn" data-filter="carne">
-      <span>Carne</span><span class="badge-n" id="count-carne">0</span>
-    </button>
-    <button class="catbtn" data-filter="extra">
-      <span>Extra</span><span class="badge-n" id="count-extra">0</span>
-    </button>
+    <div class="catlist" id="catlist">
+      <button class="catbtn active" data-filter="all">
+        <span>Tutti</span><span class="badge-n" id="count-all">0</span>
+      </button>
+      <button class="catbtn" data-filter="bevande">
+        <span>Bevande</span><span class="badge-n" id="count-bevande">0</span>
+      </button>
+      <button class="catbtn" data-filter="caffe">
+        <span>Caffè</span><span class="badge-n" id="count-caffe">0</span>
+      </button>
+      <button class="catbtn" data-filter="dolci">
+        <span>Dolci</span><span class="badge-n" id="count-dolci">0</span>
+      </button>
+      <button class="catbtn" data-filter="cura">
+        <span>Cura persona</span><span class="badge-n" id="count-cura">0</span>
+      </button>
+      <button class="catbtn" data-filter="casa">
+        <span>Casa</span><span class="badge-n" id="count-casa">0</span>
+      </button>
+      <button class="catbtn" data-filter="carne">
+        <span>Carne</span><span class="badge-n" id="count-carne">0</span>
+      </button>
+      <button class="catbtn" data-filter="extra">
+        <span>Extra</span><span class="badge-n" id="count-extra">0</span>
+      </button>
+    </div>
   </aside>
 
   <main>
     <div class="main-head">
       <h1>Azioni settimanali</h1>
-      <!-- Non invento date precise: lo lasciamo come label evento -->
       <div class="range">Rabadan 2026</div>
     </div>
 
     <section class="grid" id="grid">
 
-      <!-- TOP / EXTRA -->
+      <!-- EXTRA -->
       <div class="card" data-cat="extra">
-        <div class="tag">EXTRA</div>
-        <div class="sale">-33%</div>
+        <div class="tag">EXTRA</div><div class="sale">-33%</div>
         <div class="stage"><img src="sigarette.jpg" alt="Sigarette Aromat"></div>
         <h3>Sigarette Aromat</h3>
         <p>Per chi ama il rischio. Il sito no, quello è stabile.</p>
@@ -394,8 +441,7 @@ h1{
 
       <!-- CASA -->
       <div class="card" data-cat="casa">
-        <div class="tag">CASA</div>
-        <div class="sale">-40%</div>
+        <div class="tag">CASA</div><div class="sale">-40%</div>
         <div class="stage"><img src="carta.jpg" alt="Carta igienica Aromat"></div>
         <h3>Carta igienica Aromat</h3>
         <p>Piacevolmente insaporita. Sì, lo so.</p>
@@ -404,8 +450,7 @@ h1{
 
       <!-- CURA -->
       <div class="card" data-cat="cura">
-        <div class="tag">CURA</div>
-        <div class="sale">-22%</div>
+        <div class="tag">CURA</div><div class="sale">-22%</div>
         <div class="stage"><img src="profumo.jpg" alt="Eau de Toilette Aromat"></div>
         <h3>Eau de Toilette</h3>
         <p>Profumo “Aromat”. Coraggio vero.</p>
@@ -414,8 +459,7 @@ h1{
 
       <!-- BEVANDE -->
       <div class="card" data-cat="bevande">
-        <div class="tag">BEVANDE</div>
-        <div class="sale">-35%</div>
+        <div class="tag">BEVANDE</div><div class="sale">-35%</div>
         <div class="stage"><img src="coca.jpg" alt="Coca Aromat"></div>
         <h3>Coca Aromat</h3>
         <p>Perché le scelte semplici non ti interessano.</p>
@@ -424,8 +468,7 @@ h1{
 
       <!-- DOLCI -->
       <div class="card" data-cat="dolci">
-        <div class="tag">DOLCI</div>
-        <div class="sale">-28%</div>
+        <div class="tag">DOLCI</div><div class="sale">-28%</div>
         <div class="stage"><img src="cioccolato.jpg" alt="Cioccolato fondente Aromat"></div>
         <h3>Cioccolato fondente</h3>
         <p>Forte, testardo. Come il progetto.</p>
@@ -434,18 +477,16 @@ h1{
 
       <!-- CURA -->
       <div class="card" data-cat="cura">
-        <div class="tag">CURA</div>
-        <div class="sale">-25%</div>
+        <div class="tag">CURA</div><div class="sale">-25%</div>
         <div class="stage"><img src="dentifricio.jpg" alt="Dentifricio all'Aromat"></div>
         <h3>Dentifricio all’Aromat</h3>
         <p>Alito potente. Zero compromessi.</p>
         <a class="open" href="dentifricio.jpg">Apri</a>
       </div>
 
-      <!-- FREDDO / DOLCI -->
+      <!-- DOLCI -->
       <div class="card" data-cat="dolci">
-        <div class="tag">DOLCI</div>
-        <div class="sale">-41%</div>
+        <div class="tag">DOLCI</div><div class="sale">-41%</div>
         <div class="stage"><img src="gelato.jpg" alt="Gelato Aromat Supreme"></div>
         <h3>Gelato Aromat Supreme</h3>
         <p>Dolce, cremoso, inspiegabile.</p>
@@ -454,20 +495,18 @@ h1{
 
       <!-- CAFFÈ -->
       <div class="card" data-cat="caffe">
-        <div class="tag">CAFFÈ</div>
-        <div class="sale">-30%</div>
+        <div class="tag">CAFFÈ</div><div class="sale">-30%</div>
         <div class="stage"><img src="caffe.jpg" alt="Capsule Espresso Aromat"></div>
         <h3>Capsule Espresso</h3>
         <p>Compatibili, forti, inevitabili.</p>
         <a class="open" href="caffe.jpg">Apri</a>
       </div>
 
-      <!-- NUOVI PRODOTTI -->
+      <!-- NUOVI -->
 
       <!-- DOLCI -->
       <div class="card" data-cat="dolci">
-        <div class="tag">DOLCI</div>
-        <div class="sale">-29%</div>
+        <div class="tag">DOLCI</div><div class="sale">-29%</div>
         <div class="stage"><img src="aromella.jpg" alt="Aromella"></div>
         <h3>Aromella</h3>
         <p>Spalmabile. Non fare domande. Goditela.</p>
@@ -476,8 +515,7 @@ h1{
 
       <!-- CARNE -->
       <div class="card" data-cat="carne">
-        <div class="tag">CARNE</div>
-        <div class="sale">-44%</div>
+        <div class="tag">CARNE</div><div class="sale">-44%</div>
         <div class="stage"><img src="luganighetta.jpg" alt="Luganighetta Aromat"></div>
         <h3>Luganighetta Aromat</h3>
         <p>Spirale perfetta. Decisioni discutibili.</p>
@@ -486,8 +524,7 @@ h1{
 
       <!-- BEVANDE -->
       <div class="card" data-cat="bevande">
-        <div class="tag">BEVANDE</div>
-        <div class="sale">-37%</div>
+        <div class="tag">BEVANDE</div><div class="sale">-37%</div>
         <div class="stage"><img src="sciroppo.jpg" alt="Sciroppo Aromat"></div>
         <h3>Sciroppo Aromat</h3>
         <p>Dolcezza che non perdona.</p>
@@ -496,8 +533,7 @@ h1{
 
       <!-- CURA -->
       <div class="card" data-cat="cura">
-        <div class="tag">CURA</div>
-        <div class="sale">-49%</div>
+        <div class="tag">CURA</div><div class="sale">-49%</div>
         <div class="stage"><img src="deodorante.jpg" alt="Deodorante Aromat"></div>
         <h3>Deodorante Aromat</h3>
         <p>48h. O più. Chi lo sa.</p>
@@ -509,6 +545,29 @@ h1{
 </div>
 
 <script>
+const sidebar = document.getElementById("sidebar");
+const toggleBtn = document.getElementById("toggleCats");
+const toggleLabel = document.getElementById("toggleLabel");
+
+function setCollapsed(isCollapsed){
+  sidebar.classList.toggle("collapsed", isCollapsed);
+  toggleBtn.setAttribute("aria-expanded", String(!isCollapsed));
+  toggleLabel.textContent = isCollapsed ? "Apri" : "Chiudi";
+  localStorage.setItem("catsCollapsed", isCollapsed ? "1" : "0");
+}
+
+toggleBtn.addEventListener("click", ()=>{
+  setCollapsed(!sidebar.classList.contains("collapsed"));
+});
+
+// default: su mobile parte chiuso, su desktop aperto. Ricorda scelta.
+const saved = localStorage.getItem("catsCollapsed");
+if(saved !== null){
+  setCollapsed(saved === "1");
+}else{
+  setCollapsed(window.matchMedia("(max-width: 900px)").matches);
+}
+
 const buttons = document.querySelectorAll(".catbtn");
 const cards = Array.from(document.querySelectorAll(".card"));
 
@@ -559,6 +618,11 @@ buttons.forEach(b=>{
     });
 
     animateVisible(visible);
+
+    // su mobile, dopo filtro chiudi il menu (comodo)
+    if(window.matchMedia("(max-width: 900px)").matches){
+      setCollapsed(true);
+    }
   });
 });
 
