@@ -390,4 +390,68 @@ h1{margin:0 0 16px;font-size:28px}
         <h3>Carta igienica Aromat</h3>
         <p>Piacevolmente insaporita. Sì, lo so.</p>
         <a class="open" href="carta.jpg">Apri</a>
-      </
+      </div>
+
+      <!-- EXTRA -->
+      <div class="card" data-cat="extra">
+        <div class="stage">
+          <div class="tag">EXTRA</div><div class="sale">-33%</div>
+          <img src="sigarette.jpg" alt="Sigarette Aromat">
+        </div>
+        <h3>Sigarette Aromat</h3>
+        <p>Per chi ama il rischio. Il sito no, quello è stabile.</p>
+        <a class="open" href="sigarette.jpg">Apri</a>
+      </div>
+
+      <!-- CARNE -->
+      <div class="card" data-cat="carne">
+        <div class="stage">
+          <div class="tag">CARNE</div><div class="sale">-44%</div>
+          <img src="luganighetta.jpg" alt="Luganighetta Aromat">
+        </div>
+        <h3>Luganighetta Aromat</h3>
+        <p>Spirale perfetta. Decisioni discutibili.</p>
+        <a class="open" href="luganighetta.jpg">Apri</a>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<script>
+const sidebar=document.getElementById("sidebar");
+const toggle=document.getElementById("toggleCats");
+const label=document.getElementById("toggleLabel");
+
+toggle.onclick=()=>{
+  sidebar.classList.toggle("collapsed");
+  label.textContent=sidebar.classList.contains("collapsed")?"Apri":"Chiudi";
+};
+
+const buttons=document.querySelectorAll(".catbtn");
+const cards=document.querySelectorAll(".card");
+
+buttons.forEach(b=>{
+  b.onclick=()=>{
+    buttons.forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    const f=b.dataset.filter;
+    cards.forEach(c=>{
+      c.classList.toggle("hidden", f!=="all" && c.dataset.cat!==f);
+    });
+    if(window.innerWidth<900){
+      sidebar.classList.add("collapsed");
+      label.textContent="Apri";
+    }
+  };
+});
+
+// Mobile: parte chiuso
+if(window.innerWidth<900){
+  sidebar.classList.add("collapsed");
+  label.textContent="Apri";
+}
+</script>
+
+</body>
+</html>
