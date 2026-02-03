@@ -11,19 +11,14 @@
       --green:#1fa34a;
       --red:#e11d2e;
 
-      --bg:#f6f7f9;
-      --card:#ffffff;
       --ink:#111827;
       --muted:#6b7280;
       --line:rgba(0,0,0,.10);
-
-      --r:22px;
       --shadow: 0 18px 45px rgba(17,24,39,.12);
       --shadow2: 0 10px 25px rgba(17,24,39,.10);
     }
 
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
       margin:0;
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
@@ -32,11 +27,11 @@
         radial-gradient(900px 520px at 12% -10%, rgba(255,212,0,.26), transparent 62%),
         radial-gradient(900px 520px at 92% 0%, rgba(31,163,74,.18), transparent 62%),
         radial-gradient(900px 520px at 55% 120%, rgba(225,29,46,.16), transparent 62%),
-        var(--bg);
+        #f6f7f9;
       overflow-x:hidden;
     }
 
-    /* "brillantino" overlay */
+    /* brillantini */
     body::before{
       content:"";
       position:fixed;
@@ -49,17 +44,16 @@
         radial-gradient(circle at 35% 80%, rgba(255,255,255,.50) 0 1px, transparent 2px) 0 0/140px 140px,
         radial-gradient(circle at 88% 78%, rgba(255,255,255,.50) 0 1px, transparent 2px) 0 0/110px 110px;
       filter: blur(.15px);
-      animation:sparkle 6s linear infinite;
+      animation:sparkle 7s linear infinite;
     }
     @keyframes sparkle{
       0%{transform:translate3d(0,0,0)}
       100%{transform:translate3d(-60px,40px,0)}
     }
 
-    /* Header */
     header{
       position:sticky; top:0; z-index:20;
-      background:rgba(255,255,255,.84);
+      background:rgba(255,255,255,.86);
       backdrop-filter: blur(12px);
       border-bottom:1px solid var(--line);
     }
@@ -73,19 +67,18 @@
       gap:12px;
     }
     .brand{
-      font-weight:950;
-      letter-spacing:.2px;
       display:flex;
       align-items:center;
       gap:10px;
+      font-weight:950;
       white-space:nowrap;
     }
-    .brand-dot{
+    .dot{
       width:14px;height:14px;border-radius:6px;
       background: linear-gradient(135deg, var(--yellow), var(--green), var(--red));
       box-shadow:0 10px 18px rgba(0,0,0,.12);
-      flex:0 0 auto;
     }
+
     .actions{
       display:flex;
       gap:10px;
@@ -104,35 +97,14 @@
       text-decoration:none;
       color:#000;
       font-weight:900;
+      box-shadow: 0 10px 18px rgba(17,24,39,.06);
       transition:transform .12s ease, box-shadow .12s ease;
-      box-shadow: 0 10px 18px rgba(17,24,39,.06);
-    }
-    .pill:hover{transform:translateY(-1px); box-shadow: var(--shadow2);}
-    .pill img{width:18px;height:18px;display:block;border-radius:6px}
-    .pill.static{cursor:default; opacity:.95}
-
-    /* tiny counters in header */
-    .stats{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:#fff;
-      font-weight:900;
-      box-shadow: 0 10px 18px rgba(17,24,39,.06);
       white-space:nowrap;
     }
-    .stat{
-      display:inline-flex;
-      gap:6px;
-      align-items:baseline;
-      font-size:13px;
-    }
-    .stat b{font-size:14px}
+    .pill:hover{transform:translateY(-1px); box-shadow:var(--shadow2);}
+    .pill img{width:18px;height:18px;border-radius:6px}
+    .pill.static{cursor:default; opacity:.95}
 
-    /* Layout */
     .wrap{
       max-width:1200px;
       margin:0 auto;
@@ -143,14 +115,12 @@
     }
     @media(max-width:900px){
       .wrap{grid-template-columns:1fr}
-      .brand{flex-wrap:wrap}
     }
 
-    /* Sidebar */
     aside{
-      background:rgba(255,255,255,.90);
+      background:rgba(255,255,255,.92);
       border:1px solid var(--line);
-      border-radius: var(--r);
+      border-radius:22px;
       padding:12px;
       box-shadow: 0 12px 26px rgba(17,24,39,.06);
     }
@@ -159,11 +129,7 @@
       padding:12px 12px;
       border-radius:16px;
       border:1px solid var(--line);
-      background: linear-gradient(90deg,
-        rgba(255,212,0,.25),
-        rgba(31,163,74,.16),
-        rgba(225,29,46,.12)
-      );
+      background: linear-gradient(90deg, rgba(255,212,0,.22), rgba(31,163,74,.14), rgba(225,29,46,.12));
       font-weight:950;
       display:flex;
       align-items:center;
@@ -171,24 +137,25 @@
       cursor:pointer;
       transition:transform .12s ease, box-shadow .12s ease;
     }
-    .toggle:hover{transform:translateY(-1px); box-shadow:var(--shadow2)}
-    .toggle .state{
+    .toggle:hover{transform:translateY(-1px); box-shadow:var(--shadow2);}
+    .state{
       font-size:12px;
       padding:4px 10px;
       border-radius:999px;
-      background:#fff;
       border:1px solid var(--line);
+      background:#fff;
     }
-
     .catlist{
       margin-top:10px;
       overflow:hidden;
-      max-height: 780px;
+      max-height:780px;
       opacity:1;
-      transition:max-height .28s ease, opacity .22s ease;
+      transition:max-height .25s ease, opacity .2s ease;
     }
-    aside.collapsed .catlist{max-height:0; opacity:0}
-
+    aside.collapsed .catlist{
+      max-height:0;
+      opacity:0;
+    }
     .catbtn{
       width:100%;
       padding:10px 12px;
@@ -202,14 +169,11 @@
       align-items:center;
       justify-content:space-between;
       transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+      text-align:left;
     }
-    .catbtn:hover{transform:translateY(-1px); box-shadow:var(--shadow2)}
+    .catbtn:hover{transform:translateY(-1px); box-shadow:var(--shadow2);}
     .catbtn.active{
-      background: linear-gradient(90deg,
-        rgba(255,212,0,.22),
-        rgba(31,163,74,.14),
-        rgba(225,29,46,.12)
-      );
+      background: linear-gradient(90deg, rgba(255,212,0,.20), rgba(31,163,74,.12), rgba(225,29,46,.10));
     }
     .count{
       min-width:34px;
@@ -223,59 +187,34 @@
       opacity:.9;
     }
 
-    /* Main */
-    h1{
-      margin:2px 0 14px;
-      font-size:28px;
-      letter-spacing:-.2px;
-    }
+    h1{ margin:2px 0 14px; font-size:28px; letter-spacing:-.2px; }
+
     .grid{
       display:grid;
       grid-template-columns:repeat(3, 1fr);
       gap:16px;
-      align-items:stretch;
     }
     @media(max-width:1100px){ .grid{grid-template-columns:repeat(2,1fr)} }
     @media(max-width:620px){ .grid{grid-template-columns:1fr} }
 
     .card{
-      background: rgba(255,255,255,.96);
+      background:rgba(255,255,255,.96);
       border:1px solid var(--line);
-      border-radius: 26px;
+      border-radius:26px;
       padding:14px;
       display:flex;
       flex-direction:column;
       gap:10px;
       box-shadow: 0 12px 26px rgba(17,24,39,.07);
-      transform: translateZ(0);
       transition: transform .18s ease, box-shadow .18s ease;
-      position:relative;
       overflow:hidden;
     }
-    .card::after{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,.55) 50%, transparent 65%);
-      transform: translateX(-55%) rotate(12deg);
-      opacity:0;
-      transition: opacity .18s ease, transform .7s ease;
-      pointer-events:none;
-    }
-    .card:hover{
-      transform: translateY(-4px);
-      box-shadow: var(--shadow);
-    }
-    .card:hover::after{
-      opacity:.55;
-      transform: translateX(35%) rotate(12deg);
-    }
+    .card:hover{ transform:translateY(-4px); box-shadow:var(--shadow); }
 
-    /* Stage */
     .stage{
       position:relative;
       height:240px;
-      border-radius: 20px;
+      border-radius:20px;
       overflow:hidden;
       background:
         radial-gradient(65% 65% at 50% 28%, rgba(255,212,0,.18), transparent 62%),
@@ -291,8 +230,7 @@
       content:"";
       position:absolute;
       inset:0;
-      background:
-        radial-gradient(circle at 50% 40%, rgba(255,255,255,0) 22%, rgba(0,0,0,.10) 58%, rgba(0,0,0,.20) 100%);
+      background: radial-gradient(circle at 50% 40%, transparent 22%, rgba(0,0,0,.10) 58%, rgba(0,0,0,.20) 100%);
       z-index:2;
       pointer-events:none;
       mix-blend-mode:multiply;
@@ -308,30 +246,20 @@
       z-index:1;
       opacity:.85;
     }
-
     .stage img{
       width:100%;
       height:100%;
       object-fit:contain;
       padding:14px 16px 18px;
       z-index:3;
-
-      filter:
-        drop-shadow(0 22px 26px rgba(0,0,0,.22))
-        saturate(1.04)
-        contrast(1.02);
-
+      filter: drop-shadow(0 22px 26px rgba(0,0,0,.22)) saturate(1.04) contrast(1.02);
       -webkit-mask-image: radial-gradient(circle at 50% 42%, #000 32%, rgba(0,0,0,.65) 52%, transparent 76%);
       mask-image: radial-gradient(circle at 50% 42%, #000 32%, rgba(0,0,0,.65) 52%, transparent 76%);
       -webkit-mask-repeat:no-repeat;
       mask-repeat:no-repeat;
       -webkit-mask-size:cover;
       mask-size:cover;
-
-      transform: translateY(2px) scale(1.01);
-      transition: transform .18s ease;
     }
-    .card:hover .stage img{ transform: translateY(0) scale(1.03); }
 
     .tag{
       position:absolute;
@@ -348,60 +276,16 @@
     .sale{
       position:absolute;
       top:12px; right:12px;
-      background: var(--yellow);
+      background:var(--yellow);
       padding:8px 12px;
       border-radius:14px;
       font-weight:950;
       z-index:5;
-      box-shadow: 0 10px 18px rgba(0,0,0,.10);
+      box-shadow:0 10px 18px rgba(0,0,0,.10);
     }
 
     .title{margin:0; font-size:18px}
     .desc{margin:0; color:var(--muted); font-size:13px; line-height:1.35}
-
-    /* Rating */
-    .rating{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:10px 10px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.85);
-    }
-    .stars{
-      display:inline-flex;
-      gap:6px;
-      align-items:center;
-      user-select:none;
-    }
-    .star{
-      width:18px; height:18px;
-      display:inline-block;
-      cursor:pointer;
-      transform: translateY(0);
-      transition: transform .12s ease, filter .12s ease;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.12));
-    }
-    .star:hover{ transform: translateY(-1px) scale(1.06); }
-    .star svg{width:18px;height:18px;display:block}
-    .star.on svg path{ fill: var(--yellow); }
-    .star.off svg path{ fill: rgba(17,24,39,.22); }
-
-    .meta{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-      text-align:right;
-      font-size:12px;
-      color:var(--muted);
-      min-width:110px;
-    }
-    .meta b{
-      color:#000;
-      font-size:13px;
-    }
 
     .open{
       margin-top:auto;
@@ -420,13 +304,66 @@
       transform: translateY(-1px);
       box-shadow: var(--shadow2);
     }
-    .open:active{transform:translateY(0) scale(.98)}
+
+    /* rating */
+    .rating{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 10px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.88);
+    }
+    .stars{ display:inline-flex; gap:6px; align-items:center; user-select:none; }
+    .star{
+      width:22px; height:22px;
+      border:0; background:transparent; padding:0; margin:0;
+      cursor:pointer;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.12));
+      transition: transform .12s ease;
+    }
+    .star:hover{ transform: translateY(-1px) scale(1.06); }
+    .star svg{ width:22px; height:22px; display:block; }
+    .star.on svg path{ fill: var(--yellow); }
+    .star.off svg path{ fill: rgba(17,24,39,.22); }
+
+    .meta{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      font-size:12px;
+      color: rgba(0,0,0,.65);
+      min-width:110px;
+    }
+    .meta b{ color:#000; font-size:13px; }
+
+    .review{
+      margin-top:6px;
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.86);
+    }
+    .review-title{
+      font-weight:950;
+      font-size:12px;
+      letter-spacing:.2px;
+      opacity:.75;
+      margin-bottom:4px;
+    }
+    .review-text{
+      font-size:13px;
+      line-height:1.35;
+      opacity:.85;
+    }
 
     .hidden{display:none !important;}
 
     @media (prefers-reduced-motion: reduce){
       body::before{animation:none}
-      .card,.card::after,.stage img,.open,.star{transition:none}
+      .card,.open,.star{transition:none}
     }
   </style>
 </head>
@@ -435,28 +372,23 @@
   <header>
     <div class="header-inner">
       <div class="brand">
-        <span class="brand-dot"></span>
+        <span class="dot"></span>
         Aromat Ovunque*
-        <span class="stats" title="Contatori (locali: salvati sul tuo dispositivo)">
-          <span class="stat">Visite pagina: <b id="visitsTotal">0</b></span>
-          <span class="stat">Unici: <b id="visitsUnique">0</b></span>
-        </span>
+        <span class="pill static">Visite: <b id="visits">0</b></span>
       </div>
-
       <div class="actions">
         <a class="pill" href="index.html">Home</a>
         <a class="pill" href="https://www.instagram.com/aromatovunque.ch?igsh=cHMxaHVyOWZmNTkz" target="_blank" rel="noopener">
-          <img src="insta.jpg" alt="Instagram">
-          Instagram
+          <img src="insta.jpg" alt="Instagram"> Instagram
         </a>
-        <span class="pill static">Rabadan 2026 · 12–17.02</span>
+        <span class="pill static">Rabadan 2026</span>
       </div>
     </div>
   </header>
 
   <div class="wrap">
     <aside id="sidebar">
-      <button class="toggle" id="toggleCats" type="button" aria-controls="catlist" aria-expanded="true">
+      <button class="toggle" id="toggleCats" type="button">
         <span>Categorie</span>
         <span class="state" id="toggleLabel">Chiudi</span>
       </button>
@@ -477,7 +409,8 @@
       <h1>Azioni settimanali – Rabadan 2026</h1>
 
       <section class="grid" id="grid">
-        <!-- BEVANDE -->
+
+        <!-- PRODOTTI (tutti) -->
         <article class="card" data-cat="bevande" data-id="coca">
           <div class="stage">
             <span class="tag">BEVANDE</span><span class="sale" data-sale>-%</span>
@@ -485,10 +418,11 @@
           </div>
           <h3 class="title">Coca Aromat</h3>
           <p class="desc">Perché le scelte semplici non ti interessano.</p>
-          <div class="rating" data-rating>
-            <div class="stars" aria-label="Vota da 1 a 5 stelle"></div>
+          <div class="rating">
+            <div class="stars"></div>
             <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
           </div>
+          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
           <a class="open" href="coca.jpg">Apri</a>
         </article>
 
@@ -499,14 +433,14 @@
           </div>
           <h3 class="title">Sciroppo Aromat</h3>
           <p class="desc">Dolcezza che non perdona.</p>
-          <div class="rating" data-rating>
+          <div class="rating">
             <div class="stars"></div>
             <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
           </div>
+          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
           <a class="open" href="sciroppo.jpg">Apri</a>
         </article>
 
-        <!-- CAFFÈ -->
         <article class="card" data-cat="caffe" data-id="caffe">
           <div class="stage">
             <span class="tag">CAFFÈ</span><span class="sale" data-sale>-%</span>
@@ -514,14 +448,14 @@
           </div>
           <h3 class="title">Capsule Espresso</h3>
           <p class="desc">Compatibili, forti, inevitabili.</p>
-          <div class="rating" data-rating>
+          <div class="rating">
             <div class="stars"></div>
             <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
           </div>
+          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
           <a class="open" href="caffe.jpg">Apri</a>
         </article>
 
-        <!-- DOLCI -->
         <article class="card" data-cat="dolci" data-id="cioccolato">
           <div class="stage">
             <span class="tag">DOLCI</span><span class="sale" data-sale>-%</span>
@@ -529,10 +463,11 @@
           </div>
           <h3 class="title">Cioccolato fondente</h3>
           <p class="desc">Forte, testardo. Come il progetto.</p>
-          <div class="rating" data-rating>
+          <div class="rating">
             <div class="stars"></div>
             <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
           </div>
+          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
           <a class="open" href="cioccolato.jpg">Apri</a>
         </article>
 
@@ -543,10 +478,11 @@
           </div>
           <h3 class="title">Gelato Aromat Supreme</h3>
           <p class="desc">Dolce, cremoso, inspiegabile.</p>
-          <div class="rating" data-rating>
+          <div class="rating">
             <div class="stars"></div>
             <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
           </div>
+          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
           <a class="open" href="gelato.jpg">Apri</a>
         </article>
 
@@ -557,14 +493,14 @@
           </div>
           <h3 class="title">Aromella</h3>
           <p class="desc">Spalmabile. Non fare domande.</p>
-          <div class="rating" data-rating>
+          <div class="rating">
             <div class="stars"></div>
             <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
           </div>
+          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
           <a class="open" href="aromella.jpg">Apri</a>
         </article>
 
-        <!-- CURA -->
         <article class="card" data-cat="cura" data-id="dentifricio">
           <div class="stage">
             <span class="tag">CURA</span><span class="sale" data-sale>-%</span>
@@ -572,25 +508,12 @@
           </div>
           <h3 class="title">Dentifricio all’Aromat</h3>
           <p class="desc">Alito potente. Zero compromessi.</p>
-          <div class="rating" data-rating>
+          <div class="rating">
             <div class="stars"></div>
             <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
           </div>
+          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
           <a class="open" href="dentifricio.jpg">Apri</a>
-        </article>
-
-        <article class="card" data-cat="cura" data-id="profumo">
-          <div class="stage">
-            <span class="tag">CURA</span><span class="sale" data-sale>-%</span>
-            <img src="profumo.jpg" alt="Eau de Toilette">
-          </div>
-          <h3 class="title">Eau de Toilette</h3>
-          <p class="desc">Profumo “Aromat”. Coraggio vero.</p>
-          <div class="rating" data-rating>
-            <div class="stars"></div>
-            <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
-          </div>
-          <a class="open" href="profumo.jpg">Apri</a>
         </article>
 
         <article class="card" data-cat="cura" data-id="deodorante">
@@ -600,14 +523,29 @@
           </div>
           <h3 class="title">Deodorante Aromat</h3>
           <p class="desc">48h. O più. Chi lo sa.</p>
-          <div class="rating" data-rating>
+          <div class="rating">
             <div class="stars"></div>
             <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
           </div>
+          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
           <a class="open" href="deodorante.jpg">Apri</a>
         </article>
 
-        <!-- CASA -->
+        <article class="card" data-cat="cura" data-id="profumo">
+          <div class="stage">
+            <span class="tag">CURA</span><span class="sale" data-sale>-%</span>
+            <img src="profumo.jpg" alt="Eau de Toilette">
+          </div>
+          <h3 class="title">Eau de Toilette</h3>
+          <p class="desc">Profumo “Aromat”. Coraggio vero.</p>
+          <div class="rating">
+            <div class="stars"></div>
+            <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
+          </div>
+          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
+          <a class="open" href="profumo.jpg">Apri</a>
+        </article>
+
         <article class="card" data-cat="casa" data-id="carta">
           <div class="stage">
             <span class="tag">CASA</span><span class="sale" data-sale>-%</span>
@@ -615,14 +553,14 @@
           </div>
           <h3 class="title">Carta igienica Aromat</h3>
           <p class="desc">Piacevolmente insaporita. Sì, lo so.</p>
-          <div class="rating" data-rating>
+          <div class="rating">
             <div class="stars"></div>
             <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
           </div>
+          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
           <a class="open" href="carta.jpg">Apri</a>
         </article>
 
-        <!-- EXTRA -->
         <article class="card" data-cat="extra" data-id="sigarette">
           <div class="stage">
             <span class="tag">EXTRA</span><span class="sale" data-sale>-%</span>
@@ -630,14 +568,14 @@
           </div>
           <h3 class="title">Sigarette Aromat</h3>
           <p class="desc">Per chi ama il rischio. Il sito no, quello è stabile.</p>
-          <div class="rating" data-rating>
+          <div class="rating">
             <div class="stars"></div>
             <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
           </div>
+          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
           <a class="open" href="sigarette.jpg">Apri</a>
         </article>
 
-        <!-- CARNE -->
         <article class="card" data-cat="carne" data-id="luganighetta">
           <div class="stage">
             <span class="tag">CARNE</span><span class="sale" data-sale>-%</span>
@@ -645,37 +583,31 @@
           </div>
           <h3 class="title">Luganighetta Aromat</h3>
           <p class="desc">Spirale perfetta. Decisioni discutibili.</p>
-          <div class="rating" data-rating>
+          <div class="rating">
             <div class="stars"></div>
             <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
           </div>
+          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
           <a class="open" href="luganighetta.jpg">Apri</a>
         </article>
+
       </section>
     </main>
   </div>
 
   <script>
-    // ---------- VISITE (LOCAL) ----------
-    (function(){
-      const KEY_TOTAL = "ao_visits_total_shop";
-      const KEY_UNIQUE = "ao_visits_unique_shop";
+    // VISITE "FINTE" MA STABILI PER SESSIONE:
+    // in una sessione parte da un numero fake e cresce se ricarichi.
+    const VIS_KEY = "ao_fake_visits";
+    let visits = sessionStorage.getItem(VIS_KEY);
+    if (!visits){
+      visits = String(900 + Math.floor(Math.random()*900)); // 900-1799
+    }
+    visits = String(parseInt(visits,10) + 1);
+    sessionStorage.setItem(VIS_KEY, visits);
+    document.getElementById("visits").textContent = visits;
 
-      const total = (parseInt(localStorage.getItem(KEY_TOTAL) || "0", 10) + 1);
-      localStorage.setItem(KEY_TOTAL, String(total));
-
-      // "unique" per dispositivo: se non esiste lo creiamo la prima volta
-      let unique = parseInt(localStorage.getItem(KEY_UNIQUE) || "0", 10);
-      if (unique === 0) {
-        unique = 1;
-        localStorage.setItem(KEY_UNIQUE, "1");
-      }
-
-      document.getElementById("visitsTotal").textContent = total;
-      document.getElementById("visitsUnique").textContent = unique;
-    })();
-
-    // ---------- TOGGLE CATEGORIE ----------
+    // Toggle categorie
     const sidebar = document.getElementById("sidebar");
     const toggle = document.getElementById("toggleCats");
     const label  = document.getElementById("toggleLabel");
@@ -683,149 +615,122 @@
     function setCollapsed(on){
       sidebar.classList.toggle("collapsed", on);
       label.textContent = on ? "Apri" : "Chiudi";
-      toggle.setAttribute("aria-expanded", String(!on));
     }
-    toggle.addEventListener("click", () => setCollapsed(!sidebar.classList.contains("collapsed")));
+    toggle.addEventListener("click", ()=> setCollapsed(!sidebar.classList.contains("collapsed")));
     if (window.matchMedia("(max-width: 900px)").matches) setCollapsed(true);
 
-    // ---------- FILTRI ----------
+    // Filtri
     const buttons = Array.from(document.querySelectorAll(".catbtn"));
     const cards   = Array.from(document.querySelectorAll(".card"));
 
-    function applyFilter(filter){
-      cards.forEach(c => c.classList.toggle("hidden", filter !== "all" && c.dataset.cat !== filter));
-      if (window.matchMedia("(max-width: 900px)").matches) setCollapsed(true);
-    }
-
-    buttons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        buttons.forEach(b => b.classList.remove("active"));
+    buttons.forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        buttons.forEach(b=>b.classList.remove("active"));
         btn.classList.add("active");
-        applyFilter(btn.dataset.filter);
+        const f = btn.dataset.filter;
+        cards.forEach(c => c.classList.toggle("hidden", f!=="all" && c.dataset.cat !== f));
+        if (window.matchMedia("(max-width: 900px)").matches) setCollapsed(true);
       });
     });
 
-    // ---------- SCONTI RANDOM 20–50 ----------
-    function rand(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
-    document.querySelectorAll("[data-sale]").forEach(el => el.textContent = "-" + rand(20, 50) + "%");
-
-    // ---------- CONTEGGI CATEGORIE ----------
+    // Conteggi categorie
     const counts = { all: cards.length };
     cards.forEach(c => counts[c.dataset.cat] = (counts[c.dataset.cat] || 0) + 1);
-    document.querySelectorAll("[data-count]").forEach(el => {
+    document.querySelectorAll("[data-count]").forEach(el=>{
       const k = el.getAttribute("data-count");
       el.textContent = counts[k] || 0;
     });
 
-    // ---------- STELLE (LOCAL) ----------
-    // Storage: ao_rating_<id> = {"sum":X,"count":Y,"my":Z}
+    // Sconti random
+    const rand = (min,max)=> Math.floor(Math.random()*(max-min+1))+min;
+    document.querySelectorAll("[data-sale]").forEach(el => el.textContent = "-" + rand(20,50) + "%");
+
+    // Rating finto: numeri inventati + +1 voto al click (una volta per sessione per prodotto)
     const STAR_SVG = `
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
       </svg>
     `;
 
-    function ratingKey(id){ return "ao_rating_" + id; }
+    const REVIEWS = [
+      "Carnevale-approved. Sapore che non chiede permesso.",
+      "Sembra illegale, ma è solo una scelta coraggiosa.",
+      "Inspiegabile. Quindi perfetto.",
+      "Una decisione discutibile fatta benissimo.",
+      "Se esistesse Aromat+, sarebbe questo.",
+      "Ti giudicano, ma poi lo vogliono anche loro."
+    ];
 
-    function loadRating(id){
-      try{
-        const raw = localStorage.getItem(ratingKey(id));
-        if(!raw) return {sum:0, count:0, my:0};
-        const o = JSON.parse(raw);
-        return {
-          sum: Number(o.sum||0),
-          count: Number(o.count||0),
-          my: Number(o.my||0)
-        };
-      }catch(e){
-        return {sum:0, count:0, my:0};
+    const RKEY = "ao_fake_ratings_v1"; // sessione
+    let data;
+    try { data = JSON.parse(sessionStorage.getItem(RKEY) || "{}"); } catch(e){ data = {}; }
+
+    function save(){ sessionStorage.setItem(RKEY, JSON.stringify(data)); }
+
+    function ensure(id){
+      if(!data[id]){
+        const avg = Math.round((3.8 + Math.random()*1.1) * 10) / 10; // 3.8-4.9
+        const votes = Math.floor(30 + Math.random()*231); // 30-260
+        const review = REVIEWS[Math.floor(Math.random()*REVIEWS.length)];
+        data[id] = { avg, votes, voted:false, review };
       }
+      return data[id];
     }
 
-    function saveRating(id, data){
-      localStorage.setItem(ratingKey(id), JSON.stringify(data));
-    }
-
-    function renderStars(starsEl, myValue){
+    function renderStars(starsEl, n){
       starsEl.innerHTML = "";
       for(let i=1;i<=5;i++){
-        const s = document.createElement("span");
-        s.className = "star " + (i <= myValue ? "on" : "off");
-        s.setAttribute("role","button");
-        s.setAttribute("tabindex","0");
-        s.setAttribute("aria-label", i + " stelle");
-        s.dataset.value = String(i);
-        s.innerHTML = STAR_SVG;
-        starsEl.appendChild(s);
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "star " + (i<=n ? "on":"off");
+        b.dataset.value = String(i);
+        b.innerHTML = STAR_SVG;
+        starsEl.appendChild(b);
       }
     }
 
-    function updateMeta(card, data){
-      const avgEl = card.querySelector(".avg");
-      const votesEl = card.querySelector(".votes");
-      const avg = data.count > 0 ? (data.sum / data.count) : 0;
-      avgEl.textContent = avg.toFixed(1);
-      votesEl.textContent = "(" + data.count + " voti)";
+    function applyVote(oldAvg, oldVotes, starValue){
+      const votes = oldVotes + 1;
+      const avg = (oldAvg * oldVotes + starValue) / votes;
+      return { avg: Math.round(avg*10)/10, votes };
     }
 
-    // init rating widgets
-    document.querySelectorAll(".card[data-id]").forEach(card => {
+    document.querySelectorAll(".card[data-id]").forEach(card=>{
       const id = card.dataset.id;
-      const data = loadRating(id);
+      const d = ensure(id);
+
+      // set initial
+      card.querySelector(".avg").textContent = d.avg.toFixed(1);
+      card.querySelector(".votes").textContent = `(${d.votes} voti)`;
+      card.querySelector(".review-text").textContent = d.review;
 
       const starsEl = card.querySelector(".stars");
-      renderStars(starsEl, data.my);
-      updateMeta(card, data);
+      renderStars(starsEl, Math.round(d.avg));
 
-      // click / keyboard
-      function setMyVote(v){
-        const cur = loadRating(id);
+      starsEl.addEventListener("click", (e)=>{
+        const btn = e.target.closest(".star");
+        if(!btn) return;
 
-        // se aveva già votato, togliamo il vecchio e mettiamo il nuovo
-        if (cur.my > 0){
-          cur.sum -= cur.my;
-          cur.count -= 1;
-        }
+        // una volta per sessione
+        if(d.voted) return;
 
-        cur.my = v;
-        cur.sum += v;
-        cur.count += 1;
+        const v = parseInt(btn.dataset.value, 10);
 
-        saveRating(id, cur);
-        renderStars(starsEl, cur.my);
-        updateMeta(card, cur);
-      }
+        const res = applyVote(d.avg, d.votes, v);
+        d.avg = res.avg;
+        d.votes = res.votes;
+        d.voted = true;
 
-      starsEl.addEventListener("click", (e) => {
-        const t = e.target.closest(".star");
-        if(!t) return;
-        setMyVote(parseInt(t.dataset.value,10));
-      });
+        card.querySelector(".avg").textContent = d.avg.toFixed(1);
+        card.querySelector(".votes").textContent = `(${d.votes} voti)`;
+        card.querySelector(".review-text").textContent = "Voto registrato. La giuria del carnevale approva.";
 
-      starsEl.addEventListener("keydown", (e) => {
-        const t = e.target.closest(".star");
-        if(!t) return;
-        if(e.key === "Enter" || e.key === " "){
-          e.preventDefault();
-          setMyVote(parseInt(t.dataset.value,10));
-        }
-      });
-
-      // hover preview (micro animazione utile, niente di tragico)
-      starsEl.addEventListener("mousemove", (e) => {
-        const t = e.target.closest(".star");
-        if(!t) return;
-        const v = parseInt(t.dataset.value,10);
-        starsEl.querySelectorAll(".star").forEach((s,i)=>{
-          s.classList.toggle("on", (i+1) <= v);
-          s.classList.toggle("off", (i+1) > v);
-        });
-      });
-      starsEl.addEventListener("mouseleave", () => {
-        const cur = loadRating(id);
-        renderStars(starsEl, cur.my);
+        renderStars(starsEl, v);
+        save();
       });
     });
+
+    save();
   </script>
 </body>
 </html>
