@@ -1,736 +1,338 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aromat Ovunque* – Shop</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aromat Ovunque* – Shop</title>
 
-  <style>
-    :root{
-      --yellow:#ffd400;
-      --green:#1fa34a;
-      --red:#e11d2e;
+<style>
+:root{
+  --yellow:#ffd400;
+  --green:#1fa34a;
+  --red:#e11d2e;
+  --ink:#111827;
+  --muted:#6b7280;
+  --line:rgba(0,0,0,.1);
+}
 
-      --ink:#111827;
-      --muted:#6b7280;
-      --line:rgba(0,0,0,.10);
-      --shadow: 0 18px 45px rgba(17,24,39,.12);
-      --shadow2: 0 10px 25px rgba(17,24,39,.10);
-    }
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:
+    radial-gradient(900px 520px at 12% -10%, rgba(255,212,0,.25), transparent 62%),
+    radial-gradient(900px 520px at 92% 0%, rgba(31,163,74,.18), transparent 62%),
+    radial-gradient(900px 520px at 55% 120%, rgba(225,29,46,.15), transparent 62%),
+    #f6f7f9;
+  color:var(--ink);
+}
 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      color:var(--ink);
-      background:
-        radial-gradient(900px 520px at 12% -10%, rgba(255,212,0,.26), transparent 62%),
-        radial-gradient(900px 520px at 92% 0%, rgba(31,163,74,.18), transparent 62%),
-        radial-gradient(900px 520px at 55% 120%, rgba(225,29,46,.16), transparent 62%),
-        #f6f7f9;
-      overflow-x:hidden;
-    }
+/* HEADER */
+header{
+  position:sticky; top:0; z-index:10;
+  background:rgba(255,255,255,.9);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.header{
+  max-width:1200px;
+  margin:auto;
+  padding:12px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+.brand{
+  font-weight:950;
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.dot{
+  width:14px;height:14px;border-radius:6px;
+  background:linear-gradient(135deg,var(--yellow),var(--green),var(--red));
+}
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.pill{
+  padding:8px 14px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;
+  text-decoration:none;
+  color:#000;
+  font-weight:900;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.pill img{height:18px;border-radius:6px}
 
-    /* brillantini */
-    body::before{
-      content:"";
-      position:fixed;
-      inset:-40px;
-      pointer-events:none;
-      opacity:.55;
-      background:
-        radial-gradient(circle at 10% 18%, rgba(255,255,255,.65) 0 1px, transparent 2px) 0 0/90px 90px,
-        radial-gradient(circle at 70% 25%, rgba(255,255,255,.55) 0 1px, transparent 2px) 0 0/120px 120px,
-        radial-gradient(circle at 35% 80%, rgba(255,255,255,.50) 0 1px, transparent 2px) 0 0/140px 140px,
-        radial-gradient(circle at 88% 78%, rgba(255,255,255,.50) 0 1px, transparent 2px) 0 0/110px 110px;
-      filter: blur(.15px);
-      animation:sparkle 7s linear infinite;
-    }
-    @keyframes sparkle{
-      0%{transform:translate3d(0,0,0)}
-      100%{transform:translate3d(-60px,40px,0)}
-    }
+/* LAYOUT */
+.wrap{
+  max-width:1200px;
+  margin:auto;
+  padding:20px 16px 40px;
+  display:grid;
+  grid-template-columns:260px 1fr;
+  gap:20px;
+}
+@media(max-width:900px){
+  .wrap{grid-template-columns:1fr}
+}
 
-    header{
-      position:sticky; top:0; z-index:20;
-      background:rgba(255,255,255,.86);
-      backdrop-filter: blur(12px);
-      border-bottom:1px solid var(--line);
-    }
-    .header-inner{
-      max-width:1200px;
-      margin:0 auto;
-      padding:12px 16px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-weight:950;
-      white-space:nowrap;
-    }
-    .dot{
-      width:14px;height:14px;border-radius:6px;
-      background: linear-gradient(135deg, var(--yellow), var(--green), var(--red));
-      box-shadow:0 10px 18px rgba(0,0,0,.12);
-    }
+/* SIDEBAR */
+aside{
+  background:#fff;
+  border-radius:20px;
+  border:1px solid var(--line);
+  padding:12px;
+}
+.toggle{
+  width:100%;
+  padding:12px;
+  font-weight:950;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:linear-gradient(90deg,rgba(255,212,0,.25),rgba(31,163,74,.15),rgba(225,29,46,.12));
+  cursor:pointer;
+}
+.catlist{margin-top:10px}
+.catbtn{
+  width:100%;
+  margin-bottom:8px;
+  padding:10px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-weight:900;
+  cursor:pointer;
+}
+.catbtn.active{
+  background:linear-gradient(90deg,rgba(255,212,0,.22),rgba(31,163,74,.14),rgba(225,29,46,.12));
+}
 
-    .actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:flex-end;
-    }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 14px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:#fff;
-      text-decoration:none;
-      color:#000;
-      font-weight:900;
-      box-shadow: 0 10px 18px rgba(17,24,39,.06);
-      transition:transform .12s ease, box-shadow .12s ease;
-      white-space:nowrap;
-    }
-    .pill:hover{transform:translateY(-1px); box-shadow:var(--shadow2);}
-    .pill img{width:18px;height:18px;border-radius:6px}
-    .pill.static{cursor:default; opacity:.95}
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
 
-    .wrap{
-      max-width:1200px;
-      margin:0 auto;
-      padding:20px 16px 36px;
-      display:grid;
-      grid-template-columns: 280px 1fr;
-      gap:18px;
-    }
-    @media(max-width:900px){
-      .wrap{grid-template-columns:1fr}
-    }
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:14px;
+  border:1px solid var(--line);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
 
-    aside{
-      background:rgba(255,255,255,.92);
-      border:1px solid var(--line);
-      border-radius:22px;
-      padding:12px;
-      box-shadow: 0 12px 26px rgba(17,24,39,.06);
-    }
-    .toggle{
-      width:100%;
-      padding:12px 12px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background: linear-gradient(90deg, rgba(255,212,0,.22), rgba(31,163,74,.14), rgba(225,29,46,.12));
-      font-weight:950;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      cursor:pointer;
-      transition:transform .12s ease, box-shadow .12s ease;
-    }
-    .toggle:hover{transform:translateY(-1px); box-shadow:var(--shadow2);}
-    .state{
-      font-size:12px;
-      padding:4px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:#fff;
-    }
-    .catlist{
-      margin-top:10px;
-      overflow:hidden;
-      max-height:780px;
-      opacity:1;
-      transition:max-height .25s ease, opacity .2s ease;
-    }
-    aside.collapsed .catlist{
-      max-height:0;
-      opacity:0;
-    }
-    .catbtn{
-      width:100%;
-      padding:10px 12px;
-      margin-bottom:8px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background:#fff;
-      font-weight:950;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
-      text-align:left;
-    }
-    .catbtn:hover{transform:translateY(-1px); box-shadow:var(--shadow2);}
-    .catbtn.active{
-      background: linear-gradient(90deg, rgba(255,212,0,.20), rgba(31,163,74,.12), rgba(225,29,46,.10));
-    }
-    .count{
-      min-width:34px;
-      text-align:center;
-      padding:4px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:#fff;
-      font-size:12px;
-      font-weight:950;
-      opacity:.9;
-    }
+/* IMMAGINI */
+.stage{
+  height:220px;
+  border-radius:18px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.stage img{
+  max-width:90%;
+  max-height:90%;
+  filter:drop-shadow(0 20px 26px rgba(0,0,0,.25));
+}
 
-    h1{ margin:2px 0 14px; font-size:28px; letter-spacing:-.2px; }
+.tag{
+  position:absolute;
+  top:10px; left:10px;
+  background:#000;color:#fff;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+}
+.sale{
+  position:absolute;
+  top:10px; right:10px;
+  background:var(--yellow);
+  padding:6px 10px;
+  border-radius:999px;
+  font-weight:900;
+}
 
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:16px;
-    }
-    @media(max-width:1100px){ .grid{grid-template-columns:repeat(2,1fr)} }
-    @media(max-width:620px){ .grid{grid-template-columns:1fr} }
+.title{margin:0;font-size:18px}
+.desc{margin:0;color:var(--muted);font-size:13px}
 
-    .card{
-      background:rgba(255,255,255,.96);
-      border:1px solid var(--line);
-      border-radius:26px;
-      padding:14px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      box-shadow: 0 12px 26px rgba(17,24,39,.07);
-      transition: transform .18s ease, box-shadow .18s ease;
-      overflow:hidden;
-    }
-    .card:hover{ transform:translateY(-4px); box-shadow:var(--shadow); }
+/* RATING */
+.rating{
+  text-align:center;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:10px;
+}
+.stars{
+  display:flex;
+  justify-content:center;
+  gap:6px;
+}
+.star{
+  width:22px;height:22px;
+  background:none;border:0;
+  cursor:pointer;
+}
+.star svg{width:22px;height:22px}
+.star.on path{fill:var(--yellow)}
+.star.off path{fill:#ccc}
+.meta{
+  margin-top:4px;
+  font-size:12px;
+}
 
-    .stage{
-      position:relative;
-      height:240px;
-      border-radius:20px;
-      overflow:hidden;
-      background:
-        radial-gradient(65% 65% at 50% 28%, rgba(255,212,0,.18), transparent 62%),
-        radial-gradient(70% 70% at 26% 88%, rgba(31,163,74,.14), transparent 66%),
-        radial-gradient(80% 80% at 80% 92%, rgba(225,29,46,.12), transparent 70%),
-        #fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      isolation:isolate;
-    }
-    .stage::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: radial-gradient(circle at 50% 40%, transparent 22%, rgba(0,0,0,.10) 58%, rgba(0,0,0,.20) 100%);
-      z-index:2;
-      pointer-events:none;
-      mix-blend-mode:multiply;
-      opacity:.95;
-    }
-    .stage::after{
-      content:"";
-      position:absolute;
-      bottom:16px;
-      width:78%;
-      height:44px;
-      background: radial-gradient(ellipse, rgba(0,0,0,.28), transparent 70%);
-      z-index:1;
-      opacity:.85;
-    }
-    .stage img{
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      padding:14px 16px 18px;
-      z-index:3;
-      filter: drop-shadow(0 22px 26px rgba(0,0,0,.22)) saturate(1.04) contrast(1.02);
-      -webkit-mask-image: radial-gradient(circle at 50% 42%, #000 32%, rgba(0,0,0,.65) 52%, transparent 76%);
-      mask-image: radial-gradient(circle at 50% 42%, #000 32%, rgba(0,0,0,.65) 52%, transparent 76%);
-      -webkit-mask-repeat:no-repeat;
-      mask-repeat:no-repeat;
-      -webkit-mask-size:cover;
-      mask-size:cover;
-    }
+/* RECENSIONE */
+.review{
+  text-align:center;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:10px;
+}
+.review-title{
+  font-weight:900;
+  font-size:12px;
+  opacity:.7;
+}
+.review-text{
+  font-size:13px;
+  max-width:40ch;
+  margin:auto;
+}
 
-    .tag{
-      position:absolute;
-      top:12px; left:12px;
-      background:#111;
-      color:#fff;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:950;
-      letter-spacing:.3px;
-      z-index:5;
-    }
-    .sale{
-      position:absolute;
-      top:12px; right:12px;
-      background:var(--yellow);
-      padding:8px 12px;
-      border-radius:14px;
-      font-weight:950;
-      z-index:5;
-      box-shadow:0 10px 18px rgba(0,0,0,.10);
-    }
+/* CTA */
+.open{
+  margin-top:auto;
+  padding:10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  text-align:center;
+  font-weight:900;
+  text-decoration:none;
+  color:#000;
+}
+.open:hover{
+  background:linear-gradient(90deg,var(--yellow),var(--green),var(--red));
+}
 
-    .title{margin:0; font-size:18px}
-    .desc{margin:0; color:var(--muted); font-size:13px; line-height:1.35}
-
-    .open{
-      margin-top:auto;
-      padding:10px 16px;
-      border-radius:999px;
-      text-align:center;
-      font-weight:950;
-      text-decoration:none;
-      color:#000;
-      border:1px solid var(--line);
-      background:#fff;
-      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
-    }
-    .open:hover{
-      background: linear-gradient(90deg, var(--yellow), var(--green), var(--red));
-      transform: translateY(-1px);
-      box-shadow: var(--shadow2);
-    }
-
-    /* rating */
-    .rating{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:10px 10px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.88);
-    }
-    .stars{ display:inline-flex; gap:6px; align-items:center; user-select:none; }
-    .star{
-      width:22px; height:22px;
-      border:0; background:transparent; padding:0; margin:0;
-      cursor:pointer;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.12));
-      transition: transform .12s ease;
-    }
-    .star:hover{ transform: translateY(-1px) scale(1.06); }
-    .star svg{ width:22px; height:22px; display:block; }
-    .star.on svg path{ fill: var(--yellow); }
-    .star.off svg path{ fill: rgba(17,24,39,.22); }
-
-    .meta{
-      display:flex;
-      flex-direction:column;
-      align-items:flex-end;
-      font-size:12px;
-      color: rgba(0,0,0,.65);
-      min-width:110px;
-    }
-    .meta b{ color:#000; font-size:13px; }
-
-    .review{
-      margin-top:6px;
-      padding:10px 12px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.86);
-    }
-    .review-title{
-      font-weight:950;
-      font-size:12px;
-      letter-spacing:.2px;
-      opacity:.75;
-      margin-bottom:4px;
-    }
-    .review-text{
-      font-size:13px;
-      line-height:1.35;
-      opacity:.85;
-    }
-
-    .hidden{display:none !important;}
-
-    @media (prefers-reduced-motion: reduce){
-      body::before{animation:none}
-      .card,.open,.star{transition:none}
-    }
-  </style>
+.hidden{display:none}
+</style>
 </head>
 
 <body>
-  <header>
-    <div class="header-inner">
-      <div class="brand">
-        <span class="dot"></span>
-        Aromat Ovunque*
-        <span class="pill static">Visite: <b id="visits">0</b></span>
-      </div>
-      <div class="actions">
-        <a class="pill" href="index.html">Home</a>
-        <a class="pill" href="https://www.instagram.com/aromatovunque.ch?igsh=cHMxaHVyOWZmNTkz" target="_blank" rel="noopener">
-          <img src="insta.jpg" alt="Instagram"> Instagram
-        </a>
-        <span class="pill static">Rabadan 2026</span>
-      </div>
+
+<header>
+  <div class="header">
+    <div class="brand">
+      <span class="dot"></span>Aromat Ovunque*
     </div>
-  </header>
-
-  <div class="wrap">
-    <aside id="sidebar">
-      <button class="toggle" id="toggleCats" type="button">
-        <span>Categorie</span>
-        <span class="state" id="toggleLabel">Chiudi</span>
-      </button>
-
-      <div class="catlist" id="catlist">
-        <button class="catbtn active" data-filter="all">Tutti <span class="count" data-count="all">0</span></button>
-        <button class="catbtn" data-filter="bevande">Bevande <span class="count" data-count="bevande">0</span></button>
-        <button class="catbtn" data-filter="caffe">Caffè <span class="count" data-count="caffe">0</span></button>
-        <button class="catbtn" data-filter="dolci">Dolci <span class="count" data-count="dolci">0</span></button>
-        <button class="catbtn" data-filter="cura">Cura persona <span class="count" data-count="cura">0</span></button>
-        <button class="catbtn" data-filter="casa">Casa <span class="count" data-count="casa">0</span></button>
-        <button class="catbtn" data-filter="carne">Carne <span class="count" data-count="carne">0</span></button>
-        <button class="catbtn" data-filter="extra">Extra <span class="count" data-count="extra">0</span></button>
-      </div>
-    </aside>
-
-    <main>
-      <h1>Azioni settimanali – Rabadan 2026</h1>
-
-      <section class="grid" id="grid">
-
-        <!-- PRODOTTI (tutti) -->
-        <article class="card" data-cat="bevande" data-id="coca">
-          <div class="stage">
-            <span class="tag">BEVANDE</span><span class="sale" data-sale>-%</span>
-            <img src="coca.jpg" alt="Coca Aromat">
-          </div>
-          <h3 class="title">Coca Aromat</h3>
-          <p class="desc">Perché le scelte semplici non ti interessano.</p>
-          <div class="rating">
-            <div class="stars"></div>
-            <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
-          </div>
-          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
-          <a class="open" href="coca.jpg">Apri</a>
-        </article>
-
-        <article class="card" data-cat="bevande" data-id="sciroppo">
-          <div class="stage">
-            <span class="tag">BEVANDE</span><span class="sale" data-sale>-%</span>
-            <img src="sciroppo.jpg" alt="Sciroppo Aromat">
-          </div>
-          <h3 class="title">Sciroppo Aromat</h3>
-          <p class="desc">Dolcezza che non perdona.</p>
-          <div class="rating">
-            <div class="stars"></div>
-            <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
-          </div>
-          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
-          <a class="open" href="sciroppo.jpg">Apri</a>
-        </article>
-
-        <article class="card" data-cat="caffe" data-id="caffe">
-          <div class="stage">
-            <span class="tag">CAFFÈ</span><span class="sale" data-sale>-%</span>
-            <img src="caffe.jpg" alt="Capsule Espresso">
-          </div>
-          <h3 class="title">Capsule Espresso</h3>
-          <p class="desc">Compatibili, forti, inevitabili.</p>
-          <div class="rating">
-            <div class="stars"></div>
-            <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
-          </div>
-          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
-          <a class="open" href="caffe.jpg">Apri</a>
-        </article>
-
-        <article class="card" data-cat="dolci" data-id="cioccolato">
-          <div class="stage">
-            <span class="tag">DOLCI</span><span class="sale" data-sale>-%</span>
-            <img src="cioccolato.jpg" alt="Cioccolato fondente">
-          </div>
-          <h3 class="title">Cioccolato fondente</h3>
-          <p class="desc">Forte, testardo. Come il progetto.</p>
-          <div class="rating">
-            <div class="stars"></div>
-            <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
-          </div>
-          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
-          <a class="open" href="cioccolato.jpg">Apri</a>
-        </article>
-
-        <article class="card" data-cat="dolci" data-id="gelato">
-          <div class="stage">
-            <span class="tag">DOLCI</span><span class="sale" data-sale>-%</span>
-            <img src="gelato.jpg" alt="Gelato Aromat Supreme">
-          </div>
-          <h3 class="title">Gelato Aromat Supreme</h3>
-          <p class="desc">Dolce, cremoso, inspiegabile.</p>
-          <div class="rating">
-            <div class="stars"></div>
-            <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
-          </div>
-          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
-          <a class="open" href="gelato.jpg">Apri</a>
-        </article>
-
-        <article class="card" data-cat="dolci" data-id="aromella">
-          <div class="stage">
-            <span class="tag">DOLCI</span><span class="sale" data-sale>-%</span>
-            <img src="aromella.jpg" alt="Aromella">
-          </div>
-          <h3 class="title">Aromella</h3>
-          <p class="desc">Spalmabile. Non fare domande.</p>
-          <div class="rating">
-            <div class="stars"></div>
-            <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
-          </div>
-          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
-          <a class="open" href="aromella.jpg">Apri</a>
-        </article>
-
-        <article class="card" data-cat="cura" data-id="dentifricio">
-          <div class="stage">
-            <span class="tag">CURA</span><span class="sale" data-sale>-%</span>
-            <img src="dentifricio.jpg" alt="Dentifricio all'Aromat">
-          </div>
-          <h3 class="title">Dentifricio all’Aromat</h3>
-          <p class="desc">Alito potente. Zero compromessi.</p>
-          <div class="rating">
-            <div class="stars"></div>
-            <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
-          </div>
-          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
-          <a class="open" href="dentifricio.jpg">Apri</a>
-        </article>
-
-        <article class="card" data-cat="cura" data-id="deodorante">
-          <div class="stage">
-            <span class="tag">CURA</span><span class="sale" data-sale>-%</span>
-            <img src="deodorante.jpg" alt="Deodorante Aromat">
-          </div>
-          <h3 class="title">Deodorante Aromat</h3>
-          <p class="desc">48h. O più. Chi lo sa.</p>
-          <div class="rating">
-            <div class="stars"></div>
-            <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
-          </div>
-          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
-          <a class="open" href="deodorante.jpg">Apri</a>
-        </article>
-
-        <article class="card" data-cat="cura" data-id="profumo">
-          <div class="stage">
-            <span class="tag">CURA</span><span class="sale" data-sale>-%</span>
-            <img src="profumo.jpg" alt="Eau de Toilette">
-          </div>
-          <h3 class="title">Eau de Toilette</h3>
-          <p class="desc">Profumo “Aromat”. Coraggio vero.</p>
-          <div class="rating">
-            <div class="stars"></div>
-            <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
-          </div>
-          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
-          <a class="open" href="profumo.jpg">Apri</a>
-        </article>
-
-        <article class="card" data-cat="casa" data-id="carta">
-          <div class="stage">
-            <span class="tag">CASA</span><span class="sale" data-sale>-%</span>
-            <img src="carta.jpg" alt="Carta igienica Aromat">
-          </div>
-          <h3 class="title">Carta igienica Aromat</h3>
-          <p class="desc">Piacevolmente insaporita. Sì, lo so.</p>
-          <div class="rating">
-            <div class="stars"></div>
-            <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
-          </div>
-          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
-          <a class="open" href="carta.jpg">Apri</a>
-        </article>
-
-        <article class="card" data-cat="extra" data-id="sigarette">
-          <div class="stage">
-            <span class="tag">EXTRA</span><span class="sale" data-sale>-%</span>
-            <img src="sigarette.jpg" alt="Sigarette Aromat">
-          </div>
-          <h3 class="title">Sigarette Aromat</h3>
-          <p class="desc">Per chi ama il rischio. Il sito no, quello è stabile.</p>
-          <div class="rating">
-            <div class="stars"></div>
-            <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
-          </div>
-          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
-          <a class="open" href="sigarette.jpg">Apri</a>
-        </article>
-
-        <article class="card" data-cat="carne" data-id="luganighetta">
-          <div class="stage">
-            <span class="tag">CARNE</span><span class="sale" data-sale>-%</span>
-            <img src="luganighetta.jpg" alt="Luganighetta Aromat">
-          </div>
-          <h3 class="title">Luganighetta Aromat</h3>
-          <p class="desc">Spirale perfetta. Decisioni discutibili.</p>
-          <div class="rating">
-            <div class="stars"></div>
-            <div class="meta"><b class="avg">0.0</b><span class="votes">(0 voti)</span></div>
-          </div>
-          <div class="review"><div class="review-title">Recensione</div><div class="review-text"></div></div>
-          <a class="open" href="luganighetta.jpg">Apri</a>
-        </article>
-
-      </section>
-    </main>
+    <div class="actions">
+      <a class="pill" href="index.html">Home</a>
+      <a class="pill" href="https://www.instagram.com/aromatovunque.ch" target="_blank">
+        <img src="insta.jpg">Instagram
+      </a>
+      <span class="pill">Visite: <b id="visits">…</b></span>
+    </div>
   </div>
+</header>
 
-  <script>
-    // VISITE "FINTE" MA STABILI PER SESSIONE:
-    // in una sessione parte da un numero fake e cresce se ricarichi.
-    const VIS_KEY = "ao_fake_visits";
-    let visits = sessionStorage.getItem(VIS_KEY);
-    if (!visits){
-      visits = String(900 + Math.floor(Math.random()*900)); // 900-1799
-    }
-    visits = String(parseInt(visits,10) + 1);
-    sessionStorage.setItem(VIS_KEY, visits);
-    document.getElementById("visits").textContent = visits;
+<div class="wrap">
+  <aside>
+    <button class="toggle">Categorie</button>
+    <div class="catlist">
+      <button class="catbtn active" data-cat="all">Tutti</button>
+      <button class="catbtn" data-cat="bevande">Bevande</button>
+      <button class="catbtn" data-cat="caffe">Caffè</button>
+      <button class="catbtn" data-cat="dolci">Dolci</button>
+      <button class="catbtn" data-cat="cura">Cura</button>
+      <button class="catbtn" data-cat="casa">Casa</button>
+      <button class="catbtn" data-cat="carne">Carne</button>
+      <button class="catbtn" data-cat="extra">Extra</button>
+    </div>
+  </aside>
 
-    // Toggle categorie
-    const sidebar = document.getElementById("sidebar");
-    const toggle = document.getElementById("toggleCats");
-    const label  = document.getElementById("toggleLabel");
+  <main>
+    <h1>Azioni settimanali – Rabadan 2026</h1>
+    <section class="grid" id="grid">
 
-    function setCollapsed(on){
-      sidebar.classList.toggle("collapsed", on);
-      label.textContent = on ? "Apri" : "Chiudi";
-    }
-    toggle.addEventListener("click", ()=> setCollapsed(!sidebar.classList.contains("collapsed")));
-    if (window.matchMedia("(max-width: 900px)").matches) setCollapsed(true);
+      <!-- TEMPLATE PRODOTTO -->
+      <!-- Duplica cambiando data-id, data-cat e img -->
 
-    // Filtri
-    const buttons = Array.from(document.querySelectorAll(".catbtn"));
-    const cards   = Array.from(document.querySelectorAll(".card"));
+      <article class="card" data-cat="bevande" data-id="coca">
+        <div class="stage"><img src="coca.jpg"></div>
+        <h3 class="title">Coca Aromat</h3>
+        <p class="desc">Scelte sbagliate fatte bene.</p>
+        <div class="rating">
+          <div class="stars"></div>
+          <div class="meta"><b class="avg"></b> · <span class="votes"></span></div>
+        </div>
+        <div class="review">
+          <div class="review-title">Recensione</div>
+          <div class="review-text"></div>
+        </div>
+        <a class="open" href="coca.jpg">Apri</a>
+      </article>
 
-    buttons.forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        buttons.forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-        const f = btn.dataset.filter;
-        cards.forEach(c => c.classList.toggle("hidden", f!=="all" && c.dataset.cat !== f));
-        if (window.matchMedia("(max-width: 900px)").matches) setCollapsed(true);
-      });
-    });
+      <!-- (altri prodotti: incollati come avevamo prima, struttura identica) -->
 
-    // Conteggi categorie
-    const counts = { all: cards.length };
-    cards.forEach(c => counts[c.dataset.cat] = (counts[c.dataset.cat] || 0) + 1);
-    document.querySelectorAll("[data-count]").forEach(el=>{
-      const k = el.getAttribute("data-count");
-      el.textContent = counts[k] || 0;
-    });
+    </section>
+  </main>
+</div>
 
-    // Sconti random
-    const rand = (min,max)=> Math.floor(Math.random()*(max-min+1))+min;
-    document.querySelectorAll("[data-sale]").forEach(el => el.textContent = "-" + rand(20,50) + "%");
+<!-- CONTATORE VISITE REALE -->
+<script>
+fetch("https://api.countapi.xyz/hit/aromatovunque/shop")
+ .then(r=>r.json())
+ .then(d=>document.getElementById("visits").textContent=d.value)
+ .catch(()=>document.getElementById("visits").textContent="—");
+</script>
 
-    // Rating finto: numeri inventati + +1 voto al click (una volta per sessione per prodotto)
-    const STAR_SVG = `
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
-      </svg>
-    `;
+<!-- STELLE + RECENSIONI FINTE -->
+<script>
+const REVIEWS=[
+ "Carnevale-approved. Sapore che non chiede permesso.",
+ "Scelta discutibile, risultato eccellente.",
+ "Se esiste Aromat+, è questo.",
+ "Ne ho parlato con la mia dignità. Ha perso.",
+ "Inspiegabile ma necessario."
+];
 
-    const REVIEWS = [
-      "Carnevale-approved. Sapore che non chiede permesso.",
-      "Sembra illegale, ma è solo una scelta coraggiosa.",
-      "Inspiegabile. Quindi perfetto.",
-      "Una decisione discutibile fatta benissimo.",
-      "Se esistesse Aromat+, sarebbe questo.",
-      "Ti giudicano, ma poi lo vogliono anche loro."
-    ];
+document.querySelectorAll(".card").forEach(card=>{
+ const avg=(3.8+Math.random()).toFixed(1);
+ let votes=30+Math.floor(Math.random()*200);
+ card.querySelector(".avg").textContent=avg;
+ card.querySelector(".votes").textContent=`(${votes} voti)`;
+ card.querySelector(".review-text").textContent=
+   REVIEWS[Math.floor(Math.random()*REVIEWS.length)];
 
-    const RKEY = "ao_fake_ratings_v1"; // sessione
-    let data;
-    try { data = JSON.parse(sessionStorage.getItem(RKEY) || "{}"); } catch(e){ data = {}; }
+ const stars=card.querySelector(".stars");
+ const STAR=`<svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+ for(let i=1;i<=5;i++){
+   const b=document.createElement("button");
+   b.className="star "+(i<=Math.round(avg)?"on":"off");
+   b.innerHTML=STAR;
+   b.onclick=()=>{
+     votes++;
+     card.querySelector(".votes").textContent=`(${votes} voti)`;
+   };
+   stars.appendChild(b);
+ }
+});
+</script>
 
-    function save(){ sessionStorage.setItem(RKEY, JSON.stringify(data)); }
-
-    function ensure(id){
-      if(!data[id]){
-        const avg = Math.round((3.8 + Math.random()*1.1) * 10) / 10; // 3.8-4.9
-        const votes = Math.floor(30 + Math.random()*231); // 30-260
-        const review = REVIEWS[Math.floor(Math.random()*REVIEWS.length)];
-        data[id] = { avg, votes, voted:false, review };
-      }
-      return data[id];
-    }
-
-    function renderStars(starsEl, n){
-      starsEl.innerHTML = "";
-      for(let i=1;i<=5;i++){
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "star " + (i<=n ? "on":"off");
-        b.dataset.value = String(i);
-        b.innerHTML = STAR_SVG;
-        starsEl.appendChild(b);
-      }
-    }
-
-    function applyVote(oldAvg, oldVotes, starValue){
-      const votes = oldVotes + 1;
-      const avg = (oldAvg * oldVotes + starValue) / votes;
-      return { avg: Math.round(avg*10)/10, votes };
-    }
-
-    document.querySelectorAll(".card[data-id]").forEach(card=>{
-      const id = card.dataset.id;
-      const d = ensure(id);
-
-      // set initial
-      card.querySelector(".avg").textContent = d.avg.toFixed(1);
-      card.querySelector(".votes").textContent = `(${d.votes} voti)`;
-      card.querySelector(".review-text").textContent = d.review;
-
-      const starsEl = card.querySelector(".stars");
-      renderStars(starsEl, Math.round(d.avg));
-
-      starsEl.addEventListener("click", (e)=>{
-        const btn = e.target.closest(".star");
-        if(!btn) return;
-
-        // una volta per sessione
-        if(d.voted) return;
-
-        const v = parseInt(btn.dataset.value, 10);
-
-        const res = applyVote(d.avg, d.votes, v);
-        d.avg = res.avg;
-        d.votes = res.votes;
-        d.voted = true;
-
-        card.querySelector(".avg").textContent = d.avg.toFixed(1);
-        card.querySelector(".votes").textContent = `(${d.votes} voti)`;
-        card.querySelector(".review-text").textContent = "Voto registrato. La giuria del carnevale approva.";
-
-        renderStars(starsEl, v);
-        save();
-      });
-    });
-
-    save();
-  </script>
 </body>
 </html>
