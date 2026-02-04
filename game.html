@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aromat Pizza 1986</title>
+  <style>
+    :root { color-scheme: dark; }
+    body{
+      margin:0; height:100vh; display:flex; align-items:center; justify-content:center;
+      background:#0b0f1a; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    .wrap{
+      display:flex; flex-direction:column; gap:10px; align-items:center;
+      padding:14px 16px; border:2px solid #2a3350; background:#0f1629;
+      box-shadow: 0 0 0 4px #070a12, 0 0 0 6px #2a3350;
+    }
+    canvas{
+      width:min(92vw, 720px);
+      height:auto;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      border:2px solid #2a3350;
+      background:#080b14;
+    }
+    .hud{
+      width:min(92vw, 720px);
+      display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      color:#c7d2fe; font-size:14px;
+    }
+    .hud b{ color:#fbbf24; }
+    .help{
+      width:min(92vw, 720px);
+      color:#8aa0ff; font-size:12px; line-height:1.35;
+      opacity:0.9;
+    }
+    .btnrow{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+    button{
+      font:inherit; font-size:13px;
+      padding:8px 10px;
+      color:#e5e7eb; background:#111a33;
+      border:2px solid #2a3350;
+      cursor:pointer;
+    }
+    button:hover{ border-color:#6b82ff; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hud">
+      <div>Score: <b id="score">0</b></div>
+      <div>Tempo: <b id="time">30.0</b>s</div>
+      <div>Combo: <b id="combo">x1</b></div>
+    </div>
+
+    <canvas id="game" width="320" height="180" aria-label="Aromat Pizza 1986"></canvas>
+
+    <div class="btnrow">
+      <button id="startBtn">Start / Restart</button>
+      <button id="muteBtn">Mute: OFF</button>
+    </div>
+
+    <div class="help">
+      Controlli: <b>← →</b> o <b>A/D</b> per muovere Aromat. <b>Spazio</b> per sparare granelli.<br>
+      Obiettivo: centra la pizza. Più colpi di fila = combo. 30 secondi per dimostrare di meritarti una pizza.
+    </div>
+  </div>
+
+<script>
+(() => {
+  // ===== Canvas setup (pixel art) =====
+  const c = document.getElementById('game');
+  const ctx = c.getContext('2d', { alpha: false });
+
+  const scoreEl = document.getElementById('score');
+  const timeEl  = document.getElementById('time');
+  const comboEl = document.getElementById('combo');
+  const startBtn= document.getElementById('startBtn');
+  const muteBtn = document.getElementById('muteBtn');
+
+  // ===== Tiny "sound" (no files, just WebAudio beeps) =====
+  let audioCtx = null;
+  let muted = false;
+  function beep(freq=440, dur=0.05, type='square', gain=0.03) {
+    if (muted) return;
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const t0 = audioCtx.currentTime;
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(freq, t0);
+      g.gain.setValueAtTime(gain, t0);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t0); o.stop(t0 + dur);
+    } catch { /* se il browser fa il difficile, pace */ }
+  }
+
+  muteBtn.addEventListener('click', () => {
+    muted = !muted;
+    muteBtn.textContent = `Mute: ${muted ? 'ON' : 'OFF'}`;
+    if (!muted) beep(660, 0.06, 'square', 0.02);
+  });
+
+  // ===== Game state =====
+  const W = c.width, H = c.height;
+  let running = false;
+
+  const player = {
+    x: W/2, y: H-26,
+    w: 18, h: 22,
+    vx: 0,
+    speed: 140, // px/sec
+    cooldown: 0
+  };
+
+  const pizza = {
+    x: W/2, y: 58,
+    r: 22,
+    vx: 55 // px/sec
+  };
+
+  const bullets = [];   // grains
+  const crumbs  = [];   // hit particles
+  const stars   = [];   // background
+  let score = 0;
+  let combo = 1;
+  let comboTimer = 0;
+  let timeLeft = 30.0;
+
+  // background stars
+  for (let i=0; i<60; i++){
+    stars.push({
+      x: Math.random()*W,
+      y: Math.random()*H,
+      s: Math.random()<0.8 ? 1 : 2,
+      v: 10 + Math.random()*25
+    });
+  }
+
+  // ===== Input =====
+  const keys = new Set();
+  addEventListener('keydown', (e) => {
+    if (['ArrowLeft','ArrowRight','Space','KeyA','KeyD'].includes(e.code)) e.preventDefault();
+    keys.add(e.code);
+    if (e.code === 'Space' && running) tryShoot();
+  }, { passive:false });
+
+  addEventListener('keyup', (e) => keys.delete(e.code));
+
+  function tryShoot(){
+    if (player.cooldown > 0) return;
+    player.cooldown = 0.14; // fire rate
+    bullets.push({
+      x: player.x, y: player.y - player.h/2,
+      vx: (Math.random()-0.5)*18,
+      vy: -220 - Math.random()*60,
+      life: 1.2
+    });
+    beep(520, 0.04, 'square', 0.02);
+  }
+
+  // ===== Helpers =====
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function rnd(a,b){ return a + Math.random()*(b-a); }
+
+  function reset(){
+    bullets.length = 0;
+    crumbs.length = 0;
+    score = 0;
+    combo = 1;
+    comboTimer = 0;
+    timeLeft = 30.0;
+    player.x = W/2;
+    player.cooldown = 0;
+    pizza.x = W/2;
+    pizza.vx = 55;
+    scoreEl.textContent = score;
+    comboEl.textContent = 'x1';
+    timeEl.textContent = timeLeft.toFixed(1);
+  }
+
+  startBtn.addEventListener('click', () => {
+    if (!running) {
+      reset();
+      running = true;
+      last = performance.now();
+      beep(880, 0.06, 'square', 0.03);
+      requestAnimationFrame(loop);
+    } else {
+      reset();
+      beep(740, 0.06, 'square', 0.03);
+    }
+  });
+
+  // ===== Drawing: pixel sprites =====
+  function pxRect(x,y,w,h,color){
+    ctx.fillStyle = color;
+    ctx.fillRect(x|0, y|0, w|0, h|0);
+  }
+
+  function drawAromat(x,y){
+    // body
+    const left = (x - player.w/2)|0;
+    const top  = (y - player.h/2)|0;
+
+    // shadow
+    pxRect(left-1, top+2, player.w+2, player.h+2, '#0a0e1a');
+
+    // jar
+    pxRect(left, top, player.w, player.h, '#facc15');     // yellow label vibe
+    pxRect(left+2, top+2, player.w-4, player.h-4, '#fde68a'); // highlight
+
+    // cap
+    pxRect(left+3, top-4, player.w-6, 4, '#cbd5e1');
+    pxRect(left+4, top-3, player.w-8, 2, '#94a3b8');
+
+    // "AROMAT" pixels
+    ctx.fillStyle = '#111827';
+    ctx.fillRect(left+4, top+8, 10, 2);
+    ctx.fillRect(left+4, top+11, 8, 2);
+
+    // nozzle dots (just to sell it)
+    ctx.fillStyle = '#1f2937';
+    ctx.fillRect(left+6, top-6, 2, 2);
+    ctx.fillRect(left+10, top-6, 2, 2);
+  }
+
+  function drawPizza(x,y,r){
+    // crust
+    ctx.fillStyle = '#d97706';
+    ctx.beginPath(); ctx.arc(x, y, r+4, 0, Math.PI*2); ctx.fill();
+
+    // cheese
+    ctx.fillStyle = '#fef3c7';
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+
+    // sauce blobs
+    ctx.fillStyle = '#ef4444';
+    for (let i=0;i<6;i++){
+      const a = i* (Math.PI*2/6) + 0.3;
+      ctx.beginPath();
+      ctx.arc(x + Math.cos(a)* (r*0.45), y + Math.sin(a)* (r*0.35), 3, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    // slices lines (pixel-ish)
+    ctx.strokeStyle = '#f59e0b';
+    ctx.lineWidth = 1;
+    for (let i=0;i<4;i++){
+      const a = i*(Math.PI/2);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + Math.cos(a)* (r+3), y + Math.sin(a)* (r+3));
+      ctx.stroke();
+    }
+  }
+
+  function drawCRT(){
+    // scanlines
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    for (let y=0; y<H; y+=2) ctx.fillRect(0, y, W, 1);
+    // vignette-ish
+    const g = ctx.createRadialGradient(W/2,H/2,20,W/2,H/2,140);
+    g.addColorStop(0,'rgba(0,0,0,0)');
+    g.addColorStop(1,'rgba(0,0,0,0.35)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,W,H);
+  }
+
+  // ===== Game loop =====
+  let last = performance.now();
+
+  function loop(now){
+    if (!running) return;
+    const dt = Math.min(0.033, (now - last)/1000);
+    last = now;
+
+    update(dt);
+    render();
+
+    if (running) requestAnimationFrame(loop);
+  }
+
+  function update(dt){
+    timeLeft -= dt;
+    if (timeLeft <= 0){
+      timeLeft = 0;
+      running = false;
+      beep(220, 0.12, 'square', 0.03);
+      return;
+    }
+    timeEl.textContent = timeLeft.toFixed(1);
+
+    // input
+    let dir = 0;
+    if (keys.has('ArrowLeft') || keys.has('KeyA')) dir -= 1;
+    if (keys.has('ArrowRight') || keys.has('KeyD')) dir += 1;
+    player.vx = dir * player.speed;
+    player.x = clamp(player.x + player.vx*dt, 14, W-14);
+
+    // cooldown
+    player.cooldown = Math.max(0, player.cooldown - dt);
+
+    // move pizza
+    pizza.x += pizza.vx*dt;
+    if (pizza.x < 46){ pizza.x = 46; pizza.vx *= -1; }
+    if (pizza.x > W-46){ pizza.x = W-46; pizza.vx *= -1; }
+
+    // combo decay
+    if (combo > 1){
+      comboTimer -= dt;
+      if (comboTimer <= 0){
+        combo = 1;
+        comboEl.textContent = 'x1';
+      }
+    }
+
+    // bullets
+    for (let i=bullets.length-1; i>=0; i--){
+      const b = bullets[i];
+      b.x += b.vx*dt;
+      b.y += b.vy*dt;
+      b.vy += 260*dt; // gravity-ish
+      b.life -= dt;
+
+      // hit test pizza
+      const dx = b.x - pizza.x;
+      const dy = b.y - pizza.y;
+      const hit = (dx*dx + dy*dy) <= (pizza.r+3)*(pizza.r+3);
+
+      if (hit){
+        bullets.splice(i,1);
+        onHit(b.x,b.y);
+        continue;
+      }
+
+      // out or dead
+      if (b.y > H+10 || b.life <= 0) bullets.splice(i,1);
+    }
+
+    // crumbs particles
+    for (let i=crumbs.length-1; i>=0; i--){
+      const p = crumbs[i];
+      p.x += p.vx*dt;
+      p.y += p.vy*dt;
+      p.vy += 380*dt;
+      p.life -= dt;
+      if (p.life <= 0) crumbs.splice(i,1);
+    }
+
+    // stars
+    for (const s of stars){
+      s.y += s.v*dt;
+      if (s.y > H){ s.y = -2; s.x = Math.random()*W; }
+    }
+  }
+
+  function onHit(x,y){
+    // scoring: base + combo
+    const add = 10 * combo;
+    score += add;
+    scoreEl.textContent = score;
+
+    // increase combo
+    combo = Math.min(9, combo + 1);
+    comboTimer = 1.35; // time to keep combo alive
+    comboEl.textContent = `x${combo}`;
+
+    // particles
+    for (let i=0;i<10;i++){
+      crumbs.push({
+        x, y,
+        vx: rnd(-60,60),
+        vy: rnd(-140,-40),
+        life: rnd(0.25,0.55)
+      });
+    }
+
+    // audio feedback
+    beep(660 + combo*40, 0.05, 'square', 0.025);
+  }
+
+  function render(){
+    // clear
+    ctx.fillStyle = '#050712';
+    ctx.fillRect(0,0,W,H);
+
+    // stars
+    ctx.fillStyle = '#93c5fd';
+    for (const s of stars){
+      ctx.fillRect(s.x|0, s.y|0, s.s, s.s);
+    }
+
+    // title (pixel-ish)
+    ctx.fillStyle = '#c7d2fe';
+    ctx.font = '10px monospace';
+    ctx.fillText('AROMAT PIZZA 1986', 8, 14);
+
+    // pizza
+    drawPizza(pizza.x, pizza.y, pizza.r);
+
+    // bullets (grains)
+    ctx.fillStyle = '#fbbf24';
+    for (const b of bullets){
+      ctx.fillRect((b.x|0), (b.y|0), 2, 2);
+    }
+
+    // crumbs
+    ctx.fillStyle = '#fde68a';
+    for (const p of crumbs){
+      ctx.fillRect((p.x|0), (p.y|0), 2, 2);
+    }
+
+    // player
+    drawAromat(player.x, player.y);
+
+    // floor line
+    ctx.fillStyle = '#111827';
+    ctx.fillRect(0, H-12, W, 12);
+
+    // game over overlay
+    if (!running && timeLeft <= 0){
+      ctx.fillStyle = 'rgba(0,0,0,0.65)';
+      ctx.fillRect(0,0,W,H);
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = '14px monospace';
+      ctx.fillText('TIME UP', 124, 82);
+      ctx.fillStyle = '#c7d2fe';
+      ctx.font = '10px monospace';
+      ctx.fillText(`SCORE: ${score}`, 120, 98);
+      ctx.fillText('Premi Start/Restart', 92, 114);
+    }
+
+    // CRT effect
+    drawCRT();
+  }
+
+  // initial render
+  reset();
+  render();
+})();
+</script>
+</body>
+</html>
