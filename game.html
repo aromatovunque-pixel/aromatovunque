@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Aromat Pizza Touch</title>
+<title>Aromat Game</title>
 
 <style>
 body{
@@ -34,13 +34,26 @@ canvas{
 .hud{
   display:flex;
   justify-content:space-between;
-  margin-bottom:6px;
+  margin-bottom:4px;
   font-size:14px;
 }
 .hud b{color:#facc15}
 
+.title{
+  text-align:center;
+  margin-bottom:6px;
+  color:#facc15;
+  text-shadow:
+    0 0 6px #facc15,
+    0 0 12px #facc15;
+}
+.subtitle{
+  font-size:12px;
+  color:#c7d2fe;
+}
+
 .start{
-  margin-top:8px;
+  margin-top:6px;
   width:100%;
   padding:14px;
   font-size:22px;
@@ -58,9 +71,9 @@ canvas{
 }
 
 .controls{
-  margin-top:8px;
+  margin-top:6px;
   display:flex;
-  gap:8px;
+  gap:6px;
 }
 .controls button{
   flex:1;
@@ -70,14 +83,39 @@ canvas{
   border:2px solid #2a3350;
   color:#fff;
 }
-.controls button:active{
-  transform:translateY(1px);
+
+/* BANNER FINALE */
+.banner{
+  position:absolute;
+  inset:0;
+  background:rgba(5,7,18,0.92);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.banner.show{display:flex}
+.banner .box{
+  border:3px solid #facc15;
+  padding:16px;
+  background:#0f1629;
+  box-shadow:0 0 0 4px #050712;
+}
+.banner h1{
+  margin:0;
+  color:#facc15;
 }
 </style>
 </head>
 
 <body>
 <div class="wrap">
+
+  <div class="title">
+    <div>AROMAT GAME!</div>
+    <div class="subtitle">Sarà l’aromat sulla pizza</div>
+  </div>
+
   <div class="hud">
     <div>Score <b id="score">0</b></div>
     <div>Tempo <b id="time">30</b>s</div>
@@ -92,26 +130,31 @@ canvas{
     <button id="fire">SPARA</button>
     <button id="right">▶</button>
   </div>
+
+  <div id="banner" class="banner">
+    <div class="box">
+      <h1>COMPLIMENTI!</h1>
+      <div>Hai finito la partita</div>
+    </div>
+  </div>
 </div>
 
 <script>
-const c = document.getElementById("game");
-const ctx = c.getContext("2d");
+const c=document.getElementById("game");
+const ctx=c.getContext("2d");
 const W=c.width,H=c.height;
 
-let running=false;
-let score=0;
-let timeLeft=30;
-let timerId=null;
+let running=false, score=0, timeLeft=30, timerId=null;
 
 const scoreEl=document.getElementById("score");
 const timeEl=document.getElementById("time");
 const startBtn=document.getElementById("start");
+const banner=document.getElementById("banner");
 
 const player={x:160,y:150,w:26,h:36,cooldown:0};
 const bullets=[];
-
 const pizza={x:160,y:60,r:20,vx:1.5};
+const grains=[];
 
 // ===== PIXEL TEXT =====
 function pixelText(txt,x,y,color){
@@ -120,15 +163,19 @@ function pixelText(txt,x,y,color){
     R:["1110","1001","1110","1010","1001"],
     O:["0110","1001","1001","1001","0110"],
     M:["1001","1111","1111","1001","1001"],
-    T:["1111","0010","0010","0010","0010"]
+    T:["1111","0010","0010","0010","0010"],
+    G:["0111","1000","1011","1001","0111"],
+    E:["1111","1000","1110","1000","1111"],
+    I:["111","010","010","010","111"],
+    L:["1000","1000","1000","1000","1111"]
   };
   ctx.fillStyle=color;
   let cx=x;
   for(const ch of txt){
     const g=map[ch];
     if(!g){cx+=6;continue}
-    for(let r=0;r<5;r++)
-      for(let col=0;col<4;col++)
+    for(let r=0;r<g.length;r++)
+      for(let col=0;col<g[r].length;col++)
         if(g[r][col]==="1")
           ctx.fillRect(cx+col,y+r,1,1);
     cx+=6;
@@ -154,20 +201,20 @@ function drawPizza(){
   ctx.beginPath();ctx.arc(pizza.x,pizza.y,pizza.r,0,7);ctx.fill();
 }
 
-// ===== GAME LOGIC =====
+// ===== GAME =====
 function shoot(){
-  if(player.cooldown>0 || !running) return;
+  if(player.cooldown>0||!running)return;
   bullets.push({x:player.x,y:player.y-20,vy:-4});
   player.cooldown=8;
 }
 
 function update(){
-  if(!running) return;
+  if(!running)return;
 
   player.cooldown=Math.max(0,player.cooldown-1);
 
   pizza.x+=pizza.vx;
-  if(pizza.x<40 || pizza.x>280) pizza.vx*=-1;
+  if(pizza.x<40||pizza.x>280)pizza.vx*=-1;
 
   bullets.forEach(b=>b.y+=b.vy);
 
@@ -177,25 +224,37 @@ function update(){
       bullets.splice(i,1);
       score+=10;
       scoreEl.textContent=score;
-      continue;
     }
-    if(b.y<0) bullets.splice(i,1);
+    if(b.y<0)bullets.splice(i,1);
   }
+
+  // granelli neve
+  if(Math.random()<0.4)
+    grains.push({x:Math.random()*W,y:-2,vy:0.6+Math.random()});
+
+  grains.forEach(g=>g.y+=g.vy);
+  for(let i=grains.length-1;i>=0;i--)
+    if(grains[i].y>H)grains.splice(i,1);
 }
 
 function render(){
   ctx.fillStyle="#050712";
   ctx.fillRect(0,0,W,H);
+
   drawPizza();
   drawAromat();
+
   ctx.fillStyle="#facc15";
   bullets.forEach(b=>ctx.fillRect(b.x,b.y,2,4));
+
+  ctx.fillStyle="#fde68a";
+  grains.forEach(g=>ctx.fillRect(g.x,g.y,1,1));
 }
 
 function loop(){
   update();
   render();
-  if(running) requestAnimationFrame(loop);
+  if(running)requestAnimationFrame(loop);
 }
 
 // ===== TIMER =====
@@ -209,6 +268,7 @@ function startTimer(){
     timeEl.textContent=timeLeft;
     if(timeLeft<=0){
       running=false;
+      banner.classList.add("show");
       startBtn.classList.add("blink");
       clearInterval(timerId);
     }
@@ -219,6 +279,8 @@ function startTimer(){
 function startGame(){
   score=0;
   bullets.length=0;
+  grains.length=0;
+  banner.classList.remove("show");
   scoreEl.textContent=0;
   running=true;
   startBtn.classList.remove("blink");
@@ -226,10 +288,8 @@ function startGame(){
   loop();
 }
 
-// ===== TOUCH (COME LA VERSIONE CHE FUNZIONAVA) =====
-let dragId=null;
-let dragStartX=0;
-let playerStartX=0;
+// ===== TOUCH =====
+let dragId=null, dragStartX=0, playerStartX=0;
 
 c.addEventListener("pointerdown",e=>{
   c.setPointerCapture(e.pointerId);
@@ -237,34 +297,29 @@ c.addEventListener("pointerdown",e=>{
     dragId=e.pointerId;
     dragStartX=e.clientX;
     playerStartX=player.x;
-  }else{
-    shoot();
-  }
+  }else shoot();
 });
 
 c.addEventListener("pointermove",e=>{
-  if(e.pointerId!==dragId || !running) return;
-  const rect=c.getBoundingClientRect();
-  const scale=W/rect.width;
-  const dx=(e.clientX-dragStartX)*scale;
+  if(e.pointerId!==dragId||!running)return;
+  const r=c.getBoundingClientRect();
+  const dx=(e.clientX-dragStartX)*(W/r.width);
   player.x=Math.max(20,Math.min(300,playerStartX+dx));
 });
 
 c.addEventListener("pointerup",e=>{
   if(e.pointerId===dragId){
-    shoot(); // tap = sparo
+    shoot();
     dragId=null;
   }
 });
 
-// ===== BUTTON FALLBACK =====
+// fallback buttons
 document.getElementById("left").onpointerdown=()=>player.x=Math.max(20,player.x-10);
 document.getElementById("right").onpointerdown=()=>player.x=Math.min(300,player.x+10);
 document.getElementById("fire").onpointerdown=shoot;
 
-startBtn.onclick=()=>{
-  if(!running) startGame();
-};
+startBtn.onclick=()=>{if(!running)startGame();};
 </script>
 </body>
 </html>
