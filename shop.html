@@ -24,7 +24,6 @@
     font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
     color:var(--ink);
 
-    /* sfondo giallino/rosso/verde sfumato + “brillantino” */
     background:
       radial-gradient(1000px 520px at 12% -10%, rgba(255,212,0,.30), transparent 60%),
       radial-gradient(900px 520px at 85% 0%, rgba(31,163,74,.18), transparent 58%),
@@ -35,7 +34,6 @@
     overflow-x:hidden;
   }
 
-  /* glitter leggero */
   body::before{
     content:"";
     position:fixed;
@@ -54,7 +52,6 @@
   }
   @keyframes twinkle{ 0%,100%{opacity:.45} 50%{opacity:.75} }
 
-  /* Header */
   header{
     position:sticky; top:0; z-index:20;
     background:rgba(255,255,255,.84);
@@ -77,7 +74,6 @@
     justify-content:flex-end;
   }
 
-  /* Pills */
   .pill{
     display:inline-flex; align-items:center; gap:10px;
     padding:10px 14px;
@@ -87,8 +83,9 @@
     text-decoration:none;
     color:#000;
     font-weight:950;
-    transition:transform .12s ease, box-shadow .12s ease;
+    transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
     white-space:nowrap;
+    position:relative;
   }
   .pill:hover{transform:translateY(-1px); box-shadow:0 12px 18px rgba(0,0,0,.08)}
   .pill img{width:18px; height:18px; display:block; border-radius:6px}
@@ -100,7 +97,6 @@
   }
 
   .pill-ig{
-    position:relative;
     border-color: rgba(0,0,0,.08);
     box-shadow: 0 12px 20px rgba(0,0,0,.10);
   }
@@ -119,11 +115,49 @@
     z-index:-1;
     opacity:.55;
   }
-  .pill-ig:hover{
+  .pill-ig:hover{ transform:translateY(-2px) scale(1.02); }
+
+  /* NUOVO: pulsante GAME giallo che si illumina */
+  .pill-game{
+    border:1px solid rgba(0,0,0,.10);
+    background:
+      radial-gradient(80% 140% at 30% 20%, rgba(255,212,0,.55), rgba(255,212,0,.18) 55%, #fff 100%);
+    box-shadow:
+      0 10px 18px rgba(0,0,0,.10),
+      0 0 0 1px rgba(255,255,255,.7) inset;
+  }
+  .pill-game::after{
+    content:"";
+    position:absolute;
+    inset:-3px;
+    border-radius:999px;
+    background:radial-gradient(circle at 50% 50%, rgba(255,212,0,.65), transparent 60%);
+    opacity:0;
+    filter:blur(8px);
+    z-index:-1;
+    transition:opacity .15s ease;
+  }
+  .pill-game:hover{
     transform:translateY(-2px) scale(1.02);
+    background:
+      radial-gradient(90% 160% at 30% 20%, rgba(255,212,0,.75), rgba(255,212,0,.22) 55%, #fff 100%);
+    box-shadow:
+      0 16px 26px rgba(0,0,0,.12),
+      0 0 26px rgba(255,212,0,.35);
+  }
+  .pill-game:hover::after{ opacity:1; }
+  .pill-game .dot{
+    width:10px; height:10px; border-radius:50%;
+    background:var(--yellow);
+    box-shadow:0 0 0 6px rgba(255,212,0,.20);
+    animation:pulseDot 1.6s ease-in-out infinite;
+  }
+  @keyframes pulseDot{
+    0%,100%{transform:scale(1); box-shadow:0 0 0 6px rgba(255,212,0,.18)}
+    50%{transform:scale(1.12); box-shadow:0 0 0 12px rgba(255,212,0,0)}
   }
 
-  /* Banner Rabadan (cliccabile) */
+  /* Banner Rabadan (senza “special edition”) */
   .banner{
     display:inline-flex;
     align-items:center;
@@ -179,9 +213,7 @@
     pointer-events:none;
   }
   @keyframes shine{ 0%{left:-55%} 45%{left:130%} 100%{left:130%} }
-  .banner small{ font-weight:950; opacity:.78; }
 
-  /* Layout */
   .wrap{
     max-width:1200px; margin:0 auto;
     padding:18px 16px 34px;
@@ -189,11 +221,8 @@
     grid-template-columns:280px 1fr;
     gap:18px;
   }
-  @media(max-width:920px){
-    .wrap{grid-template-columns:1fr}
-  }
+  @media(max-width:920px){ .wrap{grid-template-columns:1fr} }
 
-  /* Sidebar */
   aside{
     border:1px solid var(--line);
     border-radius:20px;
@@ -311,7 +340,6 @@
     background:#fff;
   }
 
-  /* Main */
   h1{
     margin:6px 0 4px;
     font-size:44px;
@@ -353,7 +381,6 @@
   }
   @keyframes fadeUp{ to{opacity:1; transform:translateY(0)} }
 
-  /* Stage: immagini “affondano” nello sfondo */
   .stage{
     position:relative;
     height:260px;
@@ -395,10 +422,8 @@
     z-index:0;
     transform:translateZ(0);
     transition:transform .18s ease;
-
     filter:drop-shadow(0 26px 34px rgba(0,0,0,.30));
 
-    /* maschera organica */
     -webkit-mask-image:
       radial-gradient(circle at 45% 42%, #000 34%, rgba(0,0,0,.60) 52%, transparent 74%),
       radial-gradient(circle at 62% 58%, rgba(0,0,0,.85) 0%, transparent 62%),
@@ -481,12 +506,17 @@
     <div class="actions">
       <a class="pill pill-home" href="index.html">Home</a>
 
+      <a class="pill pill-game" href="game.html" title="Vai al Game">
+        <span class="dot" aria-hidden="true"></span>
+        Game
+      </a>
+
       <a class="pill pill-ig" href="https://www.instagram.com/aromatovunque.info/" target="_blank" rel="noopener">
         <img src="insta.jpg" alt="Instagram"> Instagram
       </a>
 
       <a class="banner" href="https://rabadan.ch" target="_blank" rel="noopener">
-        Rabadan 2026 <small>Special Edition</small>
+        Rabadan 2026
       </a>
     </div>
   </div>
@@ -551,6 +581,18 @@
         </div>
       </article>
 
+      <article class="card" data-cat="bevande">
+        <div class="stage">
+          <span class="tag">BEVANDE</span><span class="sale" data-sale></span>
+          <img src="nesquik.jpg" alt="Nesquik Aromat">
+        </div>
+        <div class="content">
+          <h3>Nesquik Aromat</h3>
+          <p>Colazione: scelte discutibili, energia garantita.</p>
+          <a class="open" href="nesquik.jpg">Apri</a>
+        </div>
+      </article>
+
       <!-- CAFFÈ -->
       <article class="card" data-cat="caffe">
         <div class="stage">
@@ -598,6 +640,18 @@
           <h3>Aromella</h3>
           <p>Spalmabile. Non fare domande.</p>
           <a class="open" href="aromella.jpg">Apri</a>
+        </div>
+      </article>
+
+      <article class="card" data-cat="dolci">
+        <div class="stage">
+          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
+          <img src="kellogs.jpg" alt="Kellogs Aromat">
+        </div>
+        <div class="content">
+          <h3>Kellogs Aromat</h3>
+          <p>Croccantezza che ti giudica.</p>
+          <a class="open" href="kellogs.jpg">Apri</a>
         </div>
       </article>
 
@@ -651,7 +705,6 @@
         </div>
       </article>
 
-      <!-- NUOVO PRODOTTO: CAT FOOD (messo in CASA) -->
       <article class="card" data-cat="casa">
         <div class="stage">
           <span class="tag">CASA</span><span class="sale" data-sale></span>
@@ -711,31 +764,6 @@
           <h3>Luganighetta Aromat</h3>
           <p>Spirale perfetta. Decisioni discutibili.</p>
           <a class="open" href="luganighetta.jpg">Apri</a>
-        </div>
-      </article>
-
-      <!-- NUOVI -->
-      <article class="card" data-cat="bevande">
-        <div class="stage">
-          <span class="tag">BEVANDE</span><span class="sale" data-sale></span>
-          <img src="nesquik.jpg" alt="Nesquik Aromat">
-        </div>
-        <div class="content">
-          <h3>Nesquik Aromat</h3>
-          <p>Colazione: scelte discutibili, energia garantita.</p>
-          <a class="open" href="nesquik.jpg">Apri</a>
-        </div>
-      </article>
-
-      <article class="card" data-cat="dolci">
-        <div class="stage">
-          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
-          <img src="kellogs.jpg" alt="Kellogs Aromat">
-        </div>
-        <div class="content">
-          <h3>Kellogs Aromat</h3>
-          <p>Croccantezza che ti giudica.</p>
-          <a class="open" href="kellogs.jpg">Apri</a>
         </div>
       </article>
 
