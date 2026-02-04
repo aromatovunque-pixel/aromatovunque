@@ -5,16 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Aromat Ovunque* – Shop</title>
 
+<!-- (Opzionale) GoatCounter: conta visite pagina -->
+<script data-goatcounter="https://aro.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+
 <style>
   :root{
-    --yellow:#ffd400;
-    --green:#1fa34a;
-    --red:#e11d2e;
-
-    --bg:#f6f7f9;
-    --ink:#111827;
-    --muted:#6b7280;
-    --line:rgba(17,24,39,.14);
+    --y:#ffd400; --g:#1fa34a; --r:#e11d2e;
+    --bg:#fbfbfc;
+    --card:#ffffff;
+    --ink:#0f172a;
+    --muted:#64748b;
+    --line:rgba(15,23,42,.12);
+    --shadow: 0 18px 45px rgba(15,23,42,.10);
+    --shadow2: 0 10px 22px rgba(15,23,42,.10);
+    --radius:22px;
   }
 
   *{box-sizing:border-box}
@@ -23,266 +27,167 @@
     margin:0;
     font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
     color:var(--ink);
-
     background:
-      radial-gradient(1000px 520px at 12% -10%, rgba(255,212,0,.30), transparent 60%),
-      radial-gradient(900px 520px at 85% 0%, rgba(31,163,74,.18), transparent 58%),
-      radial-gradient(900px 520px at 55% 110%, rgba(225,29,46,.16), transparent 55%),
-      linear-gradient(180deg, rgba(255,255,255,.95), rgba(246,247,249,.98)),
+      radial-gradient(1100px 520px at 10% -10%, rgba(255,212,0,.22), transparent 62%),
+      radial-gradient(1000px 520px at 100% 0%, rgba(31,163,74,.16), transparent 60%),
+      radial-gradient(1000px 520px at 50% 120%, rgba(225,29,46,.12), transparent 65%),
+      linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,1)),
       var(--bg);
-    position:relative;
-    overflow-x:hidden;
   }
 
-  body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    background:
-      radial-gradient(2px 2px at 12% 18%, rgba(255,255,255,.55), transparent 60%),
-      radial-gradient(2px 2px at 22% 62%, rgba(255,255,255,.45), transparent 60%),
-      radial-gradient(1.8px 1.8px at 42% 22%, rgba(255,255,255,.50), transparent 60%),
-      radial-gradient(2.2px 2.2px at 62% 44%, rgba(255,255,255,.45), transparent 60%),
-      radial-gradient(1.6px 1.6px at 78% 30%, rgba(255,255,255,.45), transparent 60%),
-      radial-gradient(2px 2px at 88% 72%, rgba(255,255,255,.45), transparent 60%);
-    opacity:.55;
-    filter:blur(.2px);
-    animation:twinkle 6s ease-in-out infinite;
-  }
-  @keyframes twinkle{ 0%,100%{opacity:.45} 50%{opacity:.75} }
-
+  /* Header */
   header{
     position:sticky; top:0; z-index:20;
-    background:rgba(255,255,255,.84);
-    backdrop-filter:blur(10px);
+    background:rgba(255,255,255,.82);
+    backdrop-filter: blur(12px);
     border-bottom:1px solid var(--line);
   }
   .header-inner{
-    max-width:1200px; margin:0 auto;
+    max-width:1240px; margin:0 auto;
     padding:12px 16px;
     display:flex; align-items:center; justify-content:space-between; gap:12px;
   }
   .brand{
+    display:flex; align-items:center; gap:10px;
     font-weight:950;
     letter-spacing:.2px;
-    user-select:none;
-    white-space:nowrap;
   }
-  .actions{
-    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-    justify-content:flex-end;
-  }
+  .brand .name{font-size:16px}
+  .brand small{display:block; color:var(--muted); font-weight:800; margin-top:2px; font-size:12px}
 
-  .pill{
+  .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+  .cta{
     display:inline-flex; align-items:center; gap:10px;
     padding:10px 14px;
     border-radius:999px;
     border:1px solid var(--line);
-    background:#fff;
+    background:linear-gradient(180deg, #fff, #fafafa);
     text-decoration:none;
-    color:#000;
+    color:var(--ink);
     font-weight:950;
-    transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
-    white-space:nowrap;
+    box-shadow: 0 8px 18px rgba(15,23,42,.06);
+    transform: translateZ(0);
+    transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+  }
+  .cta:hover{transform:translateY(-2px); box-shadow: var(--shadow2)}
+  .cta .icon{
+    width:22px; height:22px; border-radius:8px;
+    display:grid; place-items:center;
+    background:linear-gradient(135deg, rgba(255,212,0,.35), rgba(31,163,74,.18), rgba(225,29,46,.16));
+    border:1px solid rgba(15,23,42,.10);
+    overflow:hidden;
+  }
+  .cta .icon img{width:100%; height:100%; object-fit:cover; display:block}
+
+  /* GAME button glowing yellow */
+  .cta.game{
+    border:1px solid rgba(255,212,0,.55);
     position:relative;
   }
-  .pill:hover{transform:translateY(-1px); box-shadow:0 12px 18px rgba(0,0,0,.08)}
-  .pill img{width:18px; height:18px; display:block; border-radius:6px}
-
-  .pill-home{
-    background:
-      linear-gradient(90deg, rgba(255,212,0,.18), rgba(31,163,74,.10), rgba(225,29,46,.08)),
-      #fff;
-  }
-
-  .pill-ig{
-    border-color: rgba(0,0,0,.08);
-    box-shadow: 0 12px 20px rgba(0,0,0,.10);
-  }
-  .pill-ig img{
-    width:20px;
-    height:20px;
-    border-radius:6px;
-    box-shadow:0 6px 14px rgba(0,0,0,.18);
-  }
-  .pill-ig::before{
+  .cta.game::after{
     content:"";
     position:absolute;
     inset:-2px;
     border-radius:999px;
-    background:conic-gradient(from 180deg, var(--yellow), var(--green), var(--red), var(--yellow));
-    z-index:-1;
-    opacity:.55;
+    background: radial-gradient(circle at 30% 30%, rgba(255,212,0,.55), transparent 55%);
+    opacity:.0;
+    filter: blur(8px);
+    transition: opacity .18s ease;
+    pointer-events:none;
   }
-  .pill-ig:hover{ transform:translateY(-2px) scale(1.02); }
+  .cta.game:hover{
+    filter:saturate(1.1);
+    box-shadow: 0 0 0 6px rgba(255,212,0,.16), var(--shadow2);
+  }
+  .cta.game:hover::after{opacity:1}
 
-  /* NUOVO: pulsante GAME giallo che si illumina */
-  .pill-game{
-    border:1px solid rgba(0,0,0,.10);
-    background:
-      radial-gradient(80% 140% at 30% 20%, rgba(255,212,0,.55), rgba(255,212,0,.18) 55%, #fff 100%);
-    box-shadow:
-      0 10px 18px rgba(0,0,0,.10),
-      0 0 0 1px rgba(255,255,255,.7) inset;
-  }
-  .pill-game::after{
-    content:"";
-    position:absolute;
-    inset:-3px;
-    border-radius:999px;
-    background:radial-gradient(circle at 50% 50%, rgba(255,212,0,.65), transparent 60%);
-    opacity:0;
-    filter:blur(8px);
-    z-index:-1;
-    transition:opacity .15s ease;
-  }
-  .pill-game:hover{
-    transform:translateY(-2px) scale(1.02);
-    background:
-      radial-gradient(90% 160% at 30% 20%, rgba(255,212,0,.75), rgba(255,212,0,.22) 55%, #fff 100%);
-    box-shadow:
-      0 16px 26px rgba(0,0,0,.12),
-      0 0 26px rgba(255,212,0,.35);
-  }
-  .pill-game:hover::after{ opacity:1; }
-  .pill-game .dot{
-    width:10px; height:10px; border-radius:50%;
-    background:var(--yellow);
-    box-shadow:0 0 0 6px rgba(255,212,0,.20);
-    animation:pulseDot 1.6s ease-in-out infinite;
-  }
-  @keyframes pulseDot{
-    0%,100%{transform:scale(1); box-shadow:0 0 0 6px rgba(255,212,0,.18)}
-    50%{transform:scale(1.12); box-shadow:0 0 0 12px rgba(255,212,0,0)}
-  }
-
-  /* Banner Rabadan (senza “special edition”) */
-  .banner{
-    display:inline-flex;
-    align-items:center;
-    gap:10px;
+  /* Rabadan banner (link) */
+  .rabadan{
+    display:inline-flex; align-items:center; gap:10px;
     padding:10px 14px;
     border-radius:999px;
-    border:1px solid rgba(0,0,0,.10);
-    background:
-      linear-gradient(90deg,
-        rgba(255,212,0,.55),
-        rgba(31,163,74,.28),
-        rgba(225,29,46,.22)
-      ),
-      rgba(255,255,255,.92);
-    font-weight:950;
-    box-shadow:
-      0 16px 28px rgba(0,0,0,.12),
-      0 0 0 1px rgba(255,255,255,.6) inset;
-    position:relative;
-    overflow:hidden;
     text-decoration:none;
-    color:#000;
-    cursor:pointer;
-    transition:transform .12s ease, box-shadow .12s ease;
-    white-space:nowrap;
+    color:var(--ink);
+    font-weight:950;
+    border:1px solid var(--line);
+    background:
+      radial-gradient(70% 120% at 20% 20%, rgba(255,212,0,.32), transparent 60%),
+      radial-gradient(70% 120% at 80% 30%, rgba(31,163,74,.16), transparent 60%),
+      radial-gradient(70% 120% at 60% 120%, rgba(225,29,46,.14), transparent 65%),
+      #fff;
+    box-shadow: 0 8px 18px rgba(15,23,42,.06);
+    transition: transform .15s ease, box-shadow .15s ease;
   }
-  .banner:hover{
-    transform:translateY(-1px) scale(1.02);
-    box-shadow:
-      0 18px 34px rgba(0,0,0,.14),
-      0 0 0 1px rgba(255,255,255,.6) inset;
+  .rabadan:hover{transform:translateY(-2px); box-shadow: var(--shadow2)}
+  .rabadan .spark{
+    width:10px; height:10px; border-radius:50%;
+    background: var(--y);
+    box-shadow: 0 0 0 6px rgba(255,212,0,.18);
   }
-  .banner::before{
-    content:"";
-    position:absolute;
-    inset:-2px;
-    background:conic-gradient(from 180deg, var(--yellow), var(--green), var(--red), var(--yellow));
-    opacity:.22;
-    filter:blur(10px);
-    pointer-events:none;
-  }
-  .banner::after{
-    content:"";
-    position:absolute;
-    top:-30%;
-    left:-45%;
-    width:45%;
-    height:160%;
-    background:linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent);
-    transform:skewX(-18deg);
-    animation:shine 2.6s ease-in-out infinite;
-    opacity:.9;
-    pointer-events:none;
-  }
-  @keyframes shine{ 0%{left:-55%} 45%{left:130%} 100%{left:130%} }
 
+  /* Layout */
   .wrap{
-    max-width:1200px; margin:0 auto;
+    max-width:1240px; margin:0 auto;
     padding:18px 16px 34px;
     display:grid;
-    grid-template-columns:280px 1fr;
+    grid-template-columns: 300px 1fr;
     gap:18px;
   }
-  @media(max-width:920px){ .wrap{grid-template-columns:1fr} }
+  @media(max-width:980px){
+    .wrap{grid-template-columns:1fr}
+  }
 
+  /* Sidebar */
   aside{
+    background: rgba(255,255,255,.88);
     border:1px solid var(--line);
-    border-radius:20px;
-    background:rgba(255,255,255,.85);
-    backdrop-filter:blur(10px);
+    border-radius: var(--radius);
+    box-shadow: 0 10px 28px rgba(15,23,42,.06);
     overflow:hidden;
   }
+
   .side-top{
-    padding:14px 14px 10px;
-    border-bottom:1px solid rgba(0,0,0,.06);
+    padding:16px 16px 10px;
+    border-bottom:1px solid rgba(15,23,42,.08);
+    background:
+      radial-gradient(900px 320px at 20% -20%, rgba(255,212,0,.22), transparent 55%),
+      radial-gradient(900px 320px at 90% 0%, rgba(31,163,74,.16), transparent 55%),
+      radial-gradient(900px 320px at 50% 120%, rgba(225,29,46,.12), transparent 60%),
+      rgba(255,255,255,.92);
+  }
+  .logo-wrap{
+    display:flex; align-items:center; gap:12px;
   }
   .logo{
-    width:100%;
-    display:flex;
-    align-items:center;
-    justify-content:flex-start;
-    gap:12px;
+    width:88px; height:88px;
+    border-radius:18px;
+    background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.7));
+    border:1px solid rgba(15,23,42,.10);
+    box-shadow: 0 16px 28px rgba(15,23,42,.10);
+    overflow:hidden;
+    position:relative;
   }
   .logo img{
-    width:170px;
-    max-width:100%;
-    height:auto;
+    width:100%; height:100%;
+    object-fit:contain;
     display:block;
-    filter:drop-shadow(0 12px 18px rgba(0,0,0,.12));
-    transform:translateZ(0);
-    animation:logoPop .8s ease-out both;
+    padding:10px;
+    filter: drop-shadow(0 16px 18px rgba(15,23,42,.18));
   }
-  @keyframes logoPop{
-    from{opacity:0; transform:translateY(-6px) scale(.98)}
-    to{opacity:1; transform:translateY(0) scale(1)}
-  }
-
-  .new-badge{
-    display:inline-block;
-    margin-top:10px;
-    padding:7px 14px;
-    border-radius:999px;
+  .side-title{
     font-weight:950;
-    font-size:12px;
-    letter-spacing:.6px;
-    color:#000;
-    background:linear-gradient(90deg,var(--yellow),var(--green),var(--red));
-    box-shadow:0 10px 24px rgba(0,0,0,.12);
-    animation:pulseBadge 1.8s infinite;
-  }
-  @keyframes pulseBadge{
-    0%{transform:scale(1); box-shadow:0 0 0 0 rgba(255,212,0,.55), 0 10px 24px rgba(0,0,0,.12)}
-    70%{transform:scale(1.05); box-shadow:0 0 0 12px rgba(255,212,0,0), 0 10px 24px rgba(0,0,0,.12)}
-    100%{transform:scale(1); box-shadow:0 0 0 0 rgba(255,212,0,0), 0 10px 24px rgba(0,0,0,.12)}
+    font-size:18px;
+    line-height:1.05;
   }
 
-  .side-controls{ padding:12px 14px 14px; }
   .toggle{
-    width:100%;
-    padding:12px 12px;
+    width:calc(100% - 24px);
+    margin:12px;
+    padding:12px 14px;
     border-radius:16px;
-    border:1px solid var(--line);
-    background:
-      linear-gradient(90deg, rgba(255,212,0,.26), rgba(31,163,74,.14), rgba(225,29,46,.12)),
-      #fff;
+    border:1px solid rgba(15,23,42,.10);
+    background: linear-gradient(90deg, rgba(255,212,0,.26), rgba(31,163,74,.14), rgba(225,29,46,.12));
     font-weight:950;
     display:flex;
     align-items:center;
@@ -290,210 +195,230 @@
     cursor:pointer;
     transition:transform .12s ease, box-shadow .12s ease;
   }
-  .toggle:hover{transform:translateY(-1px); box-shadow:0 12px 18px rgba(0,0,0,.08)}
+  .toggle:hover{transform:translateY(-1px); box-shadow: var(--shadow2)}
   .toggle .state{
     font-size:12px;
     padding:5px 10px;
     border-radius:999px;
     background:#fff;
-    border:1px solid rgba(0,0,0,.08);
+    border:1px solid rgba(15,23,42,.10);
   }
 
   .catlist{
-    padding:0 14px 14px;
+    padding:0 12px 12px;
     overflow:hidden;
-    max-height:820px;
+    max-height:900px;
     opacity:1;
-    transition:max-height .25s ease, opacity .25s ease, padding .25s ease;
+    transition:max-height .25s ease, opacity .25s ease;
   }
-  aside.collapsed .catlist{
-    max-height:0;
-    opacity:0;
-    padding:0 14px 0;
-  }
+  aside.collapsed .catlist{max-height:0; opacity:0; padding-bottom:0}
 
   .catbtn{
     width:100%;
     padding:11px 12px;
-    margin-top:10px;
+    margin:0 0 10px;
     border-radius:16px;
-    border:1px solid rgba(0,0,0,.08);
+    border:1px solid rgba(15,23,42,.10);
     background:#fff;
     font-weight:950;
     cursor:pointer;
+    display:flex; align-items:center; justify-content:space-between;
     transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
   }
-  .catbtn:hover{transform:translateY(-1px); box-shadow:0 12px 18px rgba(0,0,0,.08)}
+  .catbtn:hover{transform:translateY(-1px); box-shadow: var(--shadow2)}
   .catbtn.active{
-    background:linear-gradient(90deg, rgba(255,212,0,.20), rgba(31,163,74,.12), rgba(225,29,46,.10));
+    background:
+      radial-gradient(80% 160% at 0% 0%, rgba(255,212,0,.22), transparent 55%),
+      radial-gradient(80% 160% at 100% 0%, rgba(31,163,74,.14), transparent 55%),
+      radial-gradient(80% 160% at 50% 140%, rgba(225,29,46,.12), transparent 60%),
+      #fff;
   }
   .count{
-    min-width:34px;
-    padding:5px 10px;
-    border-radius:999px;
-    border:1px solid rgba(0,0,0,.08);
     font-size:12px;
-    font-weight:950;
-    background:#fff;
+    padding:4px 10px;
+    border-radius:999px;
+    background: rgba(15,23,42,.06);
+    border:1px solid rgba(15,23,42,.08);
+    color: rgba(15,23,42,.70);
+    font-weight:900;
   }
 
+  /* Main */
+  main{min-width:0}
   h1{
-    margin:6px 0 4px;
-    font-size:44px;
-    letter-spacing:-.8px;
+    margin:6px 0 6px;
+    font-size:34px;
+    letter-spacing:-.6px;
   }
   .sub{
     margin:0 0 18px;
     color:var(--muted);
     font-weight:700;
   }
-  @media(max-width:700px){ h1{font-size:38px} }
 
   .grid{
     display:grid;
-    grid-template-columns:repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0,1fr));
     gap:18px;
   }
-  @media(max-width:1100px){ .grid{grid-template-columns:repeat(2,1fr)} }
-  @media(max-width:650px){ .grid{grid-template-columns:1fr} }
+  @media(max-width:1100px){ .grid{grid-template-columns: repeat(2, minmax(0,1fr));} }
+  @media(max-width:680px){ .grid{grid-template-columns: 1fr;} h1{font-size:30px} }
 
   .card{
-    background:rgba(255,255,255,.90);
-    border:1px solid rgba(0,0,0,.08);
-    border-radius:26px;
+    background: rgba(255,255,255,.92);
+    border:1px solid rgba(15,23,42,.10);
+    border-radius: 26px;
     overflow:hidden;
-    transition:transform .18s ease, box-shadow .18s ease;
-    display:flex;
-    flex-direction:column;
-    min-height:420px;
-    position:relative;
-
-    opacity:0;
-    transform:translateY(10px);
-    animation:fadeUp .45s ease forwards;
+    box-shadow: 0 12px 26px rgba(15,23,42,.06);
+    transform: translateZ(0);
+    transition: transform .18s ease, box-shadow .18s ease;
   }
   .card:hover{
-    transform:translateY(-5px);
-    box-shadow:0 18px 42px rgba(0,0,0,.14);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
   }
-  @keyframes fadeUp{ to{opacity:1; transform:translateY(0)} }
 
+  /* Image stage: modern “integrated” fade (no white old postcard) */
   .stage{
     position:relative;
-    height:260px;
+    height:250px;
     overflow:hidden;
-    display:flex;
-    align-items:center;
-    justify-content:center;
     background:
-      radial-gradient(70% 70% at 50% 30%, rgba(255,212,0,.22), transparent 62%),
-      radial-gradient(60% 60% at 20% 85%, rgba(31,163,74,.14), transparent 65%),
-      radial-gradient(70% 70% at 80% 90%, rgba(225,29,46,.12), transparent 65%),
-      linear-gradient(180deg, rgba(255,255,255,.86), rgba(255,255,255,.72));
-    box-shadow: 0 18px 50px rgba(0,0,0,.10) inset;
+      radial-gradient(70% 70% at 35% 25%, rgba(255,212,0,.18), transparent 60%),
+      radial-gradient(70% 70% at 80% 35%, rgba(31,163,74,.12), transparent 60%),
+      radial-gradient(70% 70% at 55% 120%, rgba(225,29,46,.10), transparent 65%),
+      linear-gradient(180deg, rgba(255,255,255,1), rgba(255,255,255,.85));
   }
+
+  /* vignette + aggressive fade to blend edges */
   .stage::before{
     content:"";
-    position:absolute;
-    inset:-2px;
+    position:absolute; inset:0;
     background:
-      radial-gradient(circle at 50% 45%, rgba(255,255,255,0) 18%, rgba(0,0,0,.18) 52%, rgba(0,0,0,.30) 100%);
+      radial-gradient(circle at 50% 40%, rgba(255,255,255,.0) 22%, rgba(0,0,0,.12) 55%, rgba(0,0,0,.22) 100%);
     pointer-events:none;
-    z-index:2;
+    opacity:.85;
   }
   .stage::after{
     content:"";
-    position:absolute;
-    inset:0;
-    background:radial-gradient(60% 55% at 50% 55%, rgba(255,212,0,.18), transparent 60%);
-    opacity:.9;
-    mix-blend-mode:multiply;
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0) 30%, rgba(255,255,255,.0) 65%, rgba(255,255,255,.12));
     pointer-events:none;
-    z-index:1;
   }
 
   .stage img{
-    max-width:92%;
-    max-height:92%;
+    position:absolute; inset:0;
+    width:100%; height:100%;
     object-fit:contain;
-    z-index:0;
-    transform:translateZ(0);
-    transition:transform .18s ease;
-    filter:drop-shadow(0 26px 34px rgba(0,0,0,.30));
+    padding:22px;
+    filter: drop-shadow(0 26px 32px rgba(15,23,42,.22));
+    transform: scale(1.02);
+    transition: transform .25s ease, filter .25s ease;
 
-    -webkit-mask-image:
-      radial-gradient(circle at 45% 42%, #000 34%, rgba(0,0,0,.60) 52%, transparent 74%),
-      radial-gradient(circle at 62% 58%, rgba(0,0,0,.85) 0%, transparent 62%),
-      radial-gradient(circle at 30% 70%, rgba(0,0,0,.75) 0%, transparent 58%);
-    mask-image:
-      radial-gradient(circle at 45% 42%, #000 34%, rgba(0,0,0,.60) 52%, transparent 74%),
-      radial-gradient(circle at 62% 58%, rgba(0,0,0,.85) 0%, transparent 62%),
-      radial-gradient(circle at 30% 70%, rgba(0,0,0,.75) 0%, transparent 58%);
-    -webkit-mask-size:cover;
-    mask-size:cover;
+    /* blend edges hard */
+    -webkit-mask-image: radial-gradient(circle at 50% 42%, #000 40%, rgba(0,0,0,.55) 58%, transparent 78%);
+    mask-image: radial-gradient(circle at 50% 42%, #000 40%, rgba(0,0,0,.55) 58%, transparent 78%);
     -webkit-mask-repeat:no-repeat;
     mask-repeat:no-repeat;
+    -webkit-mask-size:cover;
+    mask-size:cover;
   }
-  .card:hover .stage img{ transform:scale(1.04) }
+  .card:hover .stage img{
+    transform: scale(1.06);
+    filter: drop-shadow(0 30px 38px rgba(15,23,42,.26));
+  }
 
   .tag{
     position:absolute;
-    top:14px; left:14px;
-    background:#111;
-    color:#fff;
+    left:14px; top:14px;
     padding:7px 12px;
     border-radius:999px;
+    background: rgba(15,23,42,.90);
+    color:#fff;
     font-size:12px;
     font-weight:950;
     letter-spacing:.3px;
-    z-index:3;
+    z-index:2;
   }
+
   .sale{
     position:absolute;
-    top:14px; right:14px;
-    background:var(--yellow);
-    padding:9px 12px;
-    border-radius:16px;
+    right:14px; top:14px;
+    padding:8px 12px;
+    border-radius: 14px;
+    background: var(--y);
+    color:#111;
     font-weight:950;
-    z-index:3;
-    box-shadow:0 10px 18px rgba(0,0,0,.12);
+    z-index:2;
+    box-shadow: 0 10px 18px rgba(255,212,0,.20);
   }
 
   .content{
     padding:14px 16px 16px;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    flex:1;
+    display:flex; flex-direction:column; gap:8px;
   }
-  .content h3{margin:0; font-size:18px}
-  .content p{margin:0; color:var(--muted); font-size:13px; line-height:1.35}
+  .content h3{
+    margin:0;
+    font-size:18px;
+    letter-spacing:-.2px;
+  }
+  .content p{
+    margin:0;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.35;
+  }
 
   .open{
-    margin-top:auto;
+    margin-top:8px;
+    display:inline-flex; justify-content:center; align-items:center;
     padding:11px 16px;
     border-radius:999px;
-    text-align:center;
     font-weight:950;
     text-decoration:none;
-    color:#000;
-    border:1px solid rgba(0,0,0,.12);
-    background:#fff;
-    transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+    color:#111;
+    border:1px solid rgba(15,23,42,.12);
+    background: linear-gradient(180deg, #fff, #fafafa);
+    box-shadow: 0 10px 18px rgba(15,23,42,.06);
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
   }
   .open:hover{
-    transform:translateY(-1px);
-    box-shadow:0 12px 18px rgba(0,0,0,.10);
-    background:linear-gradient(90deg,var(--yellow),var(--green),var(--red));
+    transform: translateY(-1px);
+    box-shadow: var(--shadow2);
+    background: linear-gradient(90deg, rgba(255,212,0,.85), rgba(31,163,74,.45), rgba(225,29,46,.35));
   }
 
-  .hidden{display:none !important}
+  .hidden{display:none}
 
-  @media (prefers-reduced-motion: reduce){
-    *{animation:none!important; transition:none!important}
+  /* micro animation entry */
+  @media (prefers-reduced-motion: no-preference){
+    .card{opacity:0; transform: translateY(12px); animation: popIn .45s ease forwards;}
+    .card:nth-child(2){animation-delay:.03s}
+    .card:nth-child(3){animation-delay:.06s}
+    .card:nth-child(4){animation-delay:.09s}
+    .card:nth-child(5){animation-delay:.12s}
+    .card:nth-child(6){animation-delay:.15s}
+    .card:nth-child(7){animation-delay:.18s}
+    .card:nth-child(8){animation-delay:.21s}
+    .card:nth-child(9){animation-delay:.24s}
+    .card:nth-child(10){animation-delay:.27s}
+    .card:nth-child(11){animation-delay:.30s}
+    .card:nth-child(12){animation-delay:.33s}
+    .card:nth-child(13){animation-delay:.36s}
+    .card:nth-child(14){animation-delay:.39s}
+    .card:nth-child(15){animation-delay:.42s}
+    .card:nth-child(16){animation-delay:.45s}
+    @keyframes popIn{
+      to{opacity:1; transform: translateY(0)}
+    }
+  }
+
+  /* small helper line */
+  .tiny{
+    margin-top:10px;
+    color:rgba(15,23,42,.55);
+    font-size:12px;
+    font-weight:700;
   }
 </style>
 </head>
@@ -502,21 +427,32 @@
 
 <header>
   <div class="header-inner">
-    <div class="brand">Aromat Ovunque*</div>
+    <div class="brand">
+      <div>
+        <div class="name">Aromat Ovunque*</div>
+        <small>Azioni settimanali (assolutamente serie)</small>
+      </div>
+    </div>
+
     <div class="actions">
-      <a class="pill pill-home" href="index.html">Home</a>
-
-      <a class="pill pill-game" href="game.html" title="Vai al Game">
-        <span class="dot" aria-hidden="true"></span>
-        Game
+      <a class="cta" href="index.html" aria-label="Torna alla Home">
+        <span class="icon">🏠</span>
+        <span>Home</span>
       </a>
 
-      <a class="pill pill-ig" href="https://www.instagram.com/aromatovunque.info/" target="_blank" rel="noopener">
-        <img src="insta.jpg" alt="Instagram"> Instagram
+      <a class="cta" href="https://www.instagram.com/aromatovunque.ch?igsh=cHMxaHVyOWZmNTkz" target="_blank" rel="noopener">
+        <span class="icon"><img src="insta.jpg" alt="Instagram"></span>
+        <span>Instagram</span>
       </a>
 
-      <a class="banner" href="https://rabadan.ch" target="_blank" rel="noopener">
-        Rabadan 2026
+      <a class="cta game" href="game.html">
+        <span class="icon">🎮</span>
+        <span>Game</span>
+      </a>
+
+      <a class="rabadan" href="https://rabadan.ch" target="_blank" rel="noopener">
+        <span class="spark" aria-hidden="true"></span>
+        <span>Rabadan 2026</span>
       </a>
     </div>
   </div>
@@ -525,35 +461,36 @@
 <div class="wrap">
   <aside id="sidebar">
     <div class="side-top">
-      <div class="logo">
-        <img src="logo.jpg" alt="Aromat Ovunque">
+      <div class="logo-wrap">
+        <div class="logo">
+          <!-- carica il tuo logo qui -->
+          <img src="logo.jpg" alt="Logo Aromat Ovunque">
+        </div>
+        <div class="side-title">Categorie</div>
       </div>
-      <div class="new-badge">NUOVO</div>
     </div>
 
-    <div class="side-controls">
-      <button class="toggle" id="toggleCats" type="button" aria-controls="catlist" aria-expanded="true">
-        <span>Categorie</span>
-        <span class="state" id="toggleLabel">Chiudi</span>
-      </button>
-    </div>
+    <button class="toggle" id="toggleCats" type="button" aria-controls="catlist" aria-expanded="true">
+      <span>Apri / Chiudi</span>
+      <span class="state" id="toggleLabel">Chiudi</span>
+    </button>
 
     <div class="catlist" id="catlist">
-      <button class="catbtn active" data-filter="all">Tutti <span class="count" data-count="all">0</span></button>
-      <button class="catbtn" data-filter="bevande">Bevande <span class="count" data-count="bevande">0</span></button>
-      <button class="catbtn" data-filter="caffe">Caffè <span class="count" data-count="caffe">0</span></button>
-      <button class="catbtn" data-filter="dolci">Dolci <span class="count" data-count="dolci">0</span></button>
-      <button class="catbtn" data-filter="cura">Cura persona <span class="count" data-count="cura">0</span></button>
-      <button class="catbtn" data-filter="casa">Casa <span class="count" data-count="casa">0</span></button>
-      <button class="catbtn" data-filter="carne">Carne <span class="count" data-count="carne">0</span></button>
-      <button class="catbtn" data-filter="extra">Extra <span class="count" data-count="extra">0</span></button>
-      <button class="catbtn" data-filter="extra">Animali <span class="count" data-count="extra">0</span></button>
+      <button class="catbtn active" data-filter="all">Tutti <span class="count" id="count-all">0</span></button>
+      <button class="catbtn" data-filter="bevande">Bevande <span class="count" id="count-bevande">0</span></button>
+      <button class="catbtn" data-filter="caffe">Caffè <span class="count" id="count-caffe">0</span></button>
+      <button class="catbtn" data-filter="dolci">Dolci <span class="count" id="count-dolci">0</span></button>
+      <button class="catbtn" data-filter="cura">Cura persona <span class="count" id="count-cura">0</span></button>
+      <button class="catbtn" data-filter="casa">Casa <span class="count" id="count-casa">0</span></button>
+      <button class="catbtn" data-filter="carne">Carne <span class="count" id="count-carne">0</span></button>
+      <button class="catbtn" data-filter="animali">Animali <span class="count" id="count-animali">0</span></button>
+      <button class="catbtn" data-filter="extra">Extra <span class="count" id="count-extra">0</span></button>
     </div>
   </aside>
 
   <main>
     <h1>Azioni settimanali</h1>
-    <p class="sub">Prodotti in edizione limitata a prezzi scontati. Seleziona una categoria per filtrare.</p>
+    <p class="sub">Sconti random 20–50%. Se non ti convince, è normale.</p>
 
     <section class="grid" id="grid">
 
@@ -579,18 +516,6 @@
           <h3>Sciroppo Aromat</h3>
           <p>Dolcezza che non perdona.</p>
           <a class="open" href="sciroppo.jpg">Apri</a>
-        </div>
-      </article>
-
-      <article class="card" data-cat="bevande">
-        <div class="stage">
-          <span class="tag">BEVANDE</span><span class="sale" data-sale></span>
-          <img src="nesquik.jpg" alt="Nesquik Aromat">
-        </div>
-        <div class="content">
-          <h3>Nesquik Aromat</h3>
-          <p>Colazione: scelte discutibili, energia garantita.</p>
-          <a class="open" href="nesquik.jpg">Apri</a>
         </div>
       </article>
 
@@ -639,20 +564,8 @@
         </div>
         <div class="content">
           <h3>Aromella</h3>
-          <p>Spalmabile. Non fare domande.</p>
+          <p>Spalmabile. Non chiedere come.</p>
           <a class="open" href="aromella.jpg">Apri</a>
-        </div>
-      </article>
-
-      <article class="card" data-cat="dolci">
-        <div class="stage">
-          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
-          <img src="kellogs.jpg" alt="Kellogs Aromat">
-        </div>
-        <div class="content">
-          <h3>Kellogs Aromat</h3>
-          <p>Croccantezza che ti giudica.</p>
-          <a class="open" href="kellogs.jpg">Apri</a>
         </div>
       </article>
 
@@ -697,61 +610,12 @@
       <article class="card" data-cat="casa">
         <div class="stage">
           <span class="tag">CASA</span><span class="sale" data-sale></span>
-          <img src="carta.jpg" alt="Carta igienica">
+          <img src="carta.jpg" alt="Carta igienica Aromat">
         </div>
         <div class="content">
           <h3>Carta igienica Aromat</h3>
           <p>Piacevolmente insaporita. Sì, lo so.</p>
           <a class="open" href="carta.jpg">Apri</a>
-        </div>
-      </article>
-
-      <article class="card" data-cat="casa">
-        <div class="stage">
-          <span class="tag">ANIMALI</span><span class="sale" data-sale></span>
-          <img src="catfood.png" alt="Aromat Cat Food">
-        </div>
-        <div class="content">
-          <h3>Aromat Cat Food</h3>
-          <p>Per gatti raffinati e umani senza speranza.</p>
-          <a class="open" href="catfood.png">Apri</a>
-        </div>
-      </article>
-
-      <!-- EXTRA -->
-      <article class="card" data-cat="extra">
-        <div class="stage">
-          <span class="tag">EXTRA</span><span class="sale" data-sale></span>
-          <img src="sigarette.jpg" alt="Sigarette Aromat">
-        </div>
-        <div class="content">
-          <h3>Sigarette Aromat</h3>
-          <p>Per chi ama il rischio. Il sito no, quello è stabile.</p>
-          <a class="open" href="sigarette.jpg">Apri</a>
-        </div>
-      </article>
-
-      <article class="card" data-cat="extra">
-        <div class="stage">
-          <span class="tag">EXTRA</span><span class="sale" data-sale></span>
-          <img src="durex.jpg" alt="Durex Aromat">
-        </div>
-        <div class="content">
-          <h3>Durex Aromat</h3>
-          <p>Protezione… con carattere.</p>
-          <a class="open" href="durex.jpg">Apri</a>
-        </div>
-      </article>
-
-      <article class="card" data-cat="extra">
-        <div class="stage">
-          <span class="tag">EXTRA</span><span class="sale" data-sale></span>
-          <img src="cicche.jpg" alt="Cicche Aromat">
-        </div>
-        <div class="content">
-          <h3>Cicche Aromat</h3>
-          <p>Il retrogusto è una scelta di vita.</p>
-          <a class="open" href="cicche.jpg">Apri</a>
         </div>
       </article>
 
@@ -768,15 +632,91 @@
         </div>
       </article>
 
+      <!-- ANIMALI (NUOVO) -->
+      <article class="card" data-cat="animali">
+        <div class="stage">
+          <span class="tag">ANIMALI</span><span class="sale" data-sale></span>
+          <img src="IMG_0525.png" alt="Aromat Cat Food">
+        </div>
+        <div class="content">
+          <h3>Aromat Cat Food</h3>
+          <p>Per gatti raffinati e umani senza speranza.</p>
+          <a class="open" href="IMG_0525.png">Apri</a>
+        </div>
+      </article>
+
+      <!-- EXTRA -->
+      <article class="card" data-cat="extra">
+        <div class="stage">
+          <span class="tag">EXTRA</span><span class="sale" data-sale></span>
+          <img src="sigarette.jpg" alt="Sigarette Aromat">
+        </div>
+        <div class="content">
+          <h3>Sigarette Aromat</h3>
+          <p>Per chi ama il rischio. Il sito no, quello è stabile.</p>
+          <a class="open" href="sigarette.jpg">Apri</a>
+        </div>
+      </article>
+
+      <!-- PRODOTTI EXTRA AGGIUNTI -->
+      <article class="card" data-cat="dolci">
+        <div class="stage">
+          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
+          <img src="nesquik.jpg" alt="Nesquik all’Aromat">
+        </div>
+        <div class="content">
+          <h3>Nesquik all’Aromat</h3>
+          <p>Latte giallo. Scelte discutibili, gusto memorabile.</p>
+          <a class="open" href="nesquik.jpg">Apri</a>
+        </div>
+      </article>
+
+      <article class="card" data-cat="cura">
+        <div class="stage">
+          <span class="tag">CURA</span><span class="sale" data-sale></span>
+          <img src="durex.jpg" alt="Preservativi Aromat">
+        </div>
+        <div class="content">
+          <h3>Preservativi Aromat</h3>
+          <p>Protezione. Aromatizzazione. Responsabilità non inclusa.</p>
+          <a class="open" href="durex.jpg">Apri</a>
+        </div>
+      </article>
+
+      <article class="card" data-cat="dolci">
+        <div class="stage">
+          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
+          <img src="kellogs.jpg" alt="Cereali Kellogs all’Aromat">
+        </div>
+        <div class="content">
+          <h3>Cereali Kellogs all’Aromat</h3>
+          <p>Dolcemente salati. Colazione senza scuse.</p>
+          <a class="open" href="kellogs.jpg">Apri</a>
+        </div>
+      </article>
+
+      <article class="card" data-cat="extra">
+        <div class="stage">
+          <span class="tag">EXTRA</span><span class="sale" data-sale></span>
+          <img src="cicche.jpg" alt="Cicche StimoRoll all’Aromat">
+        </div>
+        <div class="content">
+          <h3>Cicche StimoRoll all’Aromat</h3>
+          <p>Stimolazione… aromatizzata. Sì, anche questo.</p>
+          <a class="open" href="cicche.jpg">Apri</a>
+        </div>
+      </article>
+
     </section>
+
+    <div class="tiny">
+      Nota: “Apri” mostra l’immagine del prodotto. Gli sconti cambiano a ogni refresh, come la coerenza umana.
+    </div>
   </main>
 </div>
 
 <script>
-  // animazione “stagger” delle card
-  document.querySelectorAll(".card").forEach((c, i) => c.style.animationDelay = (i * 0.03) + "s");
-
-  // Toggle categorie
+  // ====== Sidebar toggle ======
   const sidebar = document.getElementById("sidebar");
   const toggle = document.getElementById("toggleCats");
   const label = document.getElementById("toggleLabel");
@@ -787,9 +727,11 @@
     toggle.setAttribute("aria-expanded", String(!on));
   }
   toggle.addEventListener("click", () => setCollapsed(!sidebar.classList.contains("collapsed")));
-  if (window.matchMedia("(max-width: 920px)").matches) setCollapsed(true);
 
-  // Filtri
+  // Mobile: parte chiuso
+  if (window.matchMedia("(max-width: 980px)").matches) setCollapsed(true);
+
+  // ====== Filtri ======
   const buttons = Array.from(document.querySelectorAll(".catbtn"));
   const cards = Array.from(document.querySelectorAll(".card"));
 
@@ -801,24 +743,32 @@
       const f = btn.dataset.filter;
       cards.forEach(c => c.classList.toggle("hidden", f !== "all" && c.dataset.cat !== f));
 
-      if (window.matchMedia("(max-width: 920px)").matches) setCollapsed(true);
+      // dopo filtro su mobile richiudi
+      if (window.matchMedia("(max-width: 980px)").matches) setCollapsed(true);
     });
   });
 
-  // Sconti random 20–50%
+  // ====== Sconti random 20–50% ======
   function rand(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
   document.querySelectorAll("[data-sale]").forEach(el => el.textContent = "-" + rand(20, 50) + "%");
 
-  // Conteggi categoria
-  function refreshCounts(){
-    const map = {all: cards.length};
-    cards.forEach(c => { map[c.dataset.cat] = (map[c.dataset.cat] || 0) + 1; });
-    document.querySelectorAll("[data-count]").forEach(el=>{
-      const k = el.getAttribute("data-count");
-      el.textContent = map[k] ?? 0;
-    });
+  // ====== Conteggi per categoria (badge a destra nel menu) ======
+  function updateCounts(){
+    const counts = { all: cards.length };
+    cards.forEach(c => counts[c.dataset.cat] = (counts[c.dataset.cat] || 0) + 1);
+
+    const set = (id,val)=>{ const el=document.getElementById(id); if(el) el.textContent = String(val||0); };
+    set("count-all", counts.all);
+    set("count-bevande", counts.bevande);
+    set("count-caffe", counts.caffe);
+    set("count-dolci", counts.dolci);
+    set("count-cura", counts.cura);
+    set("count-casa", counts.casa);
+    set("count-carne", counts.carne);
+    set("count-animali", counts.animali);
+    set("count-extra", counts.extra);
   }
-  refreshCounts();
+  updateCounts();
 </script>
 
 </body>
