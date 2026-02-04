@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Aromat Pizza 1986</title>
+<title>Aromat Pizza Touch</title>
 
 <style>
 body{
@@ -20,33 +20,34 @@ body{
 .wrap{
   background:#0f1629;
   border:3px solid #2a3350;
-  padding:14px;
+  padding:12px;
   box-shadow:0 0 0 4px #050712;
   position:relative;
 }
 canvas{
-  width:min(92vw,720px);
+  width:min(96vw,420px);
   image-rendering:pixelated;
   border:2px solid #2a3350;
   background:#050712;
+  touch-action:none;
 }
 .hud{
   display:flex;
   justify-content:space-between;
-  margin-bottom:8px;
+  margin-bottom:6px;
+  font-size:14px;
 }
 .hud b{color:#facc15}
 
 .start{
-  margin-top:10px;
+  margin-top:8px;
   width:100%;
-  padding:18px;
-  font-size:24px;
+  padding:14px;
+  font-size:22px;
   font-weight:bold;
   background:#111a33;
   color:#facc15;
   border:3px solid #facc15;
-  cursor:pointer;
 }
 .start.blink{
   animation: blink 1s infinite;
@@ -57,13 +58,13 @@ canvas{
 }
 
 .controls{
-  margin-top:10px;
+  margin-top:8px;
   display:flex;
-  gap:10px;
+  gap:8px;
 }
 .controls button{
   flex:1;
-  padding:12px;
+  padding:10px;
   font-size:16px;
   background:#111a33;
   border:2px solid #2a3350;
@@ -72,37 +73,6 @@ canvas{
 .controls button:active{
   transform:translateY(1px);
 }
-
-/* ===== BANNER FINALE ===== */
-.banner{
-  position:absolute;
-  inset:0;
-  background:rgba(5,7,18,0.92);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  border:3px solid #facc15;
-}
-.banner.show{
-  display:flex;
-}
-.banner .box{
-  background:#0f1629;
-  border:3px solid #facc15;
-  padding:20px;
-  box-shadow:0 0 0 4px #050712;
-}
-.banner h1{
-  margin:0 0 10px;
-  font-size:20px;
-  color:#facc15;
-}
-.banner p{
-  margin:0;
-  font-size:16px;
-  color:#e5e7eb;
-}
 </style>
 </head>
 
@@ -110,7 +80,7 @@ canvas{
 <div class="wrap">
   <div class="hud">
     <div>Score <b id="score">0</b></div>
-    <div>Vite <b id="lives">3</b></div>
+    <div>Tempo <b id="time">30</b>s</div>
   </div>
 
   <canvas id="game" width="320" height="180"></canvas>
@@ -122,14 +92,6 @@ canvas{
     <button id="fire">SPARA</button>
     <button id="right">▶</button>
   </div>
-
-  <!-- BANNER -->
-  <div id="banner" class="banner">
-    <div class="box">
-      <h1>COMPLIMENTI!</h1>
-      <p>HAI VINTO L’OPPORTUNITÀ<br>DI OFFRIRMI DA BERE!</p>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -138,15 +100,20 @@ const ctx = c.getContext("2d");
 const W=c.width,H=c.height;
 
 let running=false;
-let score=0,lives=3;
-const scoreEl=document.getElementById("score");
-const livesEl=document.getElementById("lives");
-const startBtn=document.getElementById("start");
-const banner=document.getElementById("banner");
+let score=0;
+let timeLeft=30;
 
-const player={x:160,y:150,w:26,h:40,cd:0};
+const scoreEl=document.getElementById("score");
+const timeEl=document.getElementById("time");
+const startBtn=document.getElementById("start");
+
+const player={x:160,y:150,w:26,h:36,cd:0};
 const bullets=[];
-const salini=[];
+
+const pizza={
+  x:160,y:60,r:20,
+  vx:1.4
+};
 
 // ===== PIXEL TEXT =====
 function pixelText(txt,x,y,color){
@@ -184,101 +151,102 @@ function drawAromat(){
 
 function drawPizza(){
   ctx.fillStyle="#d97706";
-  ctx.beginPath();ctx.arc(160,60,26,0,7);ctx.fill();
+  ctx.beginPath();ctx.arc(pizza.x,pizza.y,pizza.r+4,0,7);ctx.fill();
   ctx.fillStyle="#fef3c7";
-  ctx.beginPath();ctx.arc(160,60,22,0,7);ctx.fill();
-}
-
-function drawSalino(s){
-  ctx.fillStyle="#e5e7eb";
-  ctx.fillRect(s.x-3,s.y-3,6,6);
-  ctx.fillStyle="#9ca3af";
-  ctx.fillRect(s.x-1,s.y-1,2,2);
+  ctx.beginPath();ctx.arc(pizza.x,pizza.y,pizza.r,0,7);ctx.fill();
 }
 
 // ===== GAME =====
 function shoot(){
-  if(player.cd>0)return;
+  if(player.cd>0 || !running) return;
   bullets.push({x:player.x,y:player.y-20,vy:-4});
-  player.cd=10;
-}
-
-function spawnSalino(){
-  salini.push({x:20+Math.random()*280,y:-10,vy:1.2});
+  player.cd=8;
 }
 
 function update(){
-  if(!running)return;
+  if(!running) return;
 
   player.cd=Math.max(0,player.cd-1);
-  if(Math.random()<0.02)spawnSalino();
+
+  // pizza movement
+  pizza.x+=pizza.vx;
+  if(pizza.x<40 || pizza.x>280) pizza.vx*=-1;
 
   bullets.forEach(b=>b.y+=b.vy);
-  salini.forEach(s=>s.y+=s.vy);
 
-  for(let i=salini.length-1;i>=0;i--){
-    const s=salini[i];
-    if(Math.hypot(s.x-160,s.y-60)<24){
-      salini.splice(i,1);
-      lives--;
-      livesEl.textContent=lives;
-      if(lives<=0)gameOver();
+  // collisions
+  for(let i=bullets.length-1;i>=0;i--){
+    const b=bullets[i];
+    if(Math.hypot(b.x-pizza.x,b.y-pizza.y)<pizza.r){
+      bullets.splice(i,1);
+      score+=10;
+      scoreEl.textContent=score;
     }
-    for(let j=bullets.length-1;j>=0;j--){
-      const b=bullets[j];
-      if(Math.abs(b.x-s.x)<4 && Math.abs(b.y-s.y)<4){
-        bullets.splice(j,1);
-        salini.splice(i,1);
-        score+=10;
-        scoreEl.textContent=score;
-        break;
-      }
-    }
+    if(b.y<0) bullets.splice(i,1);
   }
 }
 
 function render(){
   ctx.fillStyle="#050712";
   ctx.fillRect(0,0,W,H);
+
   drawPizza();
   drawAromat();
-  bullets.forEach(b=>{
-    ctx.fillStyle="#facc15";
-    ctx.fillRect(b.x,b.y,2,4);
-  });
-  salini.forEach(drawSalino);
+
+  ctx.fillStyle="#facc15";
+  bullets.forEach(b=>ctx.fillRect(b.x,b.y,2,4));
 }
 
 function loop(){
   update();
   render();
-  if(running)requestAnimationFrame(loop);
+  if(running) requestAnimationFrame(loop);
 }
 
 function startGame(){
-  score=0;lives=3;
-  bullets.length=0;salini.length=0;
+  score=0;
+  timeLeft=30;
+  bullets.length=0;
   scoreEl.textContent=0;
-  livesEl.textContent=3;
-  banner.classList.remove("show");
+  timeEl.textContent=30;
   running=true;
   startBtn.classList.remove("blink");
   loop();
+
+  const timer=setInterval(()=>{
+    if(!running){clearInterval(timer);return;}
+    timeLeft--;
+    timeEl.textContent=timeLeft;
+    if(timeLeft<=0){
+      running=false;
+      startBtn.classList.add("blink");
+      clearInterval(timer);
+    }
+  },1000);
 }
 
-function gameOver(){
-  running=false;
-  startBtn.classList.add("blink");
-  banner.classList.add("show");
-}
+// ===== TOUCH CONTROL =====
+let dragStartX=0, playerStartX=0;
+c.addEventListener("pointerdown",e=>{
+  dragStartX=e.clientX;
+  playerStartX=player.x;
+  shoot();
+});
+c.addEventListener("pointermove",e=>{
+  if(!running) return;
+  const rect=c.getBoundingClientRect();
+  const scale=W/rect.width;
+  const dx=(e.clientX-dragStartX)*scale;
+  player.x=Math.max(20,Math.min(300,playerStartX+dx));
+});
 
-// ===== INPUT =====
+// buttons fallback
 document.getElementById("left").onpointerdown=()=>player.x=Math.max(20,player.x-10);
 document.getElementById("right").onpointerdown=()=>player.x=Math.min(300,player.x+10);
 document.getElementById("fire").onpointerdown=shoot;
 
 startBtn.onclick=()=>{
-  if(!running)startGame();
+  if(!running) startGame();
 };
 </script>
 </body>
