@@ -102,18 +102,16 @@ const W=c.width,H=c.height;
 let running=false;
 let score=0;
 let timeLeft=30;
+let timerId=null;
 
 const scoreEl=document.getElementById("score");
 const timeEl=document.getElementById("time");
 const startBtn=document.getElementById("start");
 
-const player={x:160,y:150,w:26,h:36,cd:0};
+const player={x:160,y:150,w:26,h:36,cooldown:0};
 const bullets=[];
 
-const pizza={
-  x:160,y:60,r:20,
-  vx:1.4
-};
+const pizza={x:160,y:60,r:20,vx:1.5};
 
 // ===== PIXEL TEXT =====
 function pixelText(txt,x,y,color){
@@ -137,7 +135,7 @@ function pixelText(txt,x,y,color){
   }
 }
 
-// ===== SPRITES =====
+// ===== DRAW =====
 function drawAromat(){
   const l=player.x-player.w/2,t=player.y-player.h/2;
   ctx.fillStyle="#f6d32d";
@@ -156,31 +154,30 @@ function drawPizza(){
   ctx.beginPath();ctx.arc(pizza.x,pizza.y,pizza.r,0,7);ctx.fill();
 }
 
-// ===== GAME =====
+// ===== GAME LOGIC =====
 function shoot(){
-  if(player.cd>0 || !running) return;
+  if(player.cooldown>0 || !running) return;
   bullets.push({x:player.x,y:player.y-20,vy:-4});
-  player.cd=8;
+  player.cooldown=8;
 }
 
 function update(){
   if(!running) return;
 
-  player.cd=Math.max(0,player.cd-1);
+  player.cooldown=Math.max(0,player.cooldown-1);
 
-  // pizza movement
   pizza.x+=pizza.vx;
   if(pizza.x<40 || pizza.x>280) pizza.vx*=-1;
 
   bullets.forEach(b=>b.y+=b.vy);
 
-  // collisions
   for(let i=bullets.length-1;i>=0;i--){
     const b=bullets[i];
     if(Math.hypot(b.x-pizza.x,b.y-pizza.y)<pizza.r){
       bullets.splice(i,1);
       score+=10;
       scoreEl.textContent=score;
+      continue;
     }
     if(b.y<0) bullets.splice(i,1);
   }
@@ -189,10 +186,8 @@ function update(){
 function render(){
   ctx.fillStyle="#050712";
   ctx.fillRect(0,0,W,H);
-
   drawPizza();
   drawAromat();
-
   ctx.fillStyle="#facc15";
   bullets.forEach(b=>ctx.fillRect(b.x,b.y,2,4));
 }
@@ -203,44 +198,66 @@ function loop(){
   if(running) requestAnimationFrame(loop);
 }
 
-function startGame(){
-  score=0;
+// ===== TIMER =====
+function startTimer(){
   timeLeft=30;
-  bullets.length=0;
-  scoreEl.textContent=0;
-  timeEl.textContent=30;
-  running=true;
-  startBtn.classList.remove("blink");
-  loop();
-
-  const timer=setInterval(()=>{
-    if(!running){clearInterval(timer);return;}
+  timeEl.textContent=timeLeft;
+  clearInterval(timerId);
+  timerId=setInterval(()=>{
+    if(!running){clearInterval(timerId);return;}
     timeLeft--;
     timeEl.textContent=timeLeft;
     if(timeLeft<=0){
       running=false;
       startBtn.classList.add("blink");
-      clearInterval(timer);
+      clearInterval(timerId);
     }
   },1000);
 }
 
-// ===== TOUCH CONTROL =====
-let dragStartX=0, playerStartX=0;
+// ===== START =====
+function startGame(){
+  score=0;
+  bullets.length=0;
+  scoreEl.textContent=0;
+  running=true;
+  startBtn.classList.remove("blink");
+  startTimer();
+  loop();
+}
+
+// ===== TOUCH (COME LA VERSIONE CHE FUNZIONAVA) =====
+let dragId=null;
+let dragStartX=0;
+let playerStartX=0;
+
 c.addEventListener("pointerdown",e=>{
-  dragStartX=e.clientX;
-  playerStartX=player.x;
-  shoot();
+  c.setPointerCapture(e.pointerId);
+  if(dragId===null){
+    dragId=e.pointerId;
+    dragStartX=e.clientX;
+    playerStartX=player.x;
+  }else{
+    shoot();
+  }
 });
+
 c.addEventListener("pointermove",e=>{
-  if(!running) return;
+  if(e.pointerId!==dragId || !running) return;
   const rect=c.getBoundingClientRect();
   const scale=W/rect.width;
   const dx=(e.clientX-dragStartX)*scale;
   player.x=Math.max(20,Math.min(300,playerStartX+dx));
 });
 
-// buttons fallback
+c.addEventListener("pointerup",e=>{
+  if(e.pointerId===dragId){
+    shoot(); // tap = sparo
+    dragId=null;
+  }
+});
+
+// ===== BUTTON FALLBACK =====
 document.getElementById("left").onpointerdown=()=>player.x=Math.max(20,player.x-10);
 document.getElementById("right").onpointerdown=()=>player.x=Math.min(300,player.x+10);
 document.getElementById("fire").onpointerdown=shoot;
