@@ -1,1041 +1,325 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aromat Ovunque* – Shop</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Aromat Game</title>
 
-  <style>
-    :root{
-      --yellow:#ffd400;
-      --green:#1fa34a;
-      --red:#e11d2e;
+<style>
+body{
+  margin:0;
+  background:#070b18;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family: monospace;
+  color:#c7d2fe;
+  touch-action:none;
+}
+.wrap{
+  background:#0f1629;
+  border:3px solid #2a3350;
+  padding:12px;
+  box-shadow:0 0 0 4px #050712;
+  position:relative;
+}
+canvas{
+  width:min(96vw,420px);
+  image-rendering:pixelated;
+  border:2px solid #2a3350;
+  background:#050712;
+  touch-action:none;
+}
+.hud{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:4px;
+  font-size:14px;
+}
+.hud b{color:#facc15}
 
-      --bg:#fbfbf7;
-      --card:#ffffff;
-      --ink:#111827;
-      --muted:#6b7280;
-      --line:rgba(0,0,0,.10);
-      --shadow:0 18px 50px rgba(0,0,0,.12);
-      --shadow2:0 10px 22px rgba(0,0,0,.10);
-      --radius:22px;
-    }
+.title{
+  text-align:center;
+  margin-bottom:6px;
+  color:#facc15;
+  text-shadow:
+    0 0 6px #facc15,
+    0 0 12px #facc15;
+}
+.subtitle{
+  font-size:12px;
+  color:#c7d2fe;
+}
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color:var(--ink);
-      background:
-        radial-gradient(900px 520px at 8% -10%, rgba(255,212,0,.18), transparent 62%),
-        radial-gradient(900px 520px at 92% -10%, rgba(31,163,74,.14), transparent 62%),
-        radial-gradient(900px 520px at 50% 120%, rgba(225,29,46,.10), transparent 62%),
-        radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.35), transparent 60%),
-        radial-gradient(1.5px 1.5px at 70% 20%, rgba(255,255,255,.25), transparent 60%),
-        radial-gradient(1.8px 1.8px at 55% 75%, rgba(255,255,255,.20), transparent 60%),
-        var(--bg);
-    }
+.start{
+  margin-top:6px;
+  width:100%;
+  padding:14px;
+  font-size:22px;
+  font-weight:bold;
+  background:#111a33;
+  color:#facc15;
+  border:3px solid #facc15;
+}
+.start.blink{
+  animation: blink 1s infinite;
+}
+@keyframes blink{
+  0%,50%{opacity:1}
+  51%,100%{opacity:0.3}
+}
 
-    /* HEADER */
-    header{
-      position:sticky; top:0; z-index:50;
-      background:rgba(255,255,255,.82);
-      backdrop-filter: blur(10px);
-      border-bottom:1px solid var(--line);
-    }
-    .header-inner{
-      max-width:1200px; margin:0 auto;
-      padding:10px 14px;
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-    }
+.controls{
+  margin-top:6px;
+  display:flex;
+  gap:6px;
+}
+.controls button{
+  flex:1;
+  padding:10px;
+  font-size:16px;
+  background:#111a33;
+  border:2px solid #2a3350;
+  color:#fff;
+}
 
-    .brand{
-      display:flex; align-items:center; gap:10px;
-      min-width: 160px;
-    }
-    .brand img{
-      height:42px; width:auto; display:block;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,.14));
-      transform: translateZ(0);
-    }
-
-    .nav{
-      display:flex; align-items:center; gap:10px;
-      flex-wrap:nowrap;
-      overflow-x:auto;
-      -webkit-overflow-scrolling:touch;
-      scrollbar-width:none;
-      padding-bottom:2px;
-      max-width: 100%;
-    }
-    .nav::-webkit-scrollbar{display:none}
-
-    .pill{
-      display:inline-flex; align-items:center; justify-content:center; gap:8px;
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:#fff;
-      text-decoration:none;
-      color:#0b0b0b;
-      font-weight:900;
-      box-shadow:0 8px 18px rgba(0,0,0,.06);
-      transition:transform .14s ease, box-shadow .14s ease, background .14s ease;
-      white-space:nowrap;
-      flex:0 0 auto;
-    }
-    .pill:hover{
-      transform: translateY(-1px);
-      box-shadow:0 14px 26px rgba(0,0,0,.10);
-    }
-    .pill .ico{font-size:16px; line-height:1}
-    .pill img{
-      width:18px; height:18px; display:block;
-      border-radius:6px;
-    }
-
-    /* Game: glow giallo */
-    .pill.game{
-      border-color: rgba(255,212,0,.45);
-      box-shadow:0 10px 22px rgba(255,212,0,.18);
-    }
-    .pill.game:hover{
-      background: linear-gradient(90deg, rgba(255,212,0,.95), rgba(255,212,0,.65));
-      box-shadow: 0 16px 34px rgba(255,212,0,.28);
-      transform: translateY(-2px);
-    }
-
-    /* Rabadan banner */
-    .pill.rabadan{
-      position:relative;
-      border-color: rgba(0,0,0,.08);
-      background:
-        radial-gradient(120px 60px at 18% 50%, rgba(255,212,0,.30), transparent 65%),
-        radial-gradient(120px 60px at 50% 50%, rgba(31,163,74,.18), transparent 65%),
-        radial-gradient(120px 60px at 82% 50%, rgba(225,29,46,.14), transparent 65%),
-        #fff;
-      overflow:hidden;
-    }
-    .pill.rabadan::after{
-      content:"";
-      position:absolute;
-      inset:-40% -30%;
-      background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,.55) 45%, transparent 55%);
-      transform: translateX(-60%) rotate(6deg);
-      animation: shine 3.6s ease-in-out infinite;
-      pointer-events:none;
-    }
-    @keyframes shine{
-      0%,55%{transform: translateX(-70%) rotate(6deg); opacity:.0}
-      65%{opacity:.55}
-      100%{transform: translateX(70%) rotate(6deg); opacity:0}
-    }
-
-    /* LAYOUT */
-    .wrap{
-      max-width:1200px; margin:0 auto;
-      padding:18px 14px 34px;
-      display:grid;
-      grid-template-columns: 320px 1fr;
-      gap:16px;
-    }
-    @media(max-width:960px){
-      .wrap{grid-template-columns:1fr}
-      .brand{min-width:auto}
-    }
-
-    /* SIDEBAR */
-    aside{
-      background: rgba(255,255,255,.78);
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow2);
-      overflow:hidden;
-    }
-    .aside-top{
-      padding:14px 14px 10px;
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-    .aside-logo{
-      width:92px; height:72px;
-      border-radius:18px;
-      background:
-        radial-gradient(60% 60% at 30% 30%, rgba(255,212,0,.20), transparent 70%),
-        radial-gradient(60% 60% at 70% 70%, rgba(31,163,74,.12), transparent 70%),
-        radial-gradient(60% 60% at 70% 20%, rgba(225,29,46,.10), transparent 70%),
-        rgba(255,255,255,.65);
-      display:flex; align-items:center; justify-content:center;
-      border:1px solid var(--line);
-    }
-    .aside-logo img{
-      max-width:76px; max-height:46px; display:block;
-      filter: drop-shadow(0 10px 16px rgba(0,0,0,.12));
-    }
-    .aside-title{
-      font-weight:950;
-      font-size:18px;
-      line-height:1.1;
-    }
-    .aside-sub{
-      color:var(--muted);
-      font-weight:700;
-      font-size:13px;
-      margin-top:4px;
-    }
-
-    .toggle{
-      width: calc(100% - 28px);
-      margin: 0 14px 14px;
-      padding:12px 12px;
-      border-radius:18px;
-      border:1px solid var(--line);
-      background: linear-gradient(90deg, rgba(255,212,0,.22), rgba(31,163,74,.12), rgba(225,29,46,.10));
-      font-weight:950;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      cursor:pointer;
-      transition:transform .12s ease, box-shadow .12s ease;
-    }
-    .toggle:hover{
-      transform: translateY(-1px);
-      box-shadow: 0 16px 28px rgba(0,0,0,.10);
-    }
-    .toggle .state{
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      background:#fff;
-      border:1px solid var(--line);
-      font-weight:950;
-    }
-
-    .catlist{
-      padding: 0 14px 14px;
-      display:grid;
-      gap:8px;
-      overflow:hidden;
-      max-height: 800px;
-      opacity:1;
-      transition:max-height .25s ease, opacity .25s ease;
-    }
-    aside.collapsed .catlist{max-height:0; opacity:0; padding-bottom:0}
-
-    .catbtn{
-      width:100%;
-      padding:11px 12px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background:#fff;
-      font-weight:950;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
-    }
-    .catbtn:hover{transform:translateY(-1px); box-shadow: 0 14px 24px rgba(0,0,0,.10)}
-    .catbtn.active{
-      background: linear-gradient(90deg, rgba(255,212,0,.22), rgba(31,163,74,.12), rgba(225,29,46,.10));
-    }
-    .catbtn .count{
-      font-size:12px;
-      padding:5px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:#fff;
-      color:#111;
-    }
-
-    /* MAIN */
-    main{
-      min-width:0;
-    }
-    h1{
-      margin:0 0 6px;
-      font-size:42px;
-      letter-spacing:-.6px;
-      line-height:1.05;
-    }
-    .lead{
-      margin:0 0 18px;
-      color:var(--muted);
-      font-weight:700;
-      font-size:16px;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:14px;
-    }
-    @media(max-width:1150px){ .grid{grid-template-columns: repeat(2, 1fr);} }
-    @media(max-width:620px){ .grid{grid-template-columns: 1fr;} h1{font-size:36px} }
-
-    .card{
-      background: rgba(255,255,255,.86);
-      border:1px solid var(--line);
-      border-radius: 26px;
-      overflow:hidden;
-      box-shadow: var(--shadow2);
-      transition: transform .18s ease, box-shadow .18s ease;
-      display:flex;
-      flex-direction:column;
-      min-height: 420px;
-    }
-    .card:hover{
-      transform: translateY(-4px);
-      box-shadow: var(--shadow);
-    }
-
-    /* STAGE: no riquadro bianco “old”, immagine fusa nel pannello */
-    .stage{
-      position:relative;
-      height:240px;
-      overflow:hidden;
-      background:
-        radial-gradient(70% 70% at 50% 35%, rgba(255,212,0,.24), transparent 62%),
-        radial-gradient(60% 60% at 25% 85%, rgba(31,163,74,.16), transparent 65%),
-        radial-gradient(70% 70% at 78% 88%, rgba(225,29,46,.12), transparent 65%),
-        radial-gradient(120% 80% at 50% 110%, rgba(0,0,0,.08), transparent 55%),
-        #fff;
-    }
-    .stage::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        radial-gradient(circle at 50% 45%, transparent 18%, rgba(0,0,0,.14) 52%, rgba(0,0,0,.22) 100%);
-      opacity:.75;
-      pointer-events:none;
-    }
-    .stage img{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      padding:18px 18px 10px;
-      transform: translateZ(0);
-      filter: drop-shadow(0 22px 26px rgba(0,0,0,.22));
-      animation: floaty 6s ease-in-out infinite;
-      /* sfumatura aggressiva per “fondere” i bordi bianchi */
-      -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 34%, rgba(0,0,0,.55) 54%, transparent 74%);
-      mask-image: radial-gradient(circle at 50% 45%, #000 34%, rgba(0,0,0,.55) 54%, transparent 74%);
-      -webkit-mask-repeat:no-repeat;
-      mask-repeat:no-repeat;
-      -webkit-mask-size:cover;
-      mask-size:cover;
-    }
-    @keyframes floaty{
-      0%,100%{transform: translateY(0)}
-      50%{transform: translateY(-6px)}
-    }
-    /* riduci animazioni se richiesto dal sistema */
-    @media (prefers-reduced-motion: reduce){
-      .stage img{animation:none}
-      .pill.rabadan::after{animation:none}
-      .card{transition:none}
-      .pill{transition:none}
-    }
-
-    .tag{
-      position:absolute;
-      top:12px; left:12px;
-      background:#111;
-      color:#fff;
-      padding:8px 12px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:950;
-      letter-spacing:.3px;
-      z-index:2;
-      box-shadow: 0 10px 18px rgba(0,0,0,.12);
-    }
-    .sale{
-      position:absolute;
-      top:12px; right:12px;
-      background: var(--yellow);
-      padding:9px 12px;
-      border-radius:16px;
-      font-weight:950;
-      z-index:2;
-      box-shadow: 0 10px 18px rgba(0,0,0,.10);
-    }
-
-    .content{
-      padding:14px 16px 16px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      flex:1;
-    }
-    .content h3{
-      margin:0;
-      font-size:18px;
-      letter-spacing:-.2px;
-    }
-    .content p{
-      margin:0;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.35;
-    }
-
-    /* rating */
-    .rating{
-      margin-top:6px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.75);
-    }
-    .stars{
-      display:inline-flex;
-      gap:6px;
-      user-select:none;
-    }
-    .star{
-      width:20px; height:20px;
-      display:inline-grid;
-      place-items:center;
-      border-radius:6px;
-      cursor:pointer;
-      transform: translateZ(0);
-      transition: transform .10s ease, filter .10s ease;
-      font-size:18px;
-      line-height:1;
-      filter: grayscale(1) opacity(.55);
-    }
-    .star.on{
-      filter: none;
-      text-shadow: 0 10px 16px rgba(255,212,0,.22);
-    }
-    .star:hover{transform: scale(1.08)}
-    .meta{
-      text-align:right;
-      font-size:12px;
-      color:var(--muted);
-      font-weight:800;
-      line-height:1.1;
-      white-space:nowrap;
-    }
-
-    .actions-row{
-      margin-top:auto;
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-
-    .open{
-      flex:1;
-      padding:11px 14px;
-      border-radius:999px;
-      text-align:center;
-      font-weight:950;
-      text-decoration:none;
-      color:#000;
-      border:2px solid rgba(0,0,0,.08);
-      background:#fff;
-      transition: background .14s ease, transform .14s ease, box-shadow .14s ease;
-    }
-    .open:hover{
-      background: linear-gradient(90deg, rgba(255,212,0,.92), rgba(31,163,74,.78), rgba(225,29,46,.70));
-      transform: translateY(-1px);
-      box-shadow: 0 14px 24px rgba(0,0,0,.10);
-    }
-
-    .hidden{display:none !important;}
-  </style>
+/* BANNER FINALE */
+.banner{
+  position:absolute;
+  inset:0;
+  background:rgba(5,7,18,0.92);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.banner.show{display:flex}
+.banner .box{
+  border:3px solid #facc15;
+  padding:16px;
+  background:#0f1629;
+  box-shadow:0 0 0 4px #050712;
+}
+.banner h1{
+  margin:0;
+  color:#facc15;
+}
+</style>
 </head>
 
 <body>
-
-<header>
-  <div class="header-inner">
-    <!-- Logo al posto della scritta -->
-    <div class="brand">
-      <img src="logo.jpg" alt="Aromat Ovunque">
-    </div>
-
-    <!-- Bottoni ORIZZONTALI (scroll su mobile) -->
-    <nav class="nav" aria-label="Collegamenti">
-      <a class="pill" href="index.html"><span class="ico">🏠</span> Home</a>
-
-      <a class="pill" href="https://www.instagram.com/aromatovunque.ch?igsh=cHMxaHVyOWZmNTkz" target="_blank" rel="noopener">
-        <img src="insta.jpg" alt="Instagram"> Instagram
-      </a>
-
-      <a class="pill game" href="game.html"><span class="ico">🎮</span> Game</a>
-
-      <a class="pill rabadan" href="https://rabadan.ch" target="_blank" rel="noopener">
-        <span class="ico">🟡</span> Rabadan 2026
-      </a>
-    </nav>
-  </div>
-</header>
-
 <div class="wrap">
 
-  <aside id="sidebar">
-    <div class="aside-top">
-      <div class="aside-logo">
-        <img src="logo.jpg" alt="Logo">
-      </div>
-      <div>
-        <div class="aside-title">Categorie</div>
-        <div class="aside-sub">Apri, filtra, richiudi. Vita semplice.</div>
-      </div>
+  <div class="title">
+    <div>AROMAT GAME!</div>
+    <div class="subtitle">Sarà l’aromat sulla pizza</div>
+  </div>
+
+  <div class="hud">
+    <div>Score <b id="score">0</b></div>
+    <div>Tempo <b id="time">30</b>s</div>
+  </div>
+
+  <canvas id="game" width="320" height="180"></canvas>
+
+  <button id="start" class="start blink">START</button>
+
+  <div class="controls">
+    <button id="left">◀</button>
+    <button id="fire">SPARA</button>
+    <button id="right">▶</button>
+  </div>
+
+  <div id="banner" class="banner">
+    <div class="box">
+      <h1>COMPLIMENTI!</h1>
+      <div>Hai finito la partita</div>
     </div>
-
-    <button class="toggle" id="toggleCats" type="button" aria-controls="catlist" aria-expanded="true">
-      <span>Apri / Chiudi</span>
-      <span class="state" id="toggleLabel">Chiudi</span>
-    </button>
-
-    <div class="catlist" id="catlist">
-      <button class="catbtn active" data-filter="all">Tutti <span class="count" data-count="all">0</span></button>
-      <button class="catbtn" data-filter="bevande">Bevande <span class="count" data-count="bevande">0</span></button>
-      <button class="catbtn" data-filter="caffe">Caffè <span class="count" data-count="caffe">0</span></button>
-      <button class="catbtn" data-filter="dolci">Dolci <span class="count" data-count="dolci">0</span></button>
-      <button class="catbtn" data-filter="cura">Cura persona <span class="count" data-count="cura">0</span></button>
-      <button class="catbtn" data-filter="casa">Casa <span class="count" data-count="casa">0</span></button>
-      <button class="catbtn" data-filter="carne">Carne <span class="count" data-count="carne">0</span></button>
-      <button class="catbtn" data-filter="animali">Animali <span class="count" data-count="animali">0</span></button>
-      <button class="catbtn" data-filter="extra">Extra <span class="count" data-count="extra">0</span></button>
-    </div>
-  </aside>
-
-  <main>
-    <h1>Azioni settimanali</h1>
-    <p class="lead">Sconti random 20–50%. Se non ti convince, è normale.</p>
-
-    <section class="grid" id="grid">
-
-      <!-- BEVANDE -->
-      <article class="card" data-cat="bevande" data-id="coca">
-        <div class="stage">
-          <span class="tag">BEVANDE</span><span class="sale" data-sale></span>
-          <img src="coca.jpg" alt="Coca Aromat">
-        </div>
-        <div class="content">
-          <h3>Coca Aromat</h3>
-          <p>Perché le scelte semplici non ti interessano.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars" aria-label="Vota">
-              <span class="star" data-star="1">★</span>
-              <span class="star" data-star="2">★</span>
-              <span class="star" data-star="3">★</span>
-              <span class="star" data-star="4">★</span>
-              <span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="coca.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="card" data-cat="bevande" data-id="sciroppo">
-        <div class="stage">
-          <span class="tag">BEVANDE</span><span class="sale" data-sale></span>
-          <img src="sciroppo.jpg" alt="Sciroppo Aromat">
-        </div>
-        <div class="content">
-          <h3>Sciroppo Aromat</h3>
-          <p>Dolcezza che non perdona.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="sciroppo.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- CAFFÈ -->
-      <article class="card" data-cat="caffe" data-id="caffe">
-        <div class="stage">
-          <span class="tag">CAFFÈ</span><span class="sale" data-sale></span>
-          <img src="caffe.jpg" alt="Capsule Espresso Aromat">
-        </div>
-        <div class="content">
-          <h3>Capsule Espresso</h3>
-          <p>Compatibili, forti, inevitabili.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="caffe.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- DOLCI -->
-      <article class="card" data-cat="dolci" data-id="cioccolato">
-        <div class="stage">
-          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
-          <img src="cioccolato.jpg" alt="Cioccolato fondente Aromat">
-        </div>
-        <div class="content">
-          <h3>Cioccolato fondente</h3>
-          <p>Forte, testardo. Come il progetto.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="cioccolato.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="card" data-cat="dolci" data-id="gelato">
-        <div class="stage">
-          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
-          <img src="gelato.jpg" alt="Gelato Aromat Supreme">
-        </div>
-        <div class="content">
-          <h3>Gelato Aromat Supreme</h3>
-          <p>Dolce, cremoso, inspiegabile.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="gelato.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="card" data-cat="dolci" data-id="aromella">
-        <div class="stage">
-          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
-          <img src="aromella.jpg" alt="Aromella">
-        </div>
-        <div class="content">
-          <h3>Aromella</h3>
-          <p>Spalmabile. Non fare domande.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="aromella.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="card" data-cat="dolci" data-id="kellogs">
-        <div class="stage">
-          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
-          <img src="kellogs.jpg" alt="Kellogs Aromat">
-        </div>
-        <div class="content">
-          <h3>Kellogs all’Aromat</h3>
-          <p>Cereali croccanti. Scelte discutibili.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="kellogs.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="card" data-cat="dolci" data-id="nesquik">
-        <div class="stage">
-          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
-          <img src="nesquik.jpg" alt="Nesquik Aromat">
-        </div>
-        <div class="content">
-          <h3>Nesquik all’Aromat</h3>
-          <p>Latte giallo, morale grigia.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="nesquik.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- CURA -->
-      <article class="card" data-cat="cura" data-id="dentifricio">
-        <div class="stage">
-          <span class="tag">CURA</span><span class="sale" data-sale></span>
-          <img src="dentifricio.jpg" alt="Dentifricio all'Aromat">
-        </div>
-        <div class="content">
-          <h3>Dentifricio all’Aromat</h3>
-          <p>Alito potente. Zero compromessi.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="dentifricio.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="card" data-cat="cura" data-id="profumo">
-        <div class="stage">
-          <span class="tag">CURA</span><span class="sale" data-sale></span>
-          <img src="profumo.jpg" alt="Eau de Toilette Aromat">
-        </div>
-        <div class="content">
-          <h3>Eau de Toilette</h3>
-          <p>Profumo “Aromat”. Coraggio vero.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="profumo.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="card" data-cat="cura" data-id="deodorante">
-        <div class="stage">
-          <span class="tag">CURA</span><span class="sale" data-sale></span>
-          <img src="deodorante.jpg" alt="Deodorante Aromat">
-        </div>
-        <div class="content">
-          <h3>Deodorante Aromat</h3>
-          <p>48h. O più. Chi lo sa.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="deodorante.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- CASA -->
-      <article class="card" data-cat="casa" data-id="carta">
-        <div class="stage">
-          <span class="tag">CASA</span><span class="sale" data-sale></span>
-          <img src="carta.jpg" alt="Carta igienica Aromat">
-        </div>
-        <div class="content">
-          <h3>Carta igienica Aromat</h3>
-          <p>Piacevolmente insaporita. Sì, lo so.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="carta.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- CARNE -->
-      <article class="card" data-cat="carne" data-id="luganighetta">
-        <div class="stage">
-          <span class="tag">CARNE</span><span class="sale" data-sale></span>
-          <img src="luganighetta.jpg" alt="Luganighetta Aromat">
-        </div>
-        <div class="content">
-          <h3>Luganighetta Aromat</h3>
-          <p>Spirale perfetta. Decisioni discutibili.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="luganighetta.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- ANIMALI -->
-      <article class="card" data-cat="animali" data-id="catfood">
-        <div class="stage">
-          <span class="tag">ANIMALI</span><span class="sale" data-sale></span>
-          <img src="IMG_0525.png" alt="Cibo per gatti Aromat">
-        </div>
-        <div class="content">
-          <h3>Cibo per gatti Aromat</h3>
-          <p>Per felini con standard… discutibili.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="IMG_0525.png">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- EXTRA -->
-      <article class="card" data-cat="extra" data-id="sigarette">
-        <div class="stage">
-          <span class="tag">EXTRA</span><span class="sale" data-sale></span>
-          <img src="sigarette.jpg" alt="Sigarette Aromat">
-        </div>
-        <div class="content">
-          <h3>Sigarette Aromat</h3>
-          <p>Per chi ama il rischio. Il sito no, quello è stabile.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="sigarette.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="card" data-cat="extra" data-id="cicche">
-        <div class="stage">
-          <span class="tag">EXTRA</span><span class="sale" data-sale></span>
-          <img src="cicche.jpg" alt="Cicche Aromat">
-        </div>
-        <div class="content">
-          <h3>Cicche all’Aromat</h3>
-          <p>Gusto persistente. Pessime scelte.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="cicche.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="card" data-cat="extra" data-id="durex">
-        <div class="stage">
-          <span class="tag">EXTRA</span><span class="sale" data-sale></span>
-          <img src="durex.jpg" alt="Preservativi Aromat">
-        </div>
-        <div class="content">
-          <h3>Preservativi Aromat</h3>
-          <p>Protezione e sapore. Un incubo completo.</p>
-
-          <div class="rating" data-rating>
-            <div class="stars">
-              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
-            </div>
-            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
-          </div>
-
-          <div class="actions-row">
-            <a class="open" href="durex.jpg">Apri</a>
-          </div>
-        </div>
-      </article>
-
-    </section>
-  </main>
+  </div>
 </div>
 
 <script>
-  // --- Sidebar toggle ---
-  const sidebar = document.getElementById("sidebar");
-  const toggle = document.getElementById("toggleCats");
-  const label = document.getElementById("toggleLabel");
+const c=document.getElementById("game");
+const ctx=c.getContext("2d");
+const W=c.width,H=c.height;
 
-  function setCollapsed(on){
-    sidebar.classList.toggle("collapsed", on);
-    label.textContent = on ? "Apri" : "Chiudi";
-    toggle.setAttribute("aria-expanded", String(!on));
+let running=false, score=0, timeLeft=30, timerId=null;
+
+const scoreEl=document.getElementById("score");
+const timeEl=document.getElementById("time");
+const startBtn=document.getElementById("start");
+const banner=document.getElementById("banner");
+
+const player={x:160,y:150,w:26,h:36,cooldown:0};
+const bullets=[];
+const pizza={x:160,y:60,r:20,vx:1.5};
+const grains=[];
+
+// ===== PIXEL TEXT =====
+function pixelText(txt,x,y,color){
+  const map={
+    A:["0110","1001","1111","1001","1001"],
+    R:["1110","1001","1110","1010","1001"],
+    O:["0110","1001","1001","1001","0110"],
+    M:["1001","1111","1111","1001","1001"],
+    T:["1111","0010","0010","0010","0010"],
+    G:["0111","1000","1011","1001","0111"],
+    E:["1111","1000","1110","1000","1111"],
+    I:["111","010","010","010","111"],
+    L:["1000","1000","1000","1000","1111"]
+  };
+  ctx.fillStyle=color;
+  let cx=x;
+  for(const ch of txt){
+    const g=map[ch];
+    if(!g){cx+=6;continue}
+    for(let r=0;r<g.length;r++)
+      for(let col=0;col<g[r].length;col++)
+        if(g[r][col]==="1")
+          ctx.fillRect(cx+col,y+r,1,1);
+    cx+=6;
   }
-  toggle.addEventListener("click", () => setCollapsed(!sidebar.classList.contains("collapsed")));
+}
 
-  // Mobile: parte chiuso
-  if (window.matchMedia("(max-width: 960px)").matches) setCollapsed(true);
+// ===== DRAW =====
+function drawAromat(){
+  const l=player.x-player.w/2,t=player.y-player.h/2;
+  ctx.fillStyle="#f6d32d";
+  ctx.fillRect(l,t+6,player.w,player.h-6);
+  ctx.fillStyle="#d3181c";
+  ctx.fillRect(l+2,t,player.w-4,7);
+  ctx.fillStyle="#12a14a";
+  ctx.fillRect(l+1,t+18,player.w-2,14);
+  pixelText("AROMAT",l+4,t+22,"#fff");
+}
 
-  // --- Filtri categorie ---
-  const buttons = Array.from(document.querySelectorAll(".catbtn"));
-  const cards = Array.from(document.querySelectorAll(".card"));
+function drawPizza(){
+  ctx.fillStyle="#d97706";
+  ctx.beginPath();ctx.arc(pizza.x,pizza.y,pizza.r+4,0,7);ctx.fill();
+  ctx.fillStyle="#fef3c7";
+  ctx.beginPath();ctx.arc(pizza.x,pizza.y,pizza.r,0,7);ctx.fill();
+}
 
-  buttons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      buttons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
+// ===== GAME =====
+function shoot(){
+  if(player.cooldown>0||!running)return;
+  bullets.push({x:player.x,y:player.y-20,vy:-4});
+  player.cooldown=8;
+}
 
-      const f = btn.dataset.filter;
-      cards.forEach(c => c.classList.toggle("hidden", f !== "all" && c.dataset.cat !== f));
+function update(){
+  if(!running)return;
 
-      if (window.matchMedia("(max-width: 960px)").matches) setCollapsed(true);
-    });
-  });
+  player.cooldown=Math.max(0,player.cooldown-1);
 
-  // --- Sconti random 20–50% ---
-  function rand(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
-  document.querySelectorAll("[data-sale]").forEach(el => el.textContent = "-" + rand(20, 50) + "%");
+  pizza.x+=pizza.vx;
+  if(pizza.x<40||pizza.x>280)pizza.vx*=-1;
 
-  // --- Conteggi per categoria (numerini nel menu) ---
-  function refreshCounts(){
-    const counts = { all: cards.length };
-    cards.forEach(c => counts[c.dataset.cat] = (counts[c.dataset.cat] || 0) + 1);
-    document.querySelectorAll("[data-count]").forEach(b => {
-      const k = b.getAttribute("data-count");
-      b.textContent = counts[k] || 0;
-    });
-  }
-  refreshCounts();
+  bullets.forEach(b=>b.y+=b.vy);
 
-  // --- Stelle (SESSIONE): ogni voto fa +1 e salva in sessionStorage ---
-  // Per ogni prodotto: salva {votes, sum, mine}
-  function keyFor(id){ return "rating:" + id; }
-
-  function loadRating(id){
-    try{
-      return JSON.parse(sessionStorage.getItem(keyFor(id))) || null;
-    }catch(e){ return null; }
-  }
-  function saveRating(id, obj){
-    sessionStorage.setItem(keyFor(id), JSON.stringify(obj));
-  }
-
-  // valori iniziali “inventati” ma coerenti (e poi aumentano davvero quando votano)
-  function seededBase(id){
-    // mini hash
-    let h = 0;
-    for (let i=0;i<id.length;i++) h = (h*31 + id.charCodeAt(i)) >>> 0;
-    const baseVotes = 12 + (h % 38);                 // 12..49
-    const baseAvgTenth = 34 + (h % 14);              // 3.4..4.7
-    const baseSum = Math.round((baseAvgTenth/10) * baseVotes);
-    return { votes: baseVotes, sum: baseSum, mine: 0 };
-  }
-
-  function paintStars(starsEl, value){
-    starsEl.querySelectorAll(".star").forEach(s => {
-      const n = Number(s.dataset.star);
-      s.classList.toggle("on", n <= value);
-    });
-  }
-
-  document.querySelectorAll("[data-rating]").forEach(r => {
-    const card = r.closest(".card");
-    const id = card.getAttribute("data-id") || card.querySelector("img")?.getAttribute("src") || "x";
-
-    let data = loadRating(id);
-    if (!data){
-      data = seededBase(id);
-      saveRating(id, data);
+  for(let i=bullets.length-1;i>=0;i--){
+    const b=bullets[i];
+    if(Math.hypot(b.x-pizza.x,b.y-pizza.y)<pizza.r){
+      bullets.splice(i,1);
+      score+=10;
+      scoreEl.textContent=score;
     }
+    if(b.y<0)bullets.splice(i,1);
+  }
 
-    const starsEl = r.querySelector(".stars");
-    const avgEl = r.querySelector("[data-avg]");
-    const votesEl = r.querySelector("[data-votes]");
+  // granelli neve
+  if(Math.random()<0.4)
+    grains.push({x:Math.random()*W,y:-2,vy:0.6+Math.random()});
 
-    function render(){
-      const avg = data.votes ? (data.sum / data.votes) : 0;
-      avgEl.textContent = avg.toFixed(1);
-      votesEl.textContent = data.votes;
-      paintStars(starsEl, data.mine || Math.round(avg));
+  grains.forEach(g=>g.y+=g.vy);
+  for(let i=grains.length-1;i>=0;i--)
+    if(grains[i].y>H)grains.splice(i,1);
+}
+
+function render(){
+  ctx.fillStyle="#050712";
+  ctx.fillRect(0,0,W,H);
+
+  drawPizza();
+  drawAromat();
+
+  ctx.fillStyle="#facc15";
+  bullets.forEach(b=>ctx.fillRect(b.x,b.y,2,4));
+
+  ctx.fillStyle="#fde68a";
+  grains.forEach(g=>ctx.fillRect(g.x,g.y,1,1));
+}
+
+function loop(){
+  update();
+  render();
+  if(running)requestAnimationFrame(loop);
+}
+
+// ===== TIMER =====
+function startTimer(){
+  timeLeft=30;
+  timeEl.textContent=timeLeft;
+  clearInterval(timerId);
+  timerId=setInterval(()=>{
+    if(!running){clearInterval(timerId);return;}
+    timeLeft--;
+    timeEl.textContent=timeLeft;
+    if(timeLeft<=0){
+      running=false;
+      banner.classList.add("show");
+      startBtn.classList.add("blink");
+      clearInterval(timerId);
     }
-    render();
+  },1000);
+}
 
-    starsEl.querySelectorAll(".star").forEach(star => {
-      star.addEventListener("click", () => {
-        const v = Number(star.dataset.star);
+// ===== START =====
+function startGame(){
+  score=0;
+  bullets.length=0;
+  grains.length=0;
+  banner.classList.remove("show");
+  scoreEl.textContent=0;
+  running=true;
+  startBtn.classList.remove("blink");
+  startTimer();
+  loop();
+}
 
-        // ogni click fa +1 voto e aggiunge v al totale (scena, ma reale in sessione)
-        data.votes += 1;
-        data.sum += v;
-        data.mine = v;
+// ===== TOUCH =====
+let dragId=null, dragStartX=0, playerStartX=0;
 
-        saveRating(id, data);
-        render();
+c.addEventListener("pointerdown",e=>{
+  c.setPointerCapture(e.pointerId);
+  if(dragId===null){
+    dragId=e.pointerId;
+    dragStartX=e.clientX;
+    playerStartX=player.x;
+  }else shoot();
+});
 
-        // micro feedback
-        star.style.transform = "scale(1.18)";
-        setTimeout(() => (star.style.transform = ""), 120);
-      });
-    });
-  });
+c.addEventListener("pointermove",e=>{
+  if(e.pointerId!==dragId||!running)return;
+  const r=c.getBoundingClientRect();
+  const dx=(e.clientX-dragStartX)*(W/r.width);
+  player.x=Math.max(20,Math.min(300,playerStartX+dx));
+});
+
+c.addEventListener("pointerup",e=>{
+  if(e.pointerId===dragId){
+    shoot();
+    dragId=null;
+  }
+});
+
+// fallback buttons
+document.getElementById("left").onpointerdown=()=>player.x=Math.max(20,player.x-10);
+document.getElementById("right").onpointerdown=()=>player.x=Math.min(300,player.x+10);
+document.getElementById("fire").onpointerdown=shoot;
+
+startBtn.onclick=()=>{if(!running)startGame();};
 </script>
-
-<!-- (Opzionale) Contatore visite vero: GoatCounter.
-     Se hai già il tuo snippet, incollalo qui e via. -->
-<!--
-<script data-goatcounter="https://aro.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
--->
-
 </body>
 </html>
