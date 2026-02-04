@@ -2,13 +2,14 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <title>Aromat Pizza 1986</title>
   <style>
     :root { color-scheme: dark; }
     body{
       margin:0; height:100vh; display:flex; align-items:center; justify-content:center;
       background:#0b0f1a; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      touch-action: none;
     }
     .wrap{
       display:flex; flex-direction:column; gap:10px; align-items:center;
@@ -22,6 +23,7 @@
       image-rendering: crisp-edges;
       border:2px solid #2a3350;
       background:#080b14;
+      touch-action: none;
     }
     .hud{
       width:min(92vw, 720px);
@@ -37,12 +39,26 @@
     .btnrow{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
     button{
       font:inherit; font-size:13px;
-      padding:8px 10px;
+      padding:10px 12px;
       color:#e5e7eb; background:#111a33;
       border:2px solid #2a3350;
       cursor:pointer;
+      touch-action: manipulation;
+      min-width: 92px;
     }
-    button:hover{ border-color:#6b82ff; }
+    button:active{ border-color:#6b82ff; transform: translateY(1px); }
+    .touchpad{
+      width:min(92vw, 720px);
+      display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+    }
+    .touchpad button{
+      min-width: 110px;
+      font-size: 14px;
+    }
+    .touchpad .big{
+      min-width: 160px;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
@@ -60,15 +76,20 @@
       <button id="muteBtn">Mute: OFF</button>
     </div>
 
+    <div class="touchpad">
+      <button id="leftBtn">◀ SINISTRA</button>
+      <button id="rightBtn">DESTRA ▶</button>
+      <button id="fireBtn" class="big">SPARA</button>
+    </div>
+
     <div class="help">
-      Controlli: <b>← →</b> o <b>A/D</b> per muovere Aromat. <b>Spazio</b> per sparare granelli.<br>
-      Obiettivo: centra la pizza. Più colpi di fila = combo. 30 secondi per dimostrare di meritarti una pizza.
+      Desktop: <b>← →</b> o <b>A/D</b> per muovere. <b>Spazio</b> per sparare.<br>
+      Touch: <b>trascina</b> sul canvas per muovere. <b>tap</b> per sparare (o usa i bottoni).
     </div>
   </div>
 
 <script>
 (() => {
-  // ===== Canvas setup (pixel art) =====
   const c = document.getElementById('game');
   const ctx = c.getContext('2d', { alpha: false });
 
@@ -78,7 +99,11 @@
   const startBtn= document.getElementById('startBtn');
   const muteBtn = document.getElementById('muteBtn');
 
-  // ===== Tiny "sound" (no files, just WebAudio beeps) =====
+  const leftBtn = document.getElementById('leftBtn');
+  const rightBtn = document.getElementById('rightBtn');
+  const fireBtn = document.getElementById('fireBtn');
+
+  // ===== tiny beeps =====
   let audioCtx = null;
   let muted = false;
   function beep(freq=440, dur=0.05, type='square', gain=0.03) {
@@ -94,7 +119,7 @@
       g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
       o.connect(g); g.connect(audioCtx.destination);
       o.start(t0); o.stop(t0 + dur);
-    } catch { /* se il browser fa il difficile, pace */ }
+    } catch {}
   }
 
   muteBtn.addEventListener('click', () => {
@@ -109,57 +134,134 @@
 
   const player = {
     x: W/2, y: H-26,
-    w: 18, h: 22,
+    w: 26, h: 40,
     vx: 0,
-    speed: 140, // px/sec
+    speed: 150,
     cooldown: 0
   };
 
-  const pizza = {
-    x: W/2, y: 58,
-    r: 22,
-    vx: 55 // px/sec
-  };
-
-  const bullets = [];   // grains
-  const crumbs  = [];   // hit particles
-  const stars   = [];   // background
+  const pizza = { x: W/2, y: 58, r: 22, vx: 55 };
+  const bullets = [];
+  const crumbs  = [];
+  const stars   = [];
   let score = 0;
   let combo = 1;
   let comboTimer = 0;
   let timeLeft = 30.0;
 
-  // background stars
   for (let i=0; i<60; i++){
-    stars.push({
-      x: Math.random()*W,
-      y: Math.random()*H,
-      s: Math.random()<0.8 ? 1 : 2,
-      v: 10 + Math.random()*25
-    });
+    stars.push({ x: Math.random()*W, y: Math.random()*H, s: Math.random()<0.8 ? 1 : 2, v: 10 + Math.random()*25 });
   }
 
-  // ===== Input =====
+  // ===== Input (keyboard + on-screen) =====
   const keys = new Set();
   addEventListener('keydown', (e) => {
     if (['ArrowLeft','ArrowRight','Space','KeyA','KeyD'].includes(e.code)) e.preventDefault();
     keys.add(e.code);
     if (e.code === 'Space' && running) tryShoot();
   }, { passive:false });
-
   addEventListener('keyup', (e) => keys.delete(e.code));
+
+  // on-screen buttons (touch/mouse)
+  let holdLeft = false, holdRight = false;
+  function bindHold(btn, onDown, onUp){
+    const down = (e)=>{ e.preventDefault(); onDown(); };
+    const up = (e)=>{ e.preventDefault(); onUp(); };
+    btn.addEventListener('pointerdown', down);
+    btn.addEventListener('pointerup', up);
+    btn.addEventListener('pointercancel', up);
+    btn.addEventListener('pointerleave', up);
+  }
+  bindHold(leftBtn, ()=>{ holdLeft=true; }, ()=>{ holdLeft=false; });
+  bindHold(rightBtn, ()=>{ holdRight=true; }, ()=>{ holdRight=false; });
+  fireBtn.addEventListener('pointerdown', (e)=>{ e.preventDefault(); if (running) tryShoot(); });
 
   function tryShoot(){
     if (player.cooldown > 0) return;
-    player.cooldown = 0.14; // fire rate
+    player.cooldown = 0.13;
     bullets.push({
-      x: player.x, y: player.y - player.h/2,
-      vx: (Math.random()-0.5)*18,
-      vy: -220 - Math.random()*60,
+      x: player.x + (Math.random()-0.5)*3,
+      y: player.y - player.h/2 + 2,
+      vx: (Math.random()-0.5)*22,
+      vy: -240 - Math.random()*70,
       life: 1.2
     });
     beep(520, 0.04, 'square', 0.02);
   }
+
+  // ===== Touch on canvas: drag to move, tap to shoot =====
+  let activePointers = new Map(); // pointerId -> {x,y}
+  let draggingId = null;
+  let dragStartX = 0;
+  let playerStartX = 0;
+  let lastTapTime = 0;
+
+  c.addEventListener('pointerdown', (e) => {
+    c.setPointerCapture(e.pointerId);
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    // First pointer becomes drag controller
+    if (draggingId === null){
+      draggingId = e.pointerId;
+      dragStartX = e.clientX;
+      playerStartX = player.x;
+    } else {
+      // second finger: shoot immediately
+      if (running) tryShoot();
+    }
+    e.preventDefault();
+  });
+
+  c.addEventListener('pointermove', (e) => {
+    if (!activePointers.has(e.pointerId)) return;
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (e.pointerId === draggingId){
+      const dx = (e.clientX - dragStartX);
+      // scale dx from CSS pixels to canvas units
+      const rect = c.getBoundingClientRect();
+      const scale = W / rect.width;
+      player.x = clamp(playerStartX + dx*scale, 16, W-16);
+    }
+    e.preventDefault();
+  });
+
+  c.addEventListener('pointerup', (e) => {
+    // tap-to-shoot (quick release without meaningful drag)
+    const wasDragging = (e.pointerId === draggingId);
+    const rect = c.getBoundingClientRect();
+    const scale = W / rect.width;
+    const dx = wasDragging ? (e.clientX - dragStartX) * scale : 999;
+
+    // consider tap if little movement + short interval
+    const now = performance.now();
+    const isTap = Math.abs(dx) < 6;
+
+    if (isTap && running){
+      // basic anti-doppio click involontario
+      if (now - lastTapTime > 60) tryShoot();
+      lastTapTime = now;
+    }
+
+    activePointers.delete(e.pointerId);
+    if (e.pointerId === draggingId){
+      draggingId = null;
+      // if there is another pointer still down, assign it
+      for (const [pid, p] of activePointers){
+        draggingId = pid;
+        dragStartX = p.x;
+        playerStartX = player.x;
+        break;
+      }
+    }
+    e.preventDefault();
+  });
+
+  c.addEventListener('pointercancel', (e) => {
+    activePointers.delete(e.pointerId);
+    if (e.pointerId === draggingId) draggingId = null;
+    e.preventDefault();
+  });
 
   // ===== Helpers =====
   function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
@@ -194,49 +296,76 @@
     }
   });
 
-  // ===== Drawing: pixel sprites =====
+  // ===== Pixel drawing helpers =====
   function pxRect(x,y,w,h,color){
     ctx.fillStyle = color;
     ctx.fillRect(x|0, y|0, w|0, h|0);
   }
+  function pxText(text, x, y, color){
+    ctx.fillStyle = color;
+    ctx.font = '10px monospace';
+    ctx.fillText(text, x|0, y|0);
+  }
 
-  function drawAromat(x,y){
-    // body
-    const left = (x - player.w/2)|0;
-    const top  = (y - player.h/2)|0;
+  // ===== Aromat sprite (più simile alla foto) =====
+  function drawAromatJar(x,y){
+    const w = player.w, h = player.h;
+    const left = (x - w/2)|0;
+    const top  = (y - h/2)|0;
 
     // shadow
-    pxRect(left-1, top+2, player.w+2, player.h+2, '#0a0e1a');
+    pxRect(left-2, top+3, w+4, h+4, '#060814');
 
-    // jar
-    pxRect(left, top, player.w, player.h, '#facc15');     // yellow label vibe
-    pxRect(left+2, top+2, player.w-4, player.h-4, '#fde68a'); // highlight
+    // body outer (yellow)
+    pxRect(left, top+6, w, h-6, '#f6d32d');
+    // subtle highlight
+    pxRect(left+2, top+8, w-4, h-10, '#ffe88a');
 
-    // cap
-    pxRect(left+3, top-4, player.w-6, 4, '#cbd5e1');
-    pxRect(left+4, top-3, player.w-8, 2, '#94a3b8');
+    // top cap (red)
+    pxRect(left+2, top, w-4, 7, '#d3181c');
+    pxRect(left+3, top+1, w-6, 3, '#ff4b4b'); // shine
 
-    // "AROMAT" pixels
-    ctx.fillStyle = '#111827';
-    ctx.fillRect(left+4, top+8, 10, 2);
-    ctx.fillRect(left+4, top+11, 8, 2);
+    // green label band
+    pxRect(left+1, top+16, w-2, 14, '#0f7a3a');
+    pxRect(left+2, top+17, w-4, 12, '#12a14a'); // inner
 
-    // nozzle dots (just to sell it)
-    ctx.fillStyle = '#1f2937';
-    ctx.fillRect(left+6, top-6, 2, 2);
-    ctx.fillRect(left+10, top-6, 2, 2);
+    // "Aromat" text (pixel vibes)
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 11px monospace';
+    ctx.fillText('Aromat', left+3, top+27);
+
+    // small "Original" above (tiny)
+    ctx.fillStyle = '#e7f7ff';
+    ctx.font = '8px monospace';
+    ctx.fillText('ORIGINAL', left+6, top+15);
+
+    // Swiss flag (red square + white cross)
+    const fx = left + w - 10, fy = top + 31;
+    pxRect(fx, fy, 7, 7, '#d3181c');
+    pxRect(fx+3, fy+1, 1, 5, '#ffffff');
+    pxRect(fx+1, fy+3, 5, 1, '#ffffff');
+
+    // little red mascot-ish (simple pixel dude)
+    const mx = left + 5, my = top + 33;
+    pxRect(mx+2, my, 3, 3, '#d3181c');       // head
+    pxRect(mx+3, my+1, 1, 1, '#ffffff');     // face dot
+    pxRect(mx+2, my+3, 3, 3, '#d3181c');     // body
+    pxRect(mx+1, my+4, 1, 1, '#d3181c');     // arm
+    pxRect(mx+5, my+4, 1, 1, '#d3181c');     // arm
+    pxRect(mx+2, my+6, 1, 2, '#d3181c');     // leg
+    pxRect(mx+4, my+6, 1, 2, '#d3181c');     // leg
+
+    // bottom edge darker
+    pxRect(left, top+h-2, w, 2, '#caa516');
   }
 
   function drawPizza(x,y,r){
-    // crust
     ctx.fillStyle = '#d97706';
     ctx.beginPath(); ctx.arc(x, y, r+4, 0, Math.PI*2); ctx.fill();
 
-    // cheese
     ctx.fillStyle = '#fef3c7';
     ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
 
-    // sauce blobs
     ctx.fillStyle = '#ef4444';
     for (let i=0;i<6;i++){
       const a = i* (Math.PI*2/6) + 0.3;
@@ -245,7 +374,6 @@
       ctx.fill();
     }
 
-    // slices lines (pixel-ish)
     ctx.strokeStyle = '#f59e0b';
     ctx.lineWidth = 1;
     for (let i=0;i<4;i++){
@@ -258,10 +386,9 @@
   }
 
   function drawCRT(){
-    // scanlines
     ctx.fillStyle = 'rgba(0,0,0,0.18)';
     for (let y=0; y<H; y+=2) ctx.fillRect(0, y, W, 1);
-    // vignette-ish
+
     const g = ctx.createRadialGradient(W/2,H/2,20,W/2,H/2,140);
     g.addColorStop(0,'rgba(0,0,0,0)');
     g.addColorStop(1,'rgba(0,0,0,0.35)');
@@ -269,7 +396,7 @@
     ctx.fillRect(0,0,W,H);
   }
 
-  // ===== Game loop =====
+  // ===== Loop =====
   let last = performance.now();
 
   function loop(now){
@@ -293,22 +420,22 @@
     }
     timeEl.textContent = timeLeft.toFixed(1);
 
-    // input
+    // keyboard + hold buttons
     let dir = 0;
-    if (keys.has('ArrowLeft') || keys.has('KeyA')) dir -= 1;
-    if (keys.has('ArrowRight') || keys.has('KeyD')) dir += 1;
-    player.vx = dir * player.speed;
-    player.x = clamp(player.x + player.vx*dt, 14, W-14);
+    if (keys.has('ArrowLeft') || keys.has('KeyA') || holdLeft) dir -= 1;
+    if (keys.has('ArrowRight') || keys.has('KeyD') || holdRight) dir += 1;
 
-    // cooldown
+    // if user is dragging on canvas, we already set player.x directly
+    // but we still allow slight keyboard nudges
+    player.vx = dir * player.speed;
+    player.x = clamp(player.x + player.vx*dt, 16, W-16);
+
     player.cooldown = Math.max(0, player.cooldown - dt);
 
-    // move pizza
     pizza.x += pizza.vx*dt;
     if (pizza.x < 46){ pizza.x = 46; pizza.vx *= -1; }
     if (pizza.x > W-46){ pizza.x = W-46; pizza.vx *= -1; }
 
-    // combo decay
     if (combo > 1){
       comboTimer -= dt;
       if (comboTimer <= 0){
@@ -317,15 +444,13 @@
       }
     }
 
-    // bullets
     for (let i=bullets.length-1; i>=0; i--){
       const b = bullets[i];
       b.x += b.vx*dt;
       b.y += b.vy*dt;
-      b.vy += 260*dt; // gravity-ish
+      b.vy += 260*dt;
       b.life -= dt;
 
-      // hit test pizza
       const dx = b.x - pizza.x;
       const dy = b.y - pizza.y;
       const hit = (dx*dx + dy*dy) <= (pizza.r+3)*(pizza.r+3);
@@ -336,11 +461,9 @@
         continue;
       }
 
-      // out or dead
       if (b.y > H+10 || b.life <= 0) bullets.splice(i,1);
     }
 
-    // crumbs particles
     for (let i=crumbs.length-1; i>=0; i--){
       const p = crumbs[i];
       p.x += p.vx*dt;
@@ -350,7 +473,6 @@
       if (p.life <= 0) crumbs.splice(i,1);
     }
 
-    // stars
     for (const s of stars){
       s.y += s.v*dt;
       if (s.y > H){ s.y = -2; s.x = Math.random()*W; }
@@ -358,69 +480,47 @@
   }
 
   function onHit(x,y){
-    // scoring: base + combo
     const add = 10 * combo;
     score += add;
     scoreEl.textContent = score;
 
-    // increase combo
     combo = Math.min(9, combo + 1);
-    comboTimer = 1.35; // time to keep combo alive
+    comboTimer = 1.35;
     comboEl.textContent = `x${combo}`;
 
-    // particles
     for (let i=0;i<10;i++){
-      crumbs.push({
-        x, y,
-        vx: rnd(-60,60),
-        vy: rnd(-140,-40),
-        life: rnd(0.25,0.55)
-      });
+      crumbs.push({ x, y, vx: rnd(-60,60), vy: rnd(-140,-40), life: rnd(0.25,0.55) });
     }
 
-    // audio feedback
     beep(660 + combo*40, 0.05, 'square', 0.025);
   }
 
   function render(){
-    // clear
     ctx.fillStyle = '#050712';
     ctx.fillRect(0,0,W,H);
 
-    // stars
     ctx.fillStyle = '#93c5fd';
-    for (const s of stars){
-      ctx.fillRect(s.x|0, s.y|0, s.s, s.s);
-    }
+    for (const s of stars) ctx.fillRect(s.x|0, s.y|0, s.s, s.s);
 
-    // title (pixel-ish)
     ctx.fillStyle = '#c7d2fe';
     ctx.font = '10px monospace';
     ctx.fillText('AROMAT PIZZA 1986', 8, 14);
 
-    // pizza
     drawPizza(pizza.x, pizza.y, pizza.r);
 
-    // bullets (grains)
+    // grains
     ctx.fillStyle = '#fbbf24';
-    for (const b of bullets){
-      ctx.fillRect((b.x|0), (b.y|0), 2, 2);
-    }
+    for (const b of bullets) ctx.fillRect((b.x|0), (b.y|0), 2, 2);
 
     // crumbs
-    ctx.fillStyle = '#fde68a';
-    for (const p of crumbs){
-      ctx.fillRect((p.x|0), (p.y|0), 2, 2);
-    }
+    ctx.fillStyle = '#ffe88a';
+    for (const p of crumbs) ctx.fillRect((p.x|0), (p.y|0), 2, 2);
 
-    // player
-    drawAromat(player.x, player.y);
+    drawAromatJar(player.x, player.y);
 
-    // floor line
     ctx.fillStyle = '#111827';
     ctx.fillRect(0, H-12, W, 12);
 
-    // game over overlay
     if (!running && timeLeft <= 0){
       ctx.fillStyle = 'rgba(0,0,0,0.65)';
       ctx.fillRect(0,0,W,H);
@@ -433,11 +533,9 @@
       ctx.fillText('Premi Start/Restart', 92, 114);
     }
 
-    // CRT effect
     drawCRT();
   }
 
-  // initial render
   reset();
   render();
 })();
