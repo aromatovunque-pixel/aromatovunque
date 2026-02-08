@@ -23,9 +23,10 @@ body{
   padding:12px;
   box-shadow:0 0 0 4px #050712;
   position:relative;
+  width:min(96vw,460px);
 }
 canvas{
-  width:min(96vw,420px);
+  width:100%;
   image-rendering:pixelated;
   border:2px solid #2a3350;
   background:#050712;
@@ -34,22 +35,47 @@ canvas{
 .hud{
   display:flex;
   justify-content:space-between;
-  margin-bottom:4px;
+  gap:10px;
+  margin:6px 0 6px;
   font-size:14px;
+  flex-wrap:wrap;
 }
 .hud b{color:#facc15}
-
+.row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+}
 .title{
   text-align:center;
   margin-bottom:6px;
   color:#facc15;
-  text-shadow:
-    0 0 6px #facc15,
-    0 0 12px #facc15;
+  text-shadow: 0 0 6px #facc15, 0 0 12px #facc15;
 }
 .subtitle{
   font-size:12px;
   color:#c7d2fe;
+}
+
+.modes{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin:6px 0 4px;
+}
+.modes button{
+  padding:8px 10px;
+  font-size:14px;
+  background:#111a33;
+  border:2px solid #2a3350;
+  color:#fff;
+  cursor:pointer;
+}
+.modes button.active{
+  border-color:#facc15;
+  box-shadow:0 0 0 2px rgba(250,204,21,0.25) inset;
 }
 
 .start{
@@ -61,6 +87,7 @@ canvas{
   background:#111a33;
   color:#facc15;
   border:3px solid #facc15;
+  cursor:pointer;
 }
 .start.blink{
   animation: blink 1s infinite;
@@ -83,6 +110,9 @@ canvas{
   border:2px solid #2a3350;
   color:#fff;
 }
+.controls button:active{
+  transform:translateY(1px);
+}
 
 /* BANNER FINALE */
 .banner{
@@ -93,6 +123,7 @@ canvas{
   align-items:center;
   justify-content:center;
   text-align:center;
+  padding:10px;
 }
 .banner.show{display:flex}
 .banner .box{
@@ -100,10 +131,16 @@ canvas{
   padding:16px;
   background:#0f1629;
   box-shadow:0 0 0 4px #050712;
+  max-width: 420px;
 }
 .banner h1{
-  margin:0;
+  margin:0 0 8px;
   color:#facc15;
+}
+.banner .small{
+  margin-top:8px;
+  color:#c7d2fe;
+  font-size:12px;
 }
 </style>
 </head>
@@ -113,12 +150,20 @@ canvas{
 
   <div class="title">
     <div>AROMAT GAME!</div>
-    <div class="subtitle">Spara l’aromat sulla pizza</div>
+    <div class="subtitle">Sarà l’aromat sulla pizza</div>
+  </div>
+
+  <div class="modes" id="modes">
+    <button data-sec="15" class="active">15s</button>
+    <button data-sec="30">30s</button>
+    <button data-sec="60">1 min</button>
   </div>
 
   <div class="hud">
     <div>Score <b id="score">0</b></div>
     <div>Tempo <b id="time">15</b>s</div>
+    <div>Berretti <b id="ammo">0</b></div>
+    <div>Moltiplicatore <b id="mult">x1</b></div>
   </div>
 
   <canvas id="game" width="320" height="180"></canvas>
@@ -134,182 +179,436 @@ canvas{
   <div id="banner" class="banner">
     <div class="box">
       <h1>COMPLIMENTI!</h1>
-      <div>Hai vinto l'opportunità di pagarmi da bere!!</div>
+      <div>Hai vinto l’opportunità di pagarmi da bere!!</div>
+      <div class="small">Premi START per rigiocare</div>
     </div>
   </div>
+
 </div>
 
 <script>
 const c=document.getElementById("game");
-const ctx=c.getContext("2d");
+const ctx=c.getContext("2d", { alpha:false });
 const W=c.width,H=c.height;
 
-let running=false, score=0, timeLeft=30, timerId=null;
+let running=false;
+let score=0;
+let timeLeft=15;
+let durationSec=15;
+let timerId=null;
 
 const scoreEl=document.getElementById("score");
 const timeEl=document.getElementById("time");
+const ammoEl=document.getElementById("ammo");
+const multEl=document.getElementById("mult");
 const startBtn=document.getElementById("start");
 const banner=document.getElementById("banner");
 
 const player={x:160,y:150,w:26,h:36,cooldown:0};
 const bullets=[];
-const pizza={x:160,y:60,r:20,vx:1.5};
-const grains=[];
+const grains=[];      // neve aromat
+const pizzaBits=[];   // pezzi che volano via
+const bonuses=[];     // berretti bonus
+
+const pizza={
+  x:160,y:60,r:22,vx:1.55,
+  // si "disintegra" ma non muore mai: health non scende sotto MIN_HEALTH
+  health:1.0
+};
+
+const MIN_HEALTH = 0.30;        // non scende mai sotto
+const HIT_DECAY = 0.045;        // quanto perde a colpo
+const BASE_POINTS = 10;
+
+let hatAmmo = 0; // colpi "berrette"
 
 // ===== PIXEL TEXT =====
+// 4 colonne + spaziatura fissa, per centrare "AROMAT" perfettamente
 function pixelText(txt,x,y,color){
   const map={
     A:["0110","1001","1111","1001","1001"],
     R:["1110","1001","1110","1010","1001"],
     O:["0110","1001","1001","1001","0110"],
     M:["1001","1111","1111","1001","1001"],
-    T:["1111","0010","0010","0010","0010"],
-    G:["0111","1000","1011","1001","0111"],
-    E:["1111","1000","1110","1000","1111"],
-    I:["111","010","010","010","111"],
-    L:["1000","1000","1000","1000","1111"]
+    T:["1111","0010","0010","0010","0010"]
   };
   ctx.fillStyle=color;
-  let cx=x;
+  let cx=x|0;
   for(const ch of txt){
     const g=map[ch];
-    if(!g){cx+=6;continue}
-    for(let r=0;r<g.length;r++)
-      for(let col=0;col<g[r].length;col++)
-        if(g[r][col]==="1")
-          ctx.fillRect(cx+col,y+r,1,1);
-    cx+=6;
+    if(!g){ cx += 6; continue; }
+    for(let r=0;r<g.length;r++){
+      for(let col=0;col<g[r].length;col++){
+        if(g[r][col]==="1") ctx.fillRect(cx+col, (y+r)|0, 1, 1);
+      }
+    }
+    cx += 6;
   }
+}
+function pixelTextWidth(txt){
+  // ogni lettera occupa 6px (4px + spacing), anche l'ultima: ok per centraggio stabile
+  return txt.length * 6;
 }
 
 // ===== DRAW =====
 function drawAromat(){
-  const l=player.x-player.w/2,t=player.y-player.h/2;
+  const l=(player.x-player.w/2)|0;
+  const t=(player.y-player.h/2)|0;
+
+  // corpo giallo
   ctx.fillStyle="#f6d32d";
   ctx.fillRect(l,t+6,player.w,player.h-6);
+
+  // tappo rosso
   ctx.fillStyle="#d3181c";
   ctx.fillRect(l+2,t,player.w-4,7);
+
+  // banda verde
   ctx.fillStyle="#12a14a";
   ctx.fillRect(l+1,t+18,player.w-2,14);
-  pixelText("AROMAT",l+4,t+22,"#fff");
+
+  // testo centrato nella banda verde
+  const txt="AROMAT";
+  const tw=pixelTextWidth(txt);
+  const tx = (l + ((player.w - tw)/2))|0;
+  const ty = (t + 22)|0; // centrato visivamente nella banda
+  pixelText(txt,tx,ty,"#fff");
 }
 
 function drawPizza(){
-  ctx.fillStyle="#d97706";
-  ctx.beginPath();ctx.arc(pizza.x,pizza.y,pizza.r+4,0,7);ctx.fill();
-  ctx.fillStyle="#fef3c7";
-  ctx.beginPath();ctx.arc(pizza.x,pizza.y,pizza.r,0,7);ctx.fill();
+  // Pizza retro più "carina": crosta + formaggio + salsa + pepperoni pixel
+  // Intensità ridotta in base a "health" (ma mai zero)
+  const h = pizza.health;
+
+  // crosta
+  ctx.fillStyle = "#c96b2b";
+  ctx.beginPath(); ctx.arc(pizza.x,pizza.y,pizza.r+5,0,Math.PI*2); ctx.fill();
+
+  // formaggio (più spento quando disintegra)
+  const cheese = Math.floor(230*h + 40); // 40..270 (clamp naturale)
+  ctx.fillStyle = `rgb(${cheese},${cheese-10},${Math.floor(140*h+60)})`;
+  ctx.beginPath(); ctx.arc(pizza.x,pizza.y,pizza.r+1,0,Math.PI*2); ctx.fill();
+
+  // salsa a chiazze
+  ctx.fillStyle = `rgb(${Math.floor(190*h+40)},70,70)`;
+  for(let i=0;i<7;i++){
+    const a = i*(Math.PI*2/7) + 0.3;
+    const rr = pizza.r*0.55;
+    ctx.beginPath();
+    ctx.arc(pizza.x + Math.cos(a)*rr, pizza.y + Math.sin(a)*rr*0.75, 3, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // pepperoni pixel
+  ctx.fillStyle = `rgb(${Math.floor(170*h+50)},60,60)`;
+  for(let i=0;i<5;i++){
+    const a = i*(Math.PI*2/5) + 0.6;
+    const rr = pizza.r*0.35;
+    const px = (pizza.x + Math.cos(a)*rr)|0;
+    const py = (pizza.y + Math.sin(a)*rr)|0;
+    ctx.fillRect(px-2, py-2, 5, 5);
+    ctx.fillStyle = `rgba(255,200,200,${0.35*h})`;
+    ctx.fillRect(px, py, 1, 1);
+    ctx.fillStyle = `rgb(${Math.floor(170*h+50)},60,60)`;
+  }
+
+  // tagli (linee)
+  ctx.strokeStyle = `rgba(255,180,80,${0.7*h})`;
+  ctx.lineWidth = 1;
+  for(let i=0;i<4;i++){
+    const a=i*(Math.PI/2);
+    ctx.beginPath();
+    ctx.moveTo(pizza.x,pizza.y);
+    ctx.lineTo(pizza.x + Math.cos(a)*(pizza.r+5), pizza.y + Math.sin(a)*(pizza.r+5));
+    ctx.stroke();
+  }
+}
+
+function drawHatBonus(b){
+  // berretto bonus che cade (colori Aromat)
+  // mini cappellino: base + top
+  const x=b.x|0, y=b.y|0;
+  // top
+  ctx.fillStyle=b.c1;
+  ctx.fillRect(x-3,y-3,7,3);
+  // base
+  ctx.fillStyle=b.c2;
+  ctx.fillRect(x-4,y,9,3);
+  // dettaglio
+  ctx.fillStyle="#ffffff";
+  ctx.fillRect(x-1,y-2,2,1);
+}
+
+function drawHatBullet(b){
+  // proiettile "berretto" (più grosso e divertente)
+  const x=b.x|0, y=b.y|0;
+  ctx.fillStyle=b.c1;
+  ctx.fillRect(x-3,y-2,7,2);
+  ctx.fillStyle=b.c2;
+  ctx.fillRect(x-4,y,9,3);
+  ctx.fillStyle="#ffffff";
+  ctx.fillRect(x-1,y-1,2,1);
 }
 
 // ===== GAME =====
+function currentMultiplier(){
+  return hatAmmo > 0 ? 10 : 1;
+}
+
 function shoot(){
-  if(player.cooldown>0||!running)return;
-  bullets.push({x:player.x,y:player.y-20,vy:-4});
-  player.cooldown=8;
+  if(player.cooldown>0 || !running) return;
+
+  const isHat = hatAmmo > 0;
+  const mult = currentMultiplier();
+  multEl.textContent = "x"+mult;
+
+  // colpo
+  if(isHat){
+    hatAmmo--;
+    ammoEl.textContent = hatAmmo;
+    bullets.push({
+      x:player.x,
+      y:player.y-20,
+      vy:-4.3,
+      hat:true,
+      c1:"#d3181c", // rosso
+      c2:"#12a14a"  // verde
+    });
+  }else{
+    bullets.push({ x:player.x, y:player.y-20, vy:-4, hat:false });
+  }
+
+  player.cooldown = 8;
+}
+
+function spawnGrain(){
+  grains.push({ x:Math.random()*W, y:-2, vy:0.6+Math.random()*1.2 });
+}
+
+function spawnHatBonus(){
+  // colori aromat (variazione)
+  const palette = [
+    {c1:"#d3181c", c2:"#12a14a"}, // rosso+verde
+    {c1:"#f6d32d", c2:"#12a14a"}, // giallo+verde
+    {c1:"#d3181c", c2:"#f6d32d"}  // rosso+giallo
+  ];
+  const p = palette[(Math.random()*palette.length)|0];
+  bonuses.push({
+    x: 16 + Math.random()*(W-32),
+    y: -10,
+    vy: 0.9 + Math.random()*0.9,
+    c1: p.c1, c2: p.c2
+  });
+}
+
+function addPizzaBits(hitX, hitY){
+  // pezzi che si staccano: disintegrazione visiva graduale
+  const count = 6 + ((Math.random()*5)|0);
+  for(let i=0;i<count;i++){
+    pizzaBits.push({
+      x: hitX,
+      y: hitY,
+      vx: (Math.random()-0.5)*2.6,
+      vy: -1.2 - Math.random()*1.6,
+      life: 40 + ((Math.random()*30)|0),
+      s: 1 + ((Math.random()*2)|0),
+      col: Math.random()<0.5 ? "#fef3c7" : "#c96b2b"
+    });
+  }
 }
 
 function update(){
-  if(!running)return;
+  if(!running) return;
 
-  player.cooldown=Math.max(0,player.cooldown-1);
+  player.cooldown = Math.max(0, player.cooldown-1);
 
-  pizza.x+=pizza.vx;
-  if(pizza.x<40||pizza.x>280)pizza.vx*=-1;
+  // pizza si muove
+  pizza.x += pizza.vx;
+  if(pizza.x < 46 || pizza.x > 274) pizza.vx *= -1;
 
-  bullets.forEach(b=>b.y+=b.vy);
+  // colpi
+  for(const b of bullets) b.y += b.vy;
 
+  // collision colpi-pizza
   for(let i=bullets.length-1;i>=0;i--){
     const b=bullets[i];
-    if(Math.hypot(b.x-pizza.x,b.y-pizza.y)<pizza.r){
+    if(Math.hypot(b.x-pizza.x, b.y-pizza.y) < pizza.r){
       bullets.splice(i,1);
-      score+=10;
-      scoreEl.textContent=score;
+
+      // punteggio
+      const mult = currentMultiplier(); // se stai ancora in modalità berretto
+      score += BASE_POINTS * mult;
+      scoreEl.textContent = score;
+
+      // disintegrazione lenta ma mai completa
+      pizza.health = Math.max(MIN_HEALTH, pizza.health - HIT_DECAY);
+
+      // effetti: pezzi che volano
+      addPizzaBits(b.x, b.y);
+      continue;
     }
-    if(b.y<0)bullets.splice(i,1);
+    if(b.y < -10) bullets.splice(i,1);
   }
 
-  // granelli neve
-  if(Math.random()<0.4)
-    grains.push({x:Math.random()*W,y:-2,vy:0.6+Math.random()});
+  // neve aromat
+  if(Math.random() < 0.55) spawnGrain();
+  for(const g of grains) g.y += g.vy;
+  for(let i=grains.length-1;i>=0;i--) if(grains[i].y > H) grains.splice(i,1);
 
-  grains.forEach(g=>g.y+=g.vy);
-  for(let i=grains.length-1;i>=0;i--)
-    if(grains[i].y>H)grains.splice(i,1);
+  // pezzi pizza
+  for(const p of pizzaBits){
+    p.x += p.vx; p.y += p.vy;
+    p.vy += 0.08;
+    p.life--;
+  }
+  for(let i=pizzaBits.length-1;i>=0;i--) if(pizzaBits[i].life <= 0) pizzaBits.splice(i,1);
+
+  // bonus berretti che cadono
+  // spawn moderato
+  if(Math.random() < 0.012) spawnHatBonus();
+  for(const b of bonuses) b.y += b.vy;
+
+  // raccolta bonus (collisione con player)
+  for(let i=bonuses.length-1;i>=0;i--){
+    const b=bonuses[i];
+    const dx = Math.abs(b.x - player.x);
+    const dy = Math.abs(b.y - player.y);
+    if(dx < 16 && dy < 20){
+      bonuses.splice(i,1);
+      hatAmmo += 5;
+      ammoEl.textContent = hatAmmo;
+      multEl.textContent = "x"+currentMultiplier();
+      continue;
+    }
+    if(b.y > H+10) bonuses.splice(i,1);
+  }
+
+  // aggiorna UI moltiplicatore se finisce ammo
+  multEl.textContent = "x"+currentMultiplier();
 }
 
 function render(){
   ctx.fillStyle="#050712";
   ctx.fillRect(0,0,W,H);
 
+  // pizza
   drawPizza();
+
+  // pezzi che volano davanti
+  for(const p of pizzaBits){
+    ctx.fillStyle = p.col;
+    ctx.fillRect(p.x|0, p.y|0, p.s, p.s);
+  }
+
+  // player
   drawAromat();
 
-  ctx.fillStyle="#facc15";
-  bullets.forEach(b=>ctx.fillRect(b.x,b.y,2,4));
+  // proiettili
+  for(const b of bullets){
+    if(b.hat){
+      drawHatBullet(b);
+    }else{
+      ctx.fillStyle="#facc15";
+      ctx.fillRect((b.x|0), (b.y|0), 2, 4);
+    }
+  }
 
+  // neve aromat
   ctx.fillStyle="#fde68a";
-  grains.forEach(g=>ctx.fillRect(g.x,g.y,1,1));
+  for(const g of grains) ctx.fillRect(g.x|0, g.y|0, 1, 1);
+
+  // bonus berretti
+  for(const b of bonuses) drawHatBonus(b);
 }
 
 function loop(){
   update();
   render();
-  if(running)requestAnimationFrame(loop);
+  if(running) requestAnimationFrame(loop);
 }
 
 // ===== TIMER =====
 function startTimer(){
-  timeLeft=15;
-  timeEl.textContent=timeLeft;
+  timeLeft = durationSec;
+  timeEl.textContent = timeLeft;
+
   clearInterval(timerId);
-  timerId=setInterval(()=>{
-    if(!running){clearInterval(timerId);return;}
+  timerId = setInterval(()=>{
+    if(!running){ clearInterval(timerId); return; }
     timeLeft--;
-    timeEl.textContent=timeLeft;
+    timeEl.textContent = timeLeft;
     if(timeLeft<=0){
       running=false;
       banner.classList.add("show");
       startBtn.classList.add("blink");
       clearInterval(timerId);
     }
-  },1000);
+  }, 1000);
 }
 
 // ===== START =====
 function startGame(){
   score=0;
+  scoreEl.textContent=0;
+
   bullets.length=0;
   grains.length=0;
+  pizzaBits.length=0;
+  bonuses.length=0;
+
+  hatAmmo=0;
+  ammoEl.textContent=0;
+  multEl.textContent="x1";
+
+  pizza.health=1.0; // reset disintegrazione
+  pizza.x=160;
+
   banner.classList.remove("show");
-  scoreEl.textContent=0;
   running=true;
   startBtn.classList.remove("blink");
   startTimer();
   loop();
 }
 
-// ===== TOUCH =====
+// ===== MODES (15/30/60) =====
+const modes = document.getElementById("modes");
+modes.addEventListener("click",(e)=>{
+  const btn = e.target.closest("button[data-sec]");
+  if(!btn) return;
+  if(running) return; // niente cambi a partita in corso
+
+  for(const b of modes.querySelectorAll("button")) b.classList.remove("active");
+  btn.classList.add("active");
+
+  durationSec = parseInt(btn.dataset.sec,10);
+  timeLeft = durationSec;
+  timeEl.textContent = timeLeft;
+});
+
+// ===== TOUCH (come la versione stabile) =====
 let dragId=null, dragStartX=0, playerStartX=0;
 
-c.addEventListener("pointerdown",e=>{
+c.addEventListener("pointerdown",(e)=>{
   c.setPointerCapture(e.pointerId);
   if(dragId===null){
     dragId=e.pointerId;
     dragStartX=e.clientX;
     playerStartX=player.x;
-  }else shoot();
+  }else{
+    shoot();
+  }
 });
 
-c.addEventListener("pointermove",e=>{
-  if(e.pointerId!==dragId||!running)return;
+c.addEventListener("pointermove",(e)=>{
+  if(e.pointerId!==dragId || !running) return;
   const r=c.getBoundingClientRect();
   const dx=(e.clientX-dragStartX)*(W/r.width);
   player.x=Math.max(20,Math.min(300,playerStartX+dx));
 });
 
-c.addEventListener("pointerup",e=>{
+c.addEventListener("pointerup",(e)=>{
   if(e.pointerId===dragId){
-    shoot();
+    shoot(); // tap = sparo
     dragId=null;
   }
 });
@@ -319,7 +618,7 @@ document.getElementById("left").onpointerdown=()=>player.x=Math.max(20,player.x-
 document.getElementById("right").onpointerdown=()=>player.x=Math.min(300,player.x+10);
 document.getElementById("fire").onpointerdown=shoot;
 
-startBtn.onclick=()=>{if(!running)startGame();};
+startBtn.onclick=()=>{ if(!running) startGame(); };
 </script>
 </body>
 </html>
