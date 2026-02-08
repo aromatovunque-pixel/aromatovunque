@@ -41,13 +41,7 @@ canvas{
   flex-wrap:wrap;
 }
 .hud b{color:#facc15}
-.row{
-  display:flex;
-  gap:8px;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;
-}
+
 .title{
   text-align:center;
   margin-bottom:6px;
@@ -142,6 +136,19 @@ canvas{
   color:#c7d2fe;
   font-size:12px;
 }
+.restart{
+  margin-top:14px;
+  padding:12px 18px;
+  font-size:18px;
+  font-weight:bold;
+  background:#111a33;
+  color:#facc15;
+  border:3px solid #facc15;
+  cursor:pointer;
+}
+.restart:active{
+  transform:translateY(1px);
+}
 </style>
 </head>
 
@@ -180,7 +187,8 @@ canvas{
     <div class="box">
       <h1>COMPLIMENTI!</h1>
       <div>Hai vinto l’opportunità di pagarmi da bere!!</div>
-      <div class="small">Premi START per rigiocare</div>
+      <div class="small">Score finale: <b id="finalScore">0</b></div>
+      <button id="restartBtn" class="restart">RESTART</button>
     </div>
   </div>
 
@@ -203,6 +211,8 @@ const ammoEl=document.getElementById("ammo");
 const multEl=document.getElementById("mult");
 const startBtn=document.getElementById("start");
 const banner=document.getElementById("banner");
+const finalScoreEl=document.getElementById("finalScore");
+const restartBtn=document.getElementById("restartBtn");
 
 const player={x:160,y:150,w:26,h:36,cooldown:0};
 const bullets=[];
@@ -212,18 +222,16 @@ const bonuses=[];     // berretti bonus
 
 const pizza={
   x:160,y:60,r:22,vx:1.55,
-  // si "disintegra" ma non muore mai: health non scende sotto MIN_HEALTH
   health:1.0
 };
 
-const MIN_HEALTH = 0.30;        // non scende mai sotto
-const HIT_DECAY = 0.045;        // quanto perde a colpo
+const MIN_HEALTH = 0.30;  // non scende mai sotto
+const HIT_DECAY  = 0.045; // quanto perde a colpo
 const BASE_POINTS = 10;
 
 let hatAmmo = 0; // colpi "berrette"
 
 // ===== PIXEL TEXT =====
-// 4 colonne + spaziatura fissa, per centrare "AROMAT" perfettamente
 function pixelText(txt,x,y,color){
   const map={
     A:["0110","1001","1111","1001","1001"],
@@ -245,51 +253,39 @@ function pixelText(txt,x,y,color){
     cx += 6;
   }
 }
-function pixelTextWidth(txt){
-  // ogni lettera occupa 6px (4px + spacing), anche l'ultima: ok per centraggio stabile
-  return txt.length * 6;
-}
+function pixelTextWidth(txt){ return txt.length * 6; }
 
 // ===== DRAW =====
 function drawAromat(){
   const l=(player.x-player.w/2)|0;
   const t=(player.y-player.h/2)|0;
 
-  // corpo giallo
   ctx.fillStyle="#f6d32d";
   ctx.fillRect(l,t+6,player.w,player.h-6);
 
-  // tappo rosso
   ctx.fillStyle="#d3181c";
   ctx.fillRect(l+2,t,player.w-4,7);
 
-  // banda verde
   ctx.fillStyle="#12a14a";
   ctx.fillRect(l+1,t+18,player.w-2,14);
 
-  // testo centrato nella banda verde
   const txt="AROMAT";
   const tw=pixelTextWidth(txt);
   const tx = (l + ((player.w - tw)/2))|0;
-  const ty = (t + 22)|0; // centrato visivamente nella banda
+  const ty = (t + 22)|0;
   pixelText(txt,tx,ty,"#fff");
 }
 
 function drawPizza(){
-  // Pizza retro più "carina": crosta + formaggio + salsa + pepperoni pixel
-  // Intensità ridotta in base a "health" (ma mai zero)
   const h = pizza.health;
 
-  // crosta
   ctx.fillStyle = "#c96b2b";
   ctx.beginPath(); ctx.arc(pizza.x,pizza.y,pizza.r+5,0,Math.PI*2); ctx.fill();
 
-  // formaggio (più spento quando disintegra)
-  const cheese = Math.floor(230*h + 40); // 40..270 (clamp naturale)
+  const cheese = Math.floor(230*h + 40);
   ctx.fillStyle = `rgb(${cheese},${cheese-10},${Math.floor(140*h+60)})`;
   ctx.beginPath(); ctx.arc(pizza.x,pizza.y,pizza.r+1,0,Math.PI*2); ctx.fill();
 
-  // salsa a chiazze
   ctx.fillStyle = `rgb(${Math.floor(190*h+40)},70,70)`;
   for(let i=0;i<7;i++){
     const a = i*(Math.PI*2/7) + 0.3;
@@ -299,7 +295,6 @@ function drawPizza(){
     ctx.fill();
   }
 
-  // pepperoni pixel
   ctx.fillStyle = `rgb(${Math.floor(170*h+50)},60,60)`;
   for(let i=0;i<5;i++){
     const a = i*(Math.PI*2/5) + 0.6;
@@ -312,7 +307,6 @@ function drawPizza(){
     ctx.fillStyle = `rgb(${Math.floor(170*h+50)},60,60)`;
   }
 
-  // tagli (linee)
   ctx.strokeStyle = `rgba(255,180,80,${0.7*h})`;
   ctx.lineWidth = 1;
   for(let i=0;i<4;i++){
@@ -325,22 +319,16 @@ function drawPizza(){
 }
 
 function drawHatBonus(b){
-  // berretto bonus che cade (colori Aromat)
-  // mini cappellino: base + top
   const x=b.x|0, y=b.y|0;
-  // top
   ctx.fillStyle=b.c1;
   ctx.fillRect(x-3,y-3,7,3);
-  // base
   ctx.fillStyle=b.c2;
   ctx.fillRect(x-4,y,9,3);
-  // dettaglio
   ctx.fillStyle="#ffffff";
   ctx.fillRect(x-1,y-2,2,1);
 }
 
 function drawHatBullet(b){
-  // proiettile "berretto" (più grosso e divertente)
   const x=b.x|0, y=b.y|0;
   ctx.fillStyle=b.c1;
   ctx.fillRect(x-3,y-2,7,2);
@@ -351,34 +339,26 @@ function drawHatBullet(b){
 }
 
 // ===== GAME =====
-function currentMultiplier(){
-  return hatAmmo > 0 ? 10 : 1;
-}
+function currentMultiplier(){ return hatAmmo > 0 ? 10 : 1; }
 
 function shoot(){
   if(player.cooldown>0 || !running) return;
 
   const isHat = hatAmmo > 0;
-  const mult = currentMultiplier();
-  multEl.textContent = "x"+mult;
 
-  // colpo
   if(isHat){
     hatAmmo--;
     ammoEl.textContent = hatAmmo;
     bullets.push({
-      x:player.x,
-      y:player.y-20,
-      vy:-4.3,
-      hat:true,
-      c1:"#d3181c", // rosso
-      c2:"#12a14a"  // verde
+      x:player.x, y:player.y-20, vy:-4.3,
+      hat:true, c1:"#d3181c", c2:"#12a14a"
     });
   }else{
     bullets.push({ x:player.x, y:player.y-20, vy:-4, hat:false });
   }
 
   player.cooldown = 8;
+  multEl.textContent = "x"+currentMultiplier();
 }
 
 function spawnGrain(){
@@ -386,11 +366,10 @@ function spawnGrain(){
 }
 
 function spawnHatBonus(){
-  // colori aromat (variazione)
   const palette = [
-    {c1:"#d3181c", c2:"#12a14a"}, // rosso+verde
-    {c1:"#f6d32d", c2:"#12a14a"}, // giallo+verde
-    {c1:"#d3181c", c2:"#f6d32d"}  // rosso+giallo
+    {c1:"#d3181c", c2:"#12a14a"},
+    {c1:"#f6d32d", c2:"#12a14a"},
+    {c1:"#d3181c", c2:"#f6d32d"}
   ];
   const p = palette[(Math.random()*palette.length)|0];
   bonuses.push({
@@ -402,12 +381,10 @@ function spawnHatBonus(){
 }
 
 function addPizzaBits(hitX, hitY){
-  // pezzi che si staccano: disintegrazione visiva graduale
   const count = 6 + ((Math.random()*5)|0);
   for(let i=0;i<count;i++){
     pizzaBits.push({
-      x: hitX,
-      y: hitY,
+      x: hitX, y: hitY,
       vx: (Math.random()-0.5)*2.6,
       vy: -1.2 - Math.random()*1.6,
       life: 40 + ((Math.random()*30)|0),
@@ -422,40 +399,31 @@ function update(){
 
   player.cooldown = Math.max(0, player.cooldown-1);
 
-  // pizza si muove
   pizza.x += pizza.vx;
   if(pizza.x < 46 || pizza.x > 274) pizza.vx *= -1;
 
-  // colpi
   for(const b of bullets) b.y += b.vy;
 
-  // collision colpi-pizza
   for(let i=bullets.length-1;i>=0;i--){
     const b=bullets[i];
     if(Math.hypot(b.x-pizza.x, b.y-pizza.y) < pizza.r){
       bullets.splice(i,1);
 
-      // punteggio
-      const mult = currentMultiplier(); // se stai ancora in modalità berretto
+      const mult = currentMultiplier();
       score += BASE_POINTS * mult;
       scoreEl.textContent = score;
 
-      // disintegrazione lenta ma mai completa
       pizza.health = Math.max(MIN_HEALTH, pizza.health - HIT_DECAY);
-
-      // effetti: pezzi che volano
       addPizzaBits(b.x, b.y);
       continue;
     }
     if(b.y < -10) bullets.splice(i,1);
   }
 
-  // neve aromat
   if(Math.random() < 0.55) spawnGrain();
   for(const g of grains) g.y += g.vy;
   for(let i=grains.length-1;i>=0;i--) if(grains[i].y > H) grains.splice(i,1);
 
-  // pezzi pizza
   for(const p of pizzaBits){
     p.x += p.vx; p.y += p.vy;
     p.vy += 0.08;
@@ -463,12 +431,9 @@ function update(){
   }
   for(let i=pizzaBits.length-1;i>=0;i--) if(pizzaBits[i].life <= 0) pizzaBits.splice(i,1);
 
-  // bonus berretti che cadono
-  // spawn moderato
   if(Math.random() < 0.012) spawnHatBonus();
   for(const b of bonuses) b.y += b.vy;
 
-  // raccolta bonus (collisione con player)
   for(let i=bonuses.length-1;i>=0;i--){
     const b=bonuses[i];
     const dx = Math.abs(b.x - player.x);
@@ -483,7 +448,6 @@ function update(){
     if(b.y > H+10) bonuses.splice(i,1);
   }
 
-  // aggiorna UI moltiplicatore se finisce ammo
   multEl.textContent = "x"+currentMultiplier();
 }
 
@@ -491,33 +455,26 @@ function render(){
   ctx.fillStyle="#050712";
   ctx.fillRect(0,0,W,H);
 
-  // pizza
   drawPizza();
 
-  // pezzi che volano davanti
   for(const p of pizzaBits){
     ctx.fillStyle = p.col;
     ctx.fillRect(p.x|0, p.y|0, p.s, p.s);
   }
 
-  // player
   drawAromat();
 
-  // proiettili
   for(const b of bullets){
-    if(b.hat){
-      drawHatBullet(b);
-    }else{
+    if(b.hat) drawHatBullet(b);
+    else{
       ctx.fillStyle="#facc15";
       ctx.fillRect((b.x|0), (b.y|0), 2, 4);
     }
   }
 
-  // neve aromat
   ctx.fillStyle="#fde68a";
   for(const g of grains) ctx.fillRect(g.x|0, g.y|0, 1, 1);
 
-  // bonus berretti
   for(const b of bonuses) drawHatBonus(b);
 }
 
@@ -539,6 +496,7 @@ function startTimer(){
     timeEl.textContent = timeLeft;
     if(timeLeft<=0){
       running=false;
+      finalScoreEl.textContent = score;
       banner.classList.add("show");
       startBtn.classList.add("blink");
       clearInterval(timerId);
@@ -546,7 +504,7 @@ function startTimer(){
   }, 1000);
 }
 
-// ===== START =====
+// ===== START / RESTART =====
 function startGame(){
   score=0;
   scoreEl.textContent=0;
@@ -560,7 +518,7 @@ function startGame(){
   ammoEl.textContent=0;
   multEl.textContent="x1";
 
-  pizza.health=1.0; // reset disintegrazione
+  pizza.health=1.0;
   pizza.x=160;
 
   banner.classList.remove("show");
@@ -570,12 +528,12 @@ function startGame(){
   loop();
 }
 
-// ===== MODES (15/30/60) =====
+// ===== MODES =====
 const modes = document.getElementById("modes");
 modes.addEventListener("click",(e)=>{
   const btn = e.target.closest("button[data-sec]");
   if(!btn) return;
-  if(running) return; // niente cambi a partita in corso
+  if(running) return;
 
   for(const b of modes.querySelectorAll("button")) b.classList.remove("active");
   btn.classList.add("active");
@@ -585,7 +543,7 @@ modes.addEventListener("click",(e)=>{
   timeEl.textContent = timeLeft;
 });
 
-// ===== TOUCH (come la versione stabile) =====
+// ===== TOUCH (stabile) =====
 let dragId=null, dragStartX=0, playerStartX=0;
 
 c.addEventListener("pointerdown",(e)=>{
@@ -608,7 +566,7 @@ c.addEventListener("pointermove",(e)=>{
 
 c.addEventListener("pointerup",(e)=>{
   if(e.pointerId===dragId){
-    shoot(); // tap = sparo
+    shoot();
     dragId=null;
   }
 });
@@ -618,7 +576,9 @@ document.getElementById("left").onpointerdown=()=>player.x=Math.max(20,player.x-
 document.getElementById("right").onpointerdown=()=>player.x=Math.min(300,player.x+10);
 document.getElementById("fire").onpointerdown=shoot;
 
+// start / restart
 startBtn.onclick=()=>{ if(!running) startGame(); };
+restartBtn.onclick=()=>{ if(!running) startGame(); };
 </script>
 </body>
 </html>
