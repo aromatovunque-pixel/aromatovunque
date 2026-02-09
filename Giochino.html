@@ -2,74 +2,214 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Aromat World (SNES-ish)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Aromat World Mobile</title>
   <style>
     :root { color-scheme: dark; }
-    html, body { height: 100%; margin: 0; background:#0b1020; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
-    .wrap { display:flex; align-items:center; justify-content:center; height:100%; }
-    canvas { image-rendering: pixelated; image-rendering: crisp-edges; background:#1a2a4a; border:2px solid #22345c; border-radius:10px; box-shadow: 0 12px 30px rgba(0,0,0,.45); }
-    .hud {
-      position: fixed; top: 12px; left: 12px; right: 12px;
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
-      pointer-events:none;
-      font-size: 12px; opacity:.95;
+    html, body {
+      height: 100%;
+      margin: 0;
+      background:#0b1020;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      touch-action: none; /* important: avoid scroll/pinch while playing */
+      overscroll-behavior: none;
     }
-    .pill { pointer-events:none; background: rgba(10,15,30,.55); border:1px solid rgba(120,160,255,.25); padding:8px 10px; border-radius:999px; }
+    .wrap {
+      height: 100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position: relative;
+    }
+    canvas {
+      width: 100vw;
+      height: 100vh;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      background:#1a2a4a;
+      display:block;
+    }
+    .hud {
+      position: fixed;
+      top: 10px; left: 10px; right: 10px;
+      display:flex; justify-content:space-between; gap:10px;
+      pointer-events:none;
+      z-index: 20;
+      font-size: 12px;
+    }
+    .pill {
+      background: rgba(10,15,30,.55);
+      border:1px solid rgba(120,160,255,.25);
+      padding:8px 10px;
+      border-radius:999px;
+      pointer-events:none;
+      max-width: 70vw;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .pill strong { color:#cfe0ff; }
-    .hint { opacity:.9 }
-    .btns { display:none; } /* mobile controls could go here if you insist */
+
+    /* --- Touch controls --- */
+    .controls {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      height: 42vh;
+      max-height: 340px;
+      display:flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 14px;
+      z-index: 30;
+      pointer-events: none; /* enable only on buttons */
+      background: linear-gradient(to top, rgba(0,0,0,.25), rgba(0,0,0,0));
+    }
+    .pad, .actions { display:flex; gap:12px; pointer-events: auto; }
+    .btn {
+      width: 76px; height: 76px;
+      border-radius: 18px;
+      border: 1px solid rgba(180,210,255,.22);
+      background: rgba(10,15,30,.45);
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      touch-action: none;
+      font-weight: 800;
+      letter-spacing: .5px;
+    }
+    .btn:active { transform: translateY(1px); background: rgba(10,15,30,.60); }
+    .btn.small { width: 70px; height: 70px; border-radius: 16px; font-weight: 900; }
+    .btn.jump { width: 92px; height: 92px; border-radius: 22px; font-size: 14px; }
+    .btn.dash { width: 82px; height: 82px; border-radius: 20px; font-size: 13px; }
+    .btn span { opacity: .92; }
+    .hint2 {
+      position: fixed;
+      bottom: calc(42vh + 6px);
+      left: 10px; right: 10px;
+      text-align:center;
+      z-index: 25;
+      opacity: .7;
+      font-size: 11px;
+      pointer-events:none;
+    }
+    @media (min-width: 900px) {
+      /* On desktop it still works, but buttons are less annoying */
+      .controls { height: 240px; }
+      canvas { width: 960px; height: 540px; border:2px solid #22345c; border-radius:10px; }
+    }
   </style>
 </head>
 <body>
   <div class="hud">
-    <div class="pill"><strong>AROMAT WORLD</strong> · ← → muovi · Z / ↑ salta · X dash · R restart</div>
-    <div class="pill hint" id="hudRight">Granelli: 0 · Vite: 3 · Livello: 1</div>
+    <div class="pill"><strong>AROMAT WORLD</strong> · touch controls</div>
+    <div class="pill" id="hudRight">Granelli: 0 · Vite: 3 · Livello: 1</div>
   </div>
+
   <div class="wrap">
     <canvas id="c" width="960" height="540"></canvas>
   </div>
 
+  <div class="hint2">Suggerimento: tieni premuto ←/→ per correre, SALTA per saltare, DASH per sprint</div>
+
+  <div class="controls">
+    <div class="pad">
+      <div class="btn small" id="btnLeft"><span>←</span></div>
+      <div class="btn small" id="btnRight"><span>→</span></div>
+    </div>
+    <div class="actions">
+      <div class="btn dash" id="btnDash"><span>DASH</span></div>
+      <div class="btn jump" id="btnJump"><span>SALTA</span></div>
+    </div>
+  </div>
+
 <script>
 (() => {
-  // --- “SNES-ish”: low-res internal, scaled up ---
   const canvas = document.getElementById('c');
   const ctx = canvas.getContext('2d');
-
-  // Internal resolution (retro). Canvas is already 960x540, but we still draw in pixel style.
   const W = canvas.width, H = canvas.height;
-
-  // --- Input ---
-  const keys = new Set();
-  const pressed = new Set(); // edge-triggered
-  window.addEventListener('keydown', (e) => {
-    if (!keys.has(e.code)) pressed.add(e.code);
-    keys.add(e.code);
-    // prevent scroll on arrows/space
-    if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].includes(e.code)) e.preventDefault();
-  }, {passive:false});
-  window.addEventListener('keyup', (e) => { keys.delete(e.code); }, {passive:true});
-
   const hudRight = document.getElementById('hudRight');
 
-  // --- Helpers ---
-  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  const aabb = (a, b) =>
-    a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  // --- Touch input state (mobile-first) ---
+  const input = {
+    left:false, right:false,
+    jumpPressed:false, // edge
+    dashPressed:false  // edge
+  };
 
-  // --- World ---
-  const TILE = 24; // tile size
-  const GRAV = 1700; // px/s^2
+  function bindHold(btn, onDown, onUp) {
+    const down = (e) => { e.preventDefault(); onDown(); };
+    const up = (e) => { e.preventDefault(); onUp(); };
+
+    btn.addEventListener('pointerdown', down, {passive:false});
+    btn.addEventListener('pointerup', up, {passive:false});
+    btn.addEventListener('pointercancel', up, {passive:false});
+    btn.addEventListener('pointerleave', up, {passive:false});
+    btn.addEventListener('lostpointercapture', up, {passive:false});
+  }
+
+  bindHold(document.getElementById('btnLeft'),
+    () => { input.left = true; },
+    () => { input.left = false; }
+  );
+  bindHold(document.getElementById('btnRight'),
+    () => { input.right = true; },
+    () => { input.right = false; }
+  );
+  bindHold(document.getElementById('btnJump'),
+    () => { input.jumpPressed = true; },
+    () => {}
+  );
+  bindHold(document.getElementById('btnDash'),
+    () => { input.dashPressed = true; },
+    () => {}
+  );
+
+  // Optional: swipe up anywhere to jump, quick tap right side to dash (kept simple)
+  let touchStartY = null, touchStartX = null;
+  window.addEventListener('pointerdown', (e) => {
+    // ignore if pressing buttons (they already handle)
+    if (e.target.classList && e.target.classList.contains('btn')) return;
+    touchStartY = e.clientY;
+    touchStartX = e.clientX;
+  }, {passive:true});
+
+  window.addEventListener('pointerup', (e) => {
+    if (touchStartY == null) return;
+    const dy = touchStartY - e.clientY;
+    const dx = Math.abs((touchStartX ?? e.clientX) - e.clientX);
+
+    // swipe up to jump
+    if (dy > 35 && dx < 120) input.jumpPressed = true;
+
+    // quick tap on right third to dash (if not a swipe)
+    const tap = Math.abs(dy) < 15 && dx < 15;
+    if (tap && e.clientX > window.innerWidth * 0.66) input.dashPressed = true;
+
+    touchStartY = null; touchStartX = null;
+  }, {passive:true});
+
+  // Prevent double-tap zoom on iOS-ish browsers
+  let lastTap = 0;
+  window.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    if (now - lastTap < 300) e.preventDefault();
+    lastTap = now;
+  }, {passive:false});
+
+  // --- Helpers ---
+  const clamp = (v,a,b) => Math.max(a, Math.min(b,v));
+  const aabb = (a,b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+
+  // --- World/physics ---
+  const TILE = 24;
+  const GRAV = 1700;
   const FRICTION = 0.86;
   const AIR_FRICTION = 0.93;
 
-  // Tile legend:
-  // # = solid block
-  // ^ = spikes (hurt)
-  // o = granello (collect)
-  // E = enemy spawn
-  // G = goal (finish)
-  // . = empty
   const levels = [
 `................................................................
 ................................................................
@@ -99,7 +239,11 @@
 `
   ];
 
-  function parseLevel(str) {
+  function makeEnemy(x,y){
+    return { x,y,w:18,h:18, vx:(Math.random()<.5?-1:1)*120, vy:0, alive:true, stompedTimer:0 };
+  }
+
+  function parseLevel(str){
     const rows = str.trimEnd().split("\n");
     const h = rows.length;
     const w = Math.max(...rows.map(r => r.length));
@@ -108,60 +252,51 @@
     const enemies = [];
     let goal = null;
 
-    for (let y=0; y<h; y++) {
-      tiles[y] = [];
-      const row = rows[y].padEnd(w, '.');
-      for (let x=0; x<w; x++) {
+    for (let y=0;y<h;y++){
+      tiles[y]=[];
+      const row = rows[y].padEnd(w,'.');
+      for (let x=0;x<w;x++){
         const ch = row[x];
         if (ch === '#') tiles[y][x] = '#';
         else if (ch === '^') tiles[y][x] = '^';
         else tiles[y][x] = '.';
 
-        if (ch === 'o') items.push({x:x*TILE+8, y:y*TILE+8, w:8, h:8, taken:false});
-        if (ch === 'E') enemies.push(makeEnemy(x*TILE+2, y*TILE+6));
-        if (ch === 'G') goal = {x:x*TILE, y:y*TILE, w:TILE, h:TILE};
+        if (ch === 'o') items.push({x:x*TILE+8,y:y*TILE+8,w:8,h:8,taken:false});
+        if (ch === 'E') enemies.push(makeEnemy(x*TILE+2,y*TILE+6));
+        if (ch === 'G') goal = {x:x*TILE,y:y*TILE,w:TILE,h:TILE};
       }
     }
-    if (!goal) {
-      // fallback goal at far right, near bottom
-      goal = {x:(w-3)*TILE, y:(h-4)*TILE, w:TILE, h:TILE};
-    }
+    if (!goal) goal = {x:(w-3)*TILE, y:(h-4)*TILE, w:TILE, h:TILE};
     return { tiles, w, h, items, enemies, goal };
   }
 
-  function tileAt(world, px, py) {
-    const tx = Math.floor(px / TILE);
-    const ty = Math.floor(py / TILE);
-    if (ty < 0 || ty >= world.h || tx < 0 || tx >= world.w) return '.';
+  function tileAt(world, px, py){
+    const tx = Math.floor(px / TILE), ty = Math.floor(py / TILE);
+    if (ty<0 || ty>=world.h || tx<0 || tx>=world.w) return '.';
     return world.tiles[ty][tx] || '.';
   }
+  const isSolid = (t) => t === '#';
+  const isSpike = (t) => t === '^';
 
-  function isSolid(t) { return t === '#'; }
-  function isSpike(t) { return t === '^'; }
+  const cam = {x:0,y:0};
 
-  // --- Camera ---
-  const cam = { x:0, y:0 };
-
-  // --- Player: "barattolo Aromat" che saltella come se avesse senso ---
   const player = {
-    x: 72, y: 72, w: 18, h: 26,
-    vx: 0, vy: 0,
-    onGround: false,
-    facing: 1,
-    coyote: 0,
-    jumpBuffer: 0,
-    dashTimer: 0,
-    invuln: 0,
-    lives: 3,
-    score: 0,
-    level: 0
+    x:72,y:72,w:18,h:26,
+    vx:0,vy:0,
+    onGround:false,
+    facing:1,
+    coyote:0,
+    jumpBuffer:0,
+    dashTimer:0,
+    invuln:0,
+    lives:3,
+    score:0,
+    level:0
   };
 
-  function respawn(world) {
-    player.x = 72;
-    player.y = 48;
-    player.vx = 0;
-    player.vy = 0;
+  function respawn(){
+    player.x = 72; player.y = 48;
+    player.vx = 0; player.vy = 0;
     player.onGround = false;
     player.coyote = 0;
     player.jumpBuffer = 0;
@@ -169,93 +304,66 @@
     player.invuln = 1.1;
   }
 
-  function makeEnemy(x, y) {
-    return {
-      x, y, w: 18, h: 18,
-      vx: (Math.random() < 0.5 ? -1 : 1) * 120,
-      vy: 0,
-      alive: true,
-      stompedTimer: 0
-    };
-  }
-
-  function loadLevel(idx) {
-    const world = parseLevel(levels[idx % levels.length]);
-    // reset player state except score/lives
-    respawn(world);
-    return world;
+  function loadLevel(idx){
+    const w = parseLevel(levels[idx % levels.length]);
+    respawn();
+    return w;
   }
 
   let world = loadLevel(player.level);
 
-  function restartGame() {
+  function restartGame(){
     player.lives = 3;
     player.score = 0;
     player.level = 0;
     world = loadLevel(player.level);
   }
 
-  // --- Physics: tile collisions ---
-  function moveAndCollide(ent, dt, world) {
-    // X axis
+  function moveAndCollide(ent, dt, world){
+    // X
     ent.x += ent.vx * dt;
-    let minX = ent.x, maxX = ent.x + ent.w;
-    let minY = ent.y, maxY = ent.y + ent.h;
+    let left = Math.floor(ent.x / TILE);
+    let right = Math.floor((ent.x + ent.w - 1) / TILE);
+    let top = Math.floor(ent.y / TILE);
+    let bottom = Math.floor((ent.y + ent.h - 1) / TILE);
 
-    const left = Math.floor(minX / TILE);
-    const right = Math.floor((maxX-1) / TILE);
-    const top = Math.floor(minY / TILE);
-    const bottom = Math.floor((maxY-1) / TILE);
-
-    for (let ty=top; ty<=bottom; ty++) {
-      for (let tx=left; tx<=right; tx++) {
+    for (let ty=top; ty<=bottom; ty++){
+      for (let tx=left; tx<=right; tx++){
         const t = (world.tiles[ty] && world.tiles[ty][tx]) ? world.tiles[ty][tx] : '.';
-        if (isSolid(t)) {
-          const tileRect = {x:tx*TILE, y:ty*TILE, w:TILE, h:TILE};
-          if (aabb(ent, tileRect)) {
-            if (ent.vx > 0) ent.x = tileRect.x - ent.w;
-            else if (ent.vx < 0) ent.x = tileRect.x + tileRect.w;
-            ent.vx = 0;
-            // recompute bounds after correction
-            minX = ent.x; maxX = ent.x + ent.w;
-          }
+        if (!isSolid(t)) continue;
+        const r = {x:tx*TILE,y:ty*TILE,w:TILE,h:TILE};
+        if (aabb(ent,r)){
+          if (ent.vx > 0) ent.x = r.x - ent.w;
+          else if (ent.vx < 0) ent.x = r.x + r.w;
+          ent.vx = 0;
         }
       }
     }
 
-    // Y axis
+    // Y
     ent.y += ent.vy * dt;
     ent.onGround = false;
 
-    minX = ent.x; maxX = ent.x + ent.w;
-    minY = ent.y; maxY = ent.y + ent.h;
+    left = Math.floor(ent.x / TILE);
+    right = Math.floor((ent.x + ent.w - 1) / TILE);
+    top = Math.floor(ent.y / TILE);
+    bottom = Math.floor((ent.y + ent.h - 1) / TILE);
 
-    const left2 = Math.floor(minX / TILE);
-    const right2 = Math.floor((maxX-1) / TILE);
-    const top2 = Math.floor(minY / TILE);
-    const bottom2 = Math.floor((maxY-1) / TILE);
-
-    for (let ty=top2; ty<=bottom2; ty++) {
-      for (let tx=left2; tx<=right2; tx++) {
+    for (let ty=top; ty<=bottom; ty++){
+      for (let tx=left; tx<=right; tx++){
         const t = (world.tiles[ty] && world.tiles[ty][tx]) ? world.tiles[ty][tx] : '.';
-        if (isSolid(t)) {
-          const tileRect = {x:tx*TILE, y:ty*TILE, w:TILE, h:TILE};
-          if (aabb(ent, tileRect)) {
-            if (ent.vy > 0) {
-              ent.y = tileRect.y - ent.h;
-              ent.onGround = true;
-            } else if (ent.vy < 0) {
-              ent.y = tileRect.y + tileRect.h;
-            }
-            ent.vy = 0;
-          }
+        if (!isSolid(t)) continue;
+        const r = {x:tx*TILE,y:ty*TILE,w:TILE,h:TILE};
+        if (aabb(ent,r)){
+          if (ent.vy > 0){ ent.y = r.y - ent.h; ent.onGround = true; }
+          else if (ent.vy < 0){ ent.y = r.y + r.h; }
+          ent.vy = 0;
         }
       }
     }
   }
 
-  function touchingSpikes(ent, world) {
-    // sample a few points under/around entity
+  function touchingSpikes(ent, world){
     const pts = [
       [ent.x+2, ent.y+ent.h-1],
       [ent.x+ent.w-3, ent.y+ent.h-1],
@@ -266,116 +374,89 @@
     return pts.some(([px,py]) => isSpike(tileAt(world, px, py)));
   }
 
-  function hurt() {
+  function hurt(){
     if (player.invuln > 0) return;
     player.lives--;
     player.invuln = 1.4;
     player.vx = -player.facing * 220;
     player.vy = -420;
-    if (player.lives < 0) {
-      // game over: reset
-      restartGame();
-    } else {
-      // soft respawn to keep momentum of human suffering
-      // (aka: just bump the player back a bit)
-    }
+    if (player.lives < 0) restartGame();
   }
 
-  // --- Game loop ---
+  // --- Loop ---
   let last = performance.now();
-  function loop(now) {
-    const dt = Math.min(0.033, (now - last) / 1000);
+  function loop(now){
+    const dt = Math.min(0.033, (now-last)/1000);
     last = now;
-
     update(dt);
     draw();
-
-    pressed.clear();
     requestAnimationFrame(loop);
   }
 
-  function update(dt) {
-    // restart
-    if (pressed.has('KeyR')) {
-      world = loadLevel(player.level);
-      return;
-    }
-
-    // Input mapping
-    const left = keys.has('ArrowLeft') || keys.has('KeyA');
-    const right = keys.has('ArrowRight') || keys.has('KeyD');
-    const jump = pressed.has('KeyZ') || pressed.has('ArrowUp') || pressed.has('Space');
-    const dash = pressed.has('KeyX') || pressed.has('ShiftLeft');
-
+  function update(dt){
     // timers
     player.coyote = Math.max(0, player.coyote - dt);
     player.jumpBuffer = Math.max(0, player.jumpBuffer - dt);
     player.dashTimer = Math.max(0, player.dashTimer - dt);
     player.invuln = Math.max(0, player.invuln - dt);
 
-    if (jump) player.jumpBuffer = 0.12;
+    // Convert touch presses into buffers (edge)
+    if (input.jumpPressed) { player.jumpBuffer = 0.12; input.jumpPressed = false; }
+    const dashEdge = input.dashPressed; input.dashPressed = false;
 
-    // Horizontal accel
+    // movement
+    const left = input.left;
+    const right = input.right;
+
     const maxSpeed = (player.dashTimer > 0) ? 360 : 210;
     const accel = (player.onGround ? 1350 : 900);
-    if (left) { player.vx -= accel * dt; player.facing = -1; }
+
+    if (left){ player.vx -= accel * dt; player.facing = -1; }
     if (right){ player.vx += accel * dt; player.facing =  1; }
 
-    // Apply friction
     if (player.onGround) player.vx *= (left || right) ? 0.94 : FRICTION;
     else player.vx *= AIR_FRICTION;
 
     player.vx = clamp(player.vx, -maxSpeed, maxSpeed);
 
-    // Dash (short burst)
-    if (dash && player.dashTimer <= 0) {
+    if (dashEdge && player.dashTimer <= 0){
       player.dashTimer = 0.22;
       player.vx = player.facing * 360;
-      // tiny lift so it feels punchy
       player.vy = Math.min(player.vy, 80);
     }
 
-    // Gravity
     player.vy += GRAV * dt;
     player.vy = Math.min(player.vy, 1200);
 
-    // Coyote time
     if (player.onGround) player.coyote = 0.10;
 
-    // Jump if buffered
-    if (player.jumpBuffer > 0 && (player.onGround || player.coyote > 0)) {
+    if (player.jumpBuffer > 0 && (player.onGround || player.coyote > 0)){
       player.jumpBuffer = 0;
       player.coyote = 0;
       player.vy = -560;
       player.onGround = false;
     }
 
-    // Move + collide
     moveAndCollide(player, dt, world);
 
-    // Spikes
     if (touchingSpikes(player, world)) hurt();
-
-    // Fall out
     if (player.y > world.h*TILE + 200) hurt();
 
-    // Collect granelli
-    for (const g of world.items) {
-      if (!g.taken && aabb(player, g)) {
+    // collect
+    for (const g of world.items){
+      if (!g.taken && aabb(player, g)){
         g.taken = true;
         player.score += 10;
       }
     }
 
-    // Enemies
-    for (const e of world.enemies) {
+    // enemies
+    for (const e of world.enemies){
       if (!e.alive) continue;
 
-      // basic AI: walk, turn on wall/edge
       e.vy += GRAV * dt;
       e.vy = Math.min(e.vy, 1200);
 
-      // Edge detect: if next step has no ground, turn
       const aheadX = e.x + (e.vx > 0 ? e.w + 2 : -2);
       const footY = e.y + e.h + 2;
       const groundAhead = isSolid(tileAt(world, aheadX, footY));
@@ -384,11 +465,10 @@
 
       moveAndCollide(e, dt, world);
 
-      // Player interaction: stomp vs hit
-      if (aabb(player, e) && player.invuln <= 0) {
+      if (aabb(player, e) && player.invuln <= 0){
         const playerBottomPrev = player.y + player.h - player.vy * dt;
         const stomp = (player.vy > 120) && (playerBottomPrev <= e.y + 6);
-        if (stomp) {
+        if (stomp){
           e.alive = false;
           e.stompedTimer = 0.18;
           player.vy = -360;
@@ -399,15 +479,14 @@
       }
     }
 
-    // Goal
-    if (aabb(player, world.goal)) {
+    // goal
+    if (aabb(player, world.goal)){
       player.level++;
       world = loadLevel(player.level);
-      // bonus for picking stuff up like a responsible adult
       player.score += 100;
     }
 
-    // Camera follow
+    // camera
     const targetX = player.x + player.w/2 - W/2;
     const targetY = player.y + player.h/2 - H/2;
     cam.x += (targetX - cam.x) * 0.12;
@@ -415,17 +494,15 @@
     cam.x = clamp(cam.x, 0, Math.max(0, world.w*TILE - W));
     cam.y = clamp(cam.y, 0, Math.max(0, world.h*TILE - H));
 
-    // HUD
     const remaining = world.items.filter(i => !i.taken).length;
     hudRight.textContent = `Granelli: ${player.score} · Vite: ${Math.max(0, player.lives)} · Livello: ${player.level+1} · Rimasti: ${remaining}`;
   }
 
-  // --- Drawing (pixel art vibes) ---
-  function draw() {
-    // background gradient-ish with blocks
+  // --- Draw ---
+  function draw(){
     ctx.clearRect(0,0,W,H);
 
-    // parallax sky dots
+    // sky dots parallax
     ctx.save();
     ctx.translate(-cam.x*0.2, -cam.y*0.2);
     ctx.globalAlpha = 0.35;
@@ -441,55 +518,34 @@
     ctx.save();
     ctx.translate(-Math.floor(cam.x), -Math.floor(cam.y));
 
-    // tiles
-    for (let y=0; y<world.h; y++) {
-      for (let x=0; x<world.w; x++) {
+    for (let y=0;y<world.h;y++){
+      for (let x=0;x<world.w;x++){
         const t = world.tiles[y][x];
         if (t === '.') continue;
         const px = x*TILE, py = y*TILE;
-        if (t === '#') drawBlock(px, py);
-        if (t === '^') drawSpike(px, py);
+        if (t === '#') drawBlock(px,py);
+        if (t === '^') drawSpike(px,py);
       }
     }
 
-    // goal flag (Swiss-ish nod without being weird about it)
     drawGoal(world.goal.x, world.goal.y);
 
-    // items
-    for (const g of world.items) if (!g.taken) drawGranule(g.x, g.y);
+    for (const g of world.items) if (!g.taken) drawGranule(g.x,g.y);
 
-    // enemies
-    for (const e of world.enemies) {
+    for (const e of world.enemies){
       if (e.alive) drawEnemy(e);
-      else if (e.stompedTimer > 0) {
-        // little puff
-        drawPuff(e.x, e.y);
-        e.stompedTimer -= 1/60;
-      }
+      else if (e.stompedTimer > 0){ drawPuff(e.x,e.y); e.stompedTimer -= 1/60; }
     }
 
-    // player
     drawAromatHero(player);
 
-    ctx.restore();
-
-    // vignette
-    ctx.save();
-    ctx.globalAlpha = 0.20;
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0,0,W,8);
-    ctx.fillRect(0,H-8,W,8);
-    ctx.fillRect(0,0,8,H);
-    ctx.fillRect(W-8,0,8,H);
     ctx.restore();
   }
 
   function drawBlock(x,y){
-    // SNES-ish shaded tile
     ctx.fillStyle = "#2d8a4d"; ctx.fillRect(x,y,TILE,TILE);
     ctx.fillStyle = "#38a85f"; ctx.fillRect(x+2,y+2,TILE-4,TILE-4);
     ctx.fillStyle = "rgba(0,0,0,.25)"; ctx.fillRect(x+2,y+TILE-6,TILE-4,4);
-    // yellow stripe like Aromat label vibes
     ctx.fillStyle = "#f0d04f"; ctx.fillRect(x+3,y+9,TILE-6,4);
     ctx.fillStyle = "rgba(255,255,255,.20)"; ctx.fillRect(x+3,y+6,4,12);
   }
@@ -510,7 +566,6 @@
   }
 
   function drawGranule(x,y){
-    // little seasoning dot
     ctx.fillStyle = "#f7f0c6";
     ctx.fillRect(x, y, 8, 8);
     ctx.fillStyle = "rgba(0,0,0,.20)";
@@ -520,18 +575,13 @@
   }
 
   function drawGoal(x,y){
-    // pole
     ctx.fillStyle = "#dfe8ff";
     ctx.fillRect(x+10, y-48, 4, 72);
-
-    // flag
     ctx.fillStyle = "#ff3b4d";
     ctx.fillRect(x+14, y-44, 22, 14);
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(x+22, y-41, 6, 8);
     ctx.fillRect(x+20, y-39, 10, 4);
-
-    // base marker
     ctx.fillStyle = "#f0d04f";
     ctx.fillRect(x, y, TILE, TILE);
     ctx.fillStyle = "#2d8a4d";
@@ -539,12 +589,10 @@
   }
 
   function drawEnemy(e){
-    // "Cubo di Brodo ribelle"
     ctx.fillStyle = "#c58a2a";
     ctx.fillRect(e.x, e.y, e.w, e.h);
     ctx.fillStyle = "#e0b352";
     ctx.fillRect(e.x+2, e.y+2, e.w-4, e.h-4);
-    // face
     ctx.fillStyle = "#2b1a0c";
     ctx.fillRect(e.x+5, e.y+7, 3, 3);
     ctx.fillRect(e.x+e.w-8, e.y+7, 3, 3);
@@ -559,42 +607,26 @@
   }
 
   function drawAromatHero(p){
-    // invuln flicker
     if (p.invuln > 0 && Math.floor(p.invuln*18)%2===0) ctx.globalAlpha = 0.45;
 
-    // body canister
-    const x = p.x, y = p.y;
-    // label colors like Aromat (giallo/verde/rosso tappo)
-    // cap
-    ctx.fillStyle = "#e3343b";
-    ctx.fillRect(x, y, p.w, 6);
-    ctx.fillStyle = "rgba(255,255,255,.25)";
-    ctx.fillRect(x+2, y+1, 4, 3);
+    const x=p.x, y=p.y;
+    ctx.fillStyle = "#e3343b"; ctx.fillRect(x, y, p.w, 6);
+    ctx.fillStyle = "rgba(255,255,255,.25)"; ctx.fillRect(x+2, y+1, 4, 3);
 
-    // main
-    ctx.fillStyle = "#f0d04f";
-    ctx.fillRect(x, y+6, p.w, p.h-6);
-    // green band
-    ctx.fillStyle = "#1f7a49";
-    ctx.fillRect(x, y+12, p.w, 7);
-    // "label highlight"
-    ctx.fillStyle = "rgba(255,255,255,.18)";
-    ctx.fillRect(x+2, y+8, 3, p.h-10);
+    ctx.fillStyle = "#f0d04f"; ctx.fillRect(x, y+6, p.w, p.h-6);
+    ctx.fillStyle = "#1f7a49"; ctx.fillRect(x, y+12, p.w, 7);
+    ctx.fillStyle = "rgba(255,255,255,.18)"; ctx.fillRect(x+2, y+8, 3, p.h-10);
 
-    // little face
     ctx.fillStyle = "#1b1f2a";
     ctx.fillRect(x+5, y+16, 3, 3);
     ctx.fillRect(x+p.w-8, y+16, 3, 3);
-    // mouth
     ctx.fillRect(x+7, y+21, p.w-14, 2);
 
-    // feet (tiny)
     ctx.fillStyle = "#2b1a0c";
     ctx.fillRect(x+3, y+p.h-2, 5, 2);
     ctx.fillRect(x+p.w-8, y+p.h-2, 5, 2);
 
-    // dash spark
-    if (p.dashTimer > 0) {
+    if (p.dashTimer > 0){
       ctx.fillStyle = "#cfe0ff";
       const sx = x - p.facing*8;
       ctx.fillRect(sx, y+16, 6, 2);
@@ -605,9 +637,7 @@
     ctx.globalAlpha = 1;
   }
 
-  // Start
   requestAnimationFrame(loop);
-
 })();
 </script>
 </body>
