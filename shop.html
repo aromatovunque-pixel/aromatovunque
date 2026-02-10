@@ -59,7 +59,7 @@
       transform: translateZ(0);
     }
 
-    /* NAV: desktop orizzontale */
+    /* NAV */
     .nav{
       display:flex; align-items:center; gap:10px;
       flex-wrap:nowrap;
@@ -97,82 +97,69 @@
       border-radius:6px;
     }
 
-    /* GAME – insegna casinò Las Vegas */
+    /* GAME: Las Vegas / Casinò */
     .pill.game{
-      position:relative;
-      font-weight:1000;
-      letter-spacing:1px;
-      color:#1a1200;
+      border:2px solid rgba(255,212,0,.85);
       background:
-        radial-gradient(circle at 20% 50%, #fff3b0 0%, transparent 45%),
-        radial-gradient(circle at 80% 50%, #ffe066 0%, transparent 45%),
-        linear-gradient(180deg, #ffd400 0%, #ffb703 100%);
-      border:3px solid #ffcc00;
+        radial-gradient(120px 70px at 20% 20%, rgba(255,255,255,.20), transparent 60%),
+        radial-gradient(220px 140px at 80% 80%, rgba(255,212,0,.22), transparent 60%),
+        linear-gradient(180deg, rgba(20,10,25,.92), rgba(35,10,20,.92));
+      color:#fff;
+      text-shadow:
+        0 0 10px rgba(255,212,0,.55),
+        0 0 18px rgba(225,29,46,.25);
       box-shadow:
-        0 0 0 4px rgba(255,204,0,.35),
-        0 0 18px rgba(255,212,0,.85),
-        0 0 42px rgba(255,212,0,.65),
-        inset 0 0 18px rgba(255,255,255,.45);
-      text-transform:uppercase;
-      animation: casinoGlow 1.2s infinite alternate;
+        0 14px 30px rgba(0,0,0,.18),
+        0 0 0 2px rgba(255,212,0,.18) inset,
+        0 0 18px rgba(255,212,0,.22);
+      letter-spacing:.2px;
     }
 
-    /* lampadine stile marquee */
+    /* cornice “lampadine” */
     .pill.game::before{
       content:"";
       position:absolute;
-      inset:-8px;
+      inset:-6px;
       border-radius:999px;
       background:
-        radial-gradient(circle, #fff 0 3px, transparent 4px) 0 0 / 18px 18px;
-      animation: bulbsMove 0.9s linear infinite;
-      opacity:.9;
+        radial-gradient(circle, rgba(255,212,0,.95) 0 2.4px, transparent 3px) 0 0/18px 18px;
+      filter: drop-shadow(0 0 6px rgba(255,212,0,.55));
+      opacity:.95;
+      animation: bulbs 1.05s linear infinite;
       pointer-events:none;
     }
 
-    /* alone caldo esterno */
+    /* neon glow che pulsa */
     .pill.game::after{
       content:"";
       position:absolute;
-      inset:-60%;
-      background:
-        radial-gradient(circle, rgba(255,212,0,.85), transparent 60%);
-      opacity:.45;
-      animation: haloPulse 1.2s ease-in-out infinite;
+      inset:-40%;
+      background: radial-gradient(circle at 50% 50%, rgba(255,212,0,.45), transparent 60%);
+      opacity:.28;
+      animation: neon 1.05s ease-in-out infinite;
       pointer-events:none;
     }
 
-    @keyframes casinoGlow{
-      0%{
-        box-shadow:
-          0 0 0 4px rgba(255,204,0,.25),
-          0 0 14px rgba(255,212,0,.6),
-          0 0 30px rgba(255,212,0,.4),
-          inset 0 0 14px rgba(255,255,255,.35);
-      }
-      100%{
-        box-shadow:
-          0 0 0 6px rgba(255,204,0,.55),
-          0 0 28px rgba(255,212,0,1),
-          0 0 60px rgba(255,212,0,.85),
-          inset 0 0 22px rgba(255,255,255,.55);
-      }
+    @keyframes bulbs{
+      0%{ background-position: 0 0; filter: drop-shadow(0 0 5px rgba(255,212,0,.55)); }
+      50%{ filter: drop-shadow(0 0 10px rgba(255,212,0,.85)); }
+      100%{ background-position: 18px 18px; filter: drop-shadow(0 0 5px rgba(255,212,0,.55)); }
     }
-    @keyframes bulbsMove{
-      from{ background-position: 0 0; }
-      to{ background-position: 18px 18px; }
-    }
-    @keyframes haloPulse{
-      0%,100%{ opacity:.35; transform:scale(.95); }
-      50%{ opacity:.65; transform:scale(1.05); }
+    @keyframes neon{
+      0%,100%{opacity:.20; transform: scale(0.98)}
+      50%{opacity:.55; transform: scale(1.02)}
     }
 
     .pill.game:hover{
       transform: translateY(-2px);
-      filter:saturate(1.1) contrast(1.05);
+      box-shadow:
+        0 18px 38px rgba(0,0,0,.22),
+        0 0 0 2px rgba(255,212,0,.22) inset,
+        0 0 28px rgba(255,212,0,.35);
+      filter:saturate(1.08);
     }
 
-    /* MOBILE: nav in VERTICALE così Home+Game si vedono SUBITO */
+    /* MOBILE: nav in verticale */
     @media (max-width: 620px){
       .header-inner{
         align-items:flex-start;
@@ -214,7 +201,6 @@
       padding:14px;
     }
 
-    /* Toggle categorie */
     .toggle{
       width:100%;
       padding:12px 12px;
@@ -538,7 +524,7 @@
         </div>
         <div class="content">
           <h3>Coca Aromat</h3>
-          <p>L'unica bevanda che ti fa venire sete</p>
+          <p>Perché le scelte semplici non ti interessano.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -575,7 +561,7 @@
         </div>
         <div class="content">
           <h3>Capsule Espresso</h3>
-          <p>Compatibili, forti, evitabilissime</p>
+          <p>Compatibili, forti, inevitabili.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -594,7 +580,7 @@
         </div>
         <div class="content">
           <h3>Cioccolato fondente</h3>
-          <p>Forte e testardo.</p>
+          <p>Forte, testardo. Come il progetto.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -666,7 +652,7 @@
         </div>
         <div class="content">
           <h3>Nesquik all’Aromat</h3>
-          <p>Latte come non dobrebbe essere</p>
+          <p>Latte giallo, morale grigia.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -674,6 +660,61 @@
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
           </div>
           <div class="actions-row"><a class="open" href="nesquik.jpg">Apri</a></div>
+        </div>
+      </article>
+
+      <!-- NUOVI: milk / fondue / yogurt -->
+      <article class="card" data-cat="dolci" data-id="milk">
+        <div class="stage">
+          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
+          <img src="milk.png" alt="Milk Aromat">
+        </div>
+        <div class="content">
+          <h3>Milk all’Aromat</h3>
+          <p>Perfetto contro la stitichezza.</p>
+          <div class="rating" data-rating>
+            <div class="stars">
+              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
+            </div>
+            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
+          </div>
+          <div class="actions-row"><a class="open" href="milk.png">Apri</a></div>
+        </div>
+      </article>
+
+      <article class="card" data-cat="dolci" data-id="fondue">
+        <div class="stage">
+          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
+          <img src="fondue.png" alt="Fondue Aromat">
+        </div>
+        <div class="content">
+          <h3>Fondue all’Aromat</h3>
+          <p>Il gradiente che è sempre mancato.</p>
+          <div class="rating" data-rating>
+            <div class="stars">
+              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
+            </div>
+            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
+          </div>
+          <div class="actions-row"><a class="open" href="fondue.png">Apri</a></div>
+        </div>
+      </article>
+
+      <article class="card" data-cat="dolci" data-id="yogurt">
+        <div class="stage">
+          <span class="tag">DOLCI</span><span class="sale" data-sale></span>
+          <img src="yogurt.png" alt="Yogurt Aromat">
+        </div>
+        <div class="content">
+          <h3>Yogurt all’Aromat</h3>
+          <p>Fresco, cremoso, sbagliato.</p>
+          <div class="rating" data-rating>
+            <div class="stars">
+              <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
+            </div>
+            <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> voti</div>
+          </div>
+          <div class="actions-row"><a class="open" href="yogurt.png">Apri</a></div>
         </div>
       </article>
 
@@ -703,7 +744,7 @@
         </div>
         <div class="content">
           <h3>Eau de Toilette</h3>
-          <p>Per l'uomo che deve chiedere.</p>
+          <p>Profumo “Aromat”. Coraggio vero.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -740,7 +781,7 @@
         </div>
         <div class="content">
           <h3>Carta igienica Aromat</h3>
-          <p>Piacevolmente insaporita.</p>
+          <p>Piacevolmente insaporita. Sì, lo so.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -759,7 +800,7 @@
         </div>
         <div class="content">
           <h3>Luganighetta Aromat</h3>
-          <p>per grigliate con gli amici.</p>
+          <p>Spirale perfetta. Decisioni discutibili.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -797,7 +838,7 @@
         </div>
         <div class="content">
           <h3>Sigarette Aromat</h3>
-          <p>Per chi della salute se ne sbatte ma con stile.</p>
+          <p>Per chi ama il rischio. Il sito no, quello è stabile.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -833,7 +874,7 @@
         </div>
         <div class="content">
           <h3>Preservativi Aromat</h3>
-          <p>Don't be silly, protect your Knörli.</p>
+          <p>Protezione e sapore. Un incubo completo.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -951,4 +992,4 @@
 </script>
 
 </body>
-</html>
+            </html>
