@@ -97,35 +97,36 @@
       border-radius:6px;
     }
 
-    /* GAME: Las Vegas / Casinò */
+    /* GAME: insegna Las Vegas / casinò */
     .pill.game{
-      border:2px solid rgba(255,212,0,.85);
+      border:2px solid rgba(255,212,0,.88);
       background:
-        radial-gradient(120px 70px at 20% 20%, rgba(255,255,255,.20), transparent 60%),
-        radial-gradient(220px 140px at 80% 80%, rgba(255,212,0,.22), transparent 60%),
-        linear-gradient(180deg, rgba(20,10,25,.92), rgba(35,10,20,.92));
+        radial-gradient(140px 90px at 18% 30%, rgba(255,255,255,.18), transparent 60%),
+        radial-gradient(260px 160px at 85% 80%, rgba(255,212,0,.22), transparent 62%),
+        linear-gradient(180deg, rgba(18,10,28,.95), rgba(35,10,20,.95));
       color:#fff;
       text-shadow:
         0 0 10px rgba(255,212,0,.55),
-        0 0 18px rgba(225,29,46,.25);
+        0 0 22px rgba(31,163,74,.18),
+        0 0 18px rgba(225,29,46,.18);
       box-shadow:
-        0 14px 30px rgba(0,0,0,.18),
-        0 0 0 2px rgba(255,212,0,.18) inset,
-        0 0 18px rgba(255,212,0,.22);
+        0 14px 30px rgba(0,0,0,.20),
+        0 0 0 2px rgba(255,212,0,.16) inset,
+        0 0 22px rgba(255,212,0,.22);
       letter-spacing:.2px;
     }
 
-    /* cornice “lampadine” */
+    /* cornice “lampadine” animate */
     .pill.game::before{
       content:"";
       position:absolute;
-      inset:-6px;
+      inset:-7px;
       border-radius:999px;
       background:
-        radial-gradient(circle, rgba(255,212,0,.95) 0 2.4px, transparent 3px) 0 0/18px 18px;
-      filter: drop-shadow(0 0 6px rgba(255,212,0,.55));
+        radial-gradient(circle, rgba(255,212,0,.98) 0 2.4px, transparent 3.2px) 0 0/18px 18px;
+      filter: drop-shadow(0 0 7px rgba(255,212,0,.55));
       opacity:.95;
-      animation: bulbs 1.05s linear infinite;
+      animation: bulbs 1.0s linear infinite;
       pointer-events:none;
     }
 
@@ -133,33 +134,33 @@
     .pill.game::after{
       content:"";
       position:absolute;
-      inset:-40%;
-      background: radial-gradient(circle at 50% 50%, rgba(255,212,0,.45), transparent 60%);
-      opacity:.28;
-      animation: neon 1.05s ease-in-out infinite;
+      inset:-45%;
+      background: radial-gradient(circle at 50% 50%, rgba(255,212,0,.52), transparent 62%);
+      opacity:.25;
+      animation: neon 1.0s ease-in-out infinite;
       pointer-events:none;
     }
 
     @keyframes bulbs{
-      0%{ background-position: 0 0; filter: drop-shadow(0 0 5px rgba(255,212,0,.55)); }
-      50%{ filter: drop-shadow(0 0 10px rgba(255,212,0,.85)); }
-      100%{ background-position: 18px 18px; filter: drop-shadow(0 0 5px rgba(255,212,0,.55)); }
+      0%{ background-position: 0 0; filter: drop-shadow(0 0 6px rgba(255,212,0,.55)); }
+      50%{ filter: drop-shadow(0 0 12px rgba(255,212,0,.90)); }
+      100%{ background-position: 18px 18px; filter: drop-shadow(0 0 6px rgba(255,212,0,.55)); }
     }
     @keyframes neon{
-      0%,100%{opacity:.20; transform: scale(0.98)}
-      50%{opacity:.55; transform: scale(1.02)}
+      0%,100%{opacity:.18; transform: scale(0.985)}
+      50%{opacity:.60; transform: scale(1.02)}
     }
 
     .pill.game:hover{
       transform: translateY(-2px);
       box-shadow:
-        0 18px 38px rgba(0,0,0,.22),
+        0 18px 38px rgba(0,0,0,.24),
         0 0 0 2px rgba(255,212,0,.22) inset,
-        0 0 28px rgba(255,212,0,.35);
+        0 0 34px rgba(255,212,0,.35);
       filter:saturate(1.08);
     }
 
-    /* MOBILE: nav in verticale */
+    /* MOBILE: nav in VERTICALE così Home+Game si vedono SUBITO */
     @media (max-width: 620px){
       .header-inner{
         align-items:flex-start;
@@ -334,12 +335,7 @@
       transform: translateZ(0);
       filter: drop-shadow(0 22px 26px rgba(0,0,0,.22));
       animation: floaty 6s ease-in-out infinite;
-      -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 34%, rgba(0,0,0,.55) 54%, transparent 74%);
-      mask-image: radial-gradient(circle at 50% 45%, #000 34%, rgba(0,0,0,.55) 54%, transparent 74%);
-      -webkit-mask-repeat:no-repeat;
-      mask-repeat:no-repeat;
-      -webkit-mask-size:cover;
-      mask-size:cover;
+      /* FIX: niente mask (su alcuni Android fa sparire PNG/trasparenze) */
     }
     @keyframes floaty{
       0%,100%{transform: translateY(0)}
@@ -524,7 +520,7 @@
         </div>
         <div class="content">
           <h3>Coca Aromat</h3>
-          <p>Perché le scelte semplici non ti interessano.</p>
+          <p>L'unica bevanda che ti fa venire sete</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -561,7 +557,7 @@
         </div>
         <div class="content">
           <h3>Capsule Espresso</h3>
-          <p>Compatibili, forti, inevitabili.</p>
+          <p>Compatibili, forti, evitabilissime</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -580,7 +576,7 @@
         </div>
         <div class="content">
           <h3>Cioccolato fondente</h3>
-          <p>Forte, testardo. Come il progetto.</p>
+          <p>Forte e testardo.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -652,7 +648,7 @@
         </div>
         <div class="content">
           <h3>Nesquik all’Aromat</h3>
-          <p>Latte giallo, morale grigia.</p>
+          <p>Latte come non dobrebbe essere</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -663,15 +659,15 @@
         </div>
       </article>
 
-      <!-- NUOVI: milk / fondue / yogurt -->
+      <!-- NUOVI PRODOTTI -->
       <article class="card" data-cat="dolci" data-id="milk">
         <div class="stage">
           <span class="tag">DOLCI</span><span class="sale" data-sale></span>
-          <img src="milk.png" alt="Milk Aromat">
+          <img src="milk.png" alt="Milk all’Aromat">
         </div>
         <div class="content">
           <h3>Milk all’Aromat</h3>
-          <p>Perfetto contro la stitichezza.</p>
+          <p>Perfetto contro la stitichezza</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -685,11 +681,11 @@
       <article class="card" data-cat="dolci" data-id="fondue">
         <div class="stage">
           <span class="tag">DOLCI</span><span class="sale" data-sale></span>
-          <img src="fondue.png" alt="Fondue Aromat">
+          <img src="fondue.png" alt="Fondue all’Aromat">
         </div>
         <div class="content">
           <h3>Fondue all’Aromat</h3>
-          <p>Il gradiente che è sempre mancato.</p>
+          <p>Il gradiente che è sempre mancato</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -703,7 +699,7 @@
       <article class="card" data-cat="dolci" data-id="yogurt">
         <div class="stage">
           <span class="tag">DOLCI</span><span class="sale" data-sale></span>
-          <img src="yogurt.png" alt="Yogurt Aromat">
+          <img src="yogurt.png" alt="Yogurt all’Aromat">
         </div>
         <div class="content">
           <h3>Yogurt all’Aromat</h3>
@@ -744,7 +740,7 @@
         </div>
         <div class="content">
           <h3>Eau de Toilette</h3>
-          <p>Profumo “Aromat”. Coraggio vero.</p>
+          <p>Per l'uomo che deve chiedere.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -781,7 +777,7 @@
         </div>
         <div class="content">
           <h3>Carta igienica Aromat</h3>
-          <p>Piacevolmente insaporita. Sì, lo so.</p>
+          <p>Piacevolmente insaporita.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -800,7 +796,7 @@
         </div>
         <div class="content">
           <h3>Luganighetta Aromat</h3>
-          <p>Spirale perfetta. Decisioni discutibili.</p>
+          <p>per grigliate con gli amici.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -838,7 +834,7 @@
         </div>
         <div class="content">
           <h3>Sigarette Aromat</h3>
-          <p>Per chi ama il rischio. Il sito no, quello è stabile.</p>
+          <p>Per chi della salute se ne sbatte ma con stile.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -874,7 +870,7 @@
         </div>
         <div class="content">
           <h3>Preservativi Aromat</h3>
-          <p>Protezione e sapore. Un incubo completo.</p>
+          <p>Don't be silly, protect your Knörli.</p>
           <div class="rating" data-rating>
             <div class="stars">
               <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
@@ -992,4 +988,4 @@
 </script>
 
 </body>
-            </html>
+</html>
