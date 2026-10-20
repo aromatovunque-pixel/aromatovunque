@@ -1,22 +1,22 @@
 /* Aromat Ovunque* — traduzioni del sito
  *
- * Lingue: italiano (predefinito), tedesco, francese.
+ * Lingue: italiano (predefinito), tedesco, francese, romancio.
  * I testi italiani restano scritti nelle pagine HTML: questo file
- * contiene il tedesco e il francese, più i testi italiani usati solo
+ * contiene tedesco, francese e romancio, più i testi italiani usati solo
  * dagli script (es. il gioco Aromat World).
  *
  * Uso nelle pagine:
  *   <span data-i18n="chiave">testo italiano</span>       → testo
  *   <p data-i18n-html="chiave">testo con <b>tag</b></p>  → HTML
  *   <img data-i18n-alt="chiave" alt="...">               → attributo alt
- *   <div data-lang-switch></div>                         → pulsanti IT · DE · FR
+ *   <div data-lang-switch></div>                         → pulsanti IT · DE · FR · RM
  * Negli script: window.i18n.t('chiave', { valore: 1 })
  * Link diretto a una lingua: pagina.html?lang=de
  */
 (function () {
   'use strict';
 
-  var LANGS = ['it', 'de', 'fr'];
+  var LANGS = ['it', 'de', 'fr', 'rm'];
 
   var D = {
     // Testi italiani che esistono solo negli script
@@ -34,6 +34,7 @@
       'aw.intro1': 'Raccogli i granelli, evita la fondue',
       'aw.intro2': 'e arriva alla bandiera svizzera!',
       'aw.intro3': 'Colpisci da sotto le scatole ? per le sorprese',
+      'aw.intro4': 'Salta due volte di fila per il doppio salto!',
       'aw.record': 'RECORD {b}',
       'aw.coins': 'GRANELLI {s}',
       'aw.level': 'LIVELLO {n}',
@@ -165,7 +166,7 @@
       'slot.final': 'Endstand:',
 
       // Aromat World
-      'aw.keys': '<b>← →</b> / <b>A D</b> bewegen · <b>Leertaste</b> / <b>↑</b> springen · <b>Shift</b> / <b>X</b> Dash · <b>P</b> Pause · <b>M</b> Ton',
+      'aw.keys': '<b>← →</b> / <b>A D</b> bewegen · <b>Leertaste</b> / <b>↑</b> springen (2× Doppelsprung) · <b>Shift</b> / <b>X</b> Dash · <b>P</b> Pause · <b>M</b> Ton',
       'aw.jumpBtn': 'SPRING',
       'aw.hintTouch': 'Tippe auf SPRING',
       'aw.hintKeys': 'Drück ENTER oder LEERTASTE',
@@ -177,6 +178,7 @@
       'aw.intro1': 'Sammle die Körnchen, meide das Fondue',
       'aw.intro2': 'und erreiche die Schweizer Fahne!',
       'aw.intro3': 'Stoss die ?-Kisten von unten an: Überraschung!',
+      'aw.intro4': 'Zweimal springen für den Doppelsprung!',
       'aw.record': 'REKORD {b}',
       'aw.coins': 'KÖRNCHEN {s}',
       'aw.level': 'LEVEL {n}',
@@ -306,7 +308,7 @@
       'slot.final': 'Score final :',
 
       // Aromat World
-      'aw.keys': '<b>← →</b> / <b>A D</b> bouger · <b>Espace</b> / <b>↑</b> sauter · <b>Shift</b> / <b>X</b> dash · <b>P</b> pause · <b>M</b> son',
+      'aw.keys': '<b>← →</b> / <b>A D</b> bouger · <b>Espace</b> / <b>↑</b> sauter (2× double saut) · <b>Shift</b> / <b>X</b> dash · <b>P</b> pause · <b>M</b> son',
       'aw.jumpBtn': 'SAUTE',
       'aw.hintTouch': 'Touche SAUTE',
       'aw.hintKeys': 'Appuie sur ENTRÉE ou ESPACE',
@@ -318,6 +320,7 @@
       'aw.intro1': 'Ramasse les grains, évite la fondue',
       'aw.intro2': 'et atteins le drapeau suisse !',
       'aw.intro3': 'Frappe les boîtes ? par-dessous pour les surprises',
+      'aw.intro4': 'Saute deux fois pour un double saut !',
       'aw.record': 'RECORD {b}',
       'aw.coins': 'GRAINS {s}',
       'aw.level': 'NIVEAU {n}',
@@ -341,6 +344,147 @@
       'aw.lv2': 'Rivière de Fondue',
       'aw.lv3': 'Montagnes tessinoises',
       'aw.lv4': 'Château du Sel'
+    },
+    rm: {
+      // Home
+      'idx.doctitle': 'Aromat Dapertut*',
+      'idx.title': 'Aromat Dapertut*',
+      'idx.cta': 'Entrar',
+      'idx.disclaimer': '<b>* Avis:</b> Questa pagina d’internet è vegnida fatga exclusivamain per divertiment e satira. ' +
+        'Ils products preschentads èn inventads e na correspundan ni a products reals ni a lur caracteristicas commerzialas.' +
+        '<br><br>Bun Tschaiver a tuts.',
+
+      // Navigaziun
+      'nav.home': 'Home',
+      'nav.game': 'Gieu',
+
+      // Shop
+      'shop.doctitle': 'Aromat Dapertut* – Shop',
+      'shop.cats': 'Categorias',
+      'shop.open': 'Avrir',
+      'shop.close': 'Serrar',
+      'shop.h1': 'Acziuns da l’emna',
+      'shop.lead': 'Rabats casuals da 20–50 %. Sche quai na ta persvada betg, è quai normal.',
+      'shop.votes': 'vuschs',
+      'shop.view': 'Mussar',
+
+      'cat.all': 'Tuts',
+      'cat.bevande': 'Bavrondas',
+      'cat.caffe': 'Caffè',
+      'cat.dolci': 'Dultschezzas',
+      'cat.cura': 'Tgira dal corp',
+      'cat.casa': 'Chasa',
+      'cat.carne': 'Charn',
+      'cat.latticini': 'Products da latg & divers',
+      'cat.animali': 'Animals',
+      'cat.salute': 'Sanadad',
+      'cat.sanvalentino': 'Son Valentin',
+      'cat.extra': 'Extra',
+
+      'tag.bevande': 'BAVRONDAS',
+      'tag.caffe': 'CAFFÈ',
+      'tag.dolci': 'DULTSCHEZZAS',
+      'tag.cura': 'TGIRA',
+      'tag.casa': 'CHASA',
+      'tag.carne': 'CHARN',
+      'tag.latticini': 'PRODUCTS DA LATG',
+      'tag.animali': 'ANIMALS',
+      'tag.salute': 'SANADAD',
+      'tag.sanvalentino': 'SON VALENTIN',
+      'tag.extra': 'EXTRA',
+
+      'p.coca.name': 'Coca Aromat',
+      'p.coca.desc': '«L’unica bavronda che ta fa vegnir said»',
+      'p.sciroppo.name': 'Sirup Aromat',
+      'p.sciroppo.desc': '«Dultschezza che na perduna betg.»',
+      'p.milk.name': 'Milk Aromat',
+      'p.milk.desc': 'Perfect cunter la constipaziun.',
+      'p.caffe.name': 'Capsulas Espresso',
+      'p.caffe.desc': '«Cumpatiblas, fermas, absolutamain evitablas»',
+      'p.cioccolato.name': 'Tschigulatta naira',
+      'p.cioccolato.desc': '«Ferma ed ostinada.»',
+      'p.gelato.name': 'Glatscha Aromat Supreme',
+      'p.gelato.desc': '«Dultscha, cremusa, inexplitgabla.»',
+      'p.aromella.name': 'Aromella',
+      'p.aromella.desc': '«Per sin il paun. Betg far dumondas.»',
+      'p.kellogs.name': 'Kellogs cun Aromat',
+      'p.kellogs.desc': '«Cereals crustigliants. Decisiuns dubiusas.»',
+      'p.nesquik.name': 'Nesquik cun Aromat',
+      'p.nesquik.desc': '«Latg sco ch’el na duess betg esser»',
+      'p.dentifricio.name': 'Pasta da dents Aromat',
+      'p.dentifricio.desc': '«Flad ferm. Nagins cumpromiss.»',
+      'p.profumo.name': 'Eau de Toilette',
+      'p.profumo.desc': '«Per l’um che sto dumandar.»',
+      'p.deodorante.name': 'Deodorant Aromat',
+      'p.deodorante.desc': '«48 uras. U dapli. Tgi sa.»',
+      'p.carta.name': 'Pavaigl da tualetta Aromat',
+      'p.carta.desc': '«Agreablamain condimentà.»',
+      'p.luganighetta.name': 'Luganighetta Aromat',
+      'p.luganighetta.desc': '«Per grigliadas cun ils amis.»',
+      'p.fondue.name': 'Fondue Aromat',
+      'p.fondue.desc': 'L’ingredient che ha adina mancà.',
+      'p.yogurt.name': 'Jogurt Aromat',
+      'p.yogurt.desc': 'Crema svizra. Ideas sbagliadas.',
+      'p.catfood.name': 'Pavel per giats Aromat',
+      'p.catfood.desc': '«Per giats cun pretensiuns… dubiusas.»',
+      'p.citran.name': 'Aromat-Citran Forte',
+      'p.citran.desc': 'Grippa e fradaglia, ma cun personalitad.',
+      'p.arodor.name': 'Pralinas Arodor',
+      'p.arodor.desc': 'Sche ti es inamurà, regala Aromat',
+      'p.sigarette.name': 'Cigarettas Aromat',
+      'p.sigarette.desc': '«Per quels che la sanadad na fa nagut, ma cun stil.»',
+      'p.cicche.name': 'Chicles Aromat',
+      'p.cicche.desc': '«Gust persistent. Decisiuns nauschas.»',
+      'p.durex.name': 'Preservativs Aromat',
+      'p.durex.desc': '“Don\'t be silly, protect your Knörli.”',
+
+      // Aromat Game (pizza)
+      'slot.subtitle': 'Sajetta l’Aromat sin la pizza',
+      'slot.time': 'Temp',
+      'slot.hats': 'Chapitschas',
+      'slot.mult': 'Multiplicatur',
+      'slot.fire': 'SAJETTA',
+      'slot.congrats': 'GRATULAZIUN!',
+      'slot.prize': 'Ti has gudagnà la schanza da ma pajar ina bavronda!!',
+      'slot.final': 'Puncts finals:',
+
+      // Aromat World
+      'aw.keys': '<b>← →</b> / <b>A D</b> mover · <b>Spazi</b> / <b>↑</b> sigliir (2× sigl dubel) · <b>Shift</b> / <b>X</b> dash · <b>P</b> pausa · <b>M</b> tun',
+      'aw.jumpBtn': 'SIGLIA',
+      'aw.hintTouch': 'Tutga SIGLIA',
+      'aw.hintKeys': 'Smatga ENTER u SPAZI',
+      'aw.start': '{hint} per cumenzar',
+      'aw.resume': '{hint} per cuntinuar',
+      'aw.continue': '{hint} per ir vinavant',
+      'aw.retry': '{hint} per empruvar anc ina giada il nivel',
+      'aw.replay': '{hint} per giugar anc ina giada',
+      'aw.intro1': 'Rimna ils grauns, evita la fondue',
+      'aw.intro2': 'e cuntanscha la bandiera svizra!',
+      'aw.intro3': 'Batta da sut las chaschettas ? per las surpraisas',
+      'aw.intro4': 'Siglia duas giadas per il sigl dubel!',
+      'aw.record': 'RECORD {b}',
+      'aw.coins': 'GRAUNS {s}',
+      'aw.level': 'NIVEL {n}',
+      'aw.pause': 'PAUSA',
+      'aw.clear': 'NIVEL REUSSÌ!',
+      'aw.coinsGot': 'Grauns rimnads: {a}/{b}',
+      'aw.score': 'Puncts: {s}',
+      'aw.scoreRecord': 'Puncts: {s} · Record: {b}',
+      'aw.win': 'TI HAS GUDAGNÀ!',
+      'aw.winLine': 'Aromat dapertut, schizunt en il Chastè da Sal.',
+      'aw.final': 'Puncts finals: {s}',
+      'aw.newRecord': 'NOV RECORD!',
+      'aw.recordLine': 'Record: {b}',
+      'aw.allCoins': 'TUTS ILS GRAUNS! +200',
+      'aw.chips': 'CHIPS ZWEIFEL! +1 VITA',
+      'aw.van': 'CAMIONET AROMAT! INVINCIBEL',
+      'aw.magnet': 'MAGNET! TIRA ILS GRAUNS',
+      'aw.vanBar': 'CAMIONET',
+      'aw.magnetBar': 'MAGNET',
+      'aw.lv1': 'Prads d’Aromat',
+      'aw.lv2': 'Flum da Fondue',
+      'aw.lv3': 'Muntognas tessinaisas',
+      'aw.lv4': 'Chastè da Sal'
     }
   };
 
@@ -348,7 +492,7 @@
   function write(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 
   function initialLang() {
-    var m = /[?&]lang=(it|de|fr)\b/.exec(location.search);
+    var m = /[?&]lang=(it|de|fr|rm)\b/.exec(location.search);
     if (m) { write('lang', m[1]); return m[1]; }
     var saved = read('lang');
     return LANGS.indexOf(saved) >= 0 ? saved : 'it'; // l'italiano ha la priorità
@@ -420,7 +564,7 @@
       box.classList.add('lang-switch');
       if (box.getAttribute('data-lang-switch') === 'light') box.classList.add('light');
       box.setAttribute('role', 'group');
-      box.setAttribute('aria-label', 'Lingua / Sprache / Langue');
+      box.setAttribute('aria-label', 'Lingua / Sprache / Langue / Lingua');
       LANGS.forEach(function (l) {
         var b = document.createElement('button');
         b.type = 'button';
