@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aromat Ovunque*</title>
+  <title data-i18n="idx.doctitle">Aromat Ovunque*</title>
 
   <style>
     :root{
@@ -165,6 +165,12 @@
       color: rgba(255,255,255,.92);
     }
 
+    /* Lingua */
+    .lang-fixed{
+      position:fixed; top:14px; right:14px; z-index:5;
+      top:calc(14px + env(safe-area-inset-top));
+    }
+
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce){
       .sparkles{animation:none}
@@ -178,15 +184,17 @@
   <div class="overlay" aria-hidden="true"></div>
   <div class="sparkles" aria-hidden="true"></div>
 
+  <div class="lang-fixed" data-lang-switch></div>
+
   <main class="wrap">
     <section class="panel">
       <div class="stack">
-        <h1>Aromat Ovunque*</h1>
+        <h1 data-i18n="idx.title">Aromat Ovunque*</h1>
         <p class="subtitle">Stay strong. Stay Aromat.</p>
-        <a class="cta" href="shop.html">Entra</a>
+        <a class="cta" href="shop.html" data-i18n="idx.cta">Entra</a>
       </div>
 
-      <p class="disclaimer">
+      <p class="disclaimer" data-i18n-html="idx.disclaimer">
         <b>* Disclaimer:</b> questo sito è stato realizzato esclusivamente a scopo di intrattenimento e satira.
         I prodotti rappresentati sono frutto di fantasia e non corrispondono a prodotti reali né alle loro caratteristiche commerciali.
         <br><br>
@@ -194,5 +202,6 @@
       </p>
     </section>
   </main>
+  <script src="lang.js"></script>
 </body>
 </html>

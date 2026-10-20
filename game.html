@@ -63,6 +63,11 @@ canvas{
 }
 .hud b{color:#facc15}
 
+.langrow{
+  display:flex;
+  justify-content:center;
+  margin-bottom:8px;
+}
 .title{
   text-align:center;
   margin-bottom:6px;
@@ -177,9 +182,11 @@ canvas{
 <body>
 <div class="wrap">
 
+  <div class="langrow"><div data-lang-switch></div></div>
+
   <div class="title">
     <div>AROMAT GAME!</div>
-    <div class="subtitle">Spara l’aromat sulla pizza</div>
+    <div class="subtitle" data-i18n="slot.subtitle">Spara l’aromat sulla pizza</div>
   </div>
 
   <div class="modes" id="modes">
@@ -190,9 +197,9 @@ canvas{
 
   <div class="hud">
     <div>Score <b id="score">0</b></div>
-    <div>Tempo <b id="time">15</b>s</div>
-    <div>Berretti <b id="ammo">0</b></div>
-    <div>Moltiplicatore <b id="mult">x1</b></div>
+    <div><span data-i18n="slot.time">Tempo</span> <b id="time">15</b>s</div>
+    <div><span data-i18n="slot.hats">Berretti</span> <b id="ammo">0</b></div>
+    <div><span data-i18n="slot.mult">Moltiplicatore</span> <b id="mult">x1</b></div>
   </div>
 
   <canvas id="game" width="320" height="180"></canvas>
@@ -201,21 +208,22 @@ canvas{
 
   <div class="controls">
     <button id="left" type="button">◀</button>
-    <button id="fire" type="button">SPARA</button>
+    <button id="fire" type="button" data-i18n="slot.fire">SPARA</button>
     <button id="right" type="button">▶</button>
   </div>
 
   <div id="banner" class="banner">
     <div class="box">
-      <h1>COMPLIMENTI!</h1>
-      <div>Hai vinto l’opportunità di pagarmi da bere!!</div>
-      <div class="small">Score finale: <b id="finalScore">0</b></div>
+      <h1 data-i18n="slot.congrats">COMPLIMENTI!</h1>
+      <div data-i18n="slot.prize">Hai vinto l’opportunità di pagarmi da bere!!</div>
+      <div class="small"><span data-i18n="slot.final">Score finale:</span> <b id="finalScore">0</b></div>
       <button id="restartBtn" class="restart" type="button">RESTART</button>
     </div>
   </div>
 
 </div>
 
+<script src="lang.js"></script>
 <script>
 (() => {
   const c = document.getElementById("game");
