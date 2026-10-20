@@ -51,7 +51,9 @@
       cursor: pointer;
     }
     .top .title { font-weight: 800; letter-spacing: 1px; color: #f0d04f; }
-    .top .right { display: flex; gap: 6px; }
+    .top .right { display: flex; gap: 6px; align-items: center; }
+    .top .lang-switch button { padding: 5px 7px; font-size: 11px; }
+    @media (max-width: 420px) { .top .title { display: none; } }
 
     /* --- Area di gioco --- */
     .stage {
@@ -147,6 +149,7 @@
     <a href="shop.html">← Shop</a>
     <span class="title">AROMAT WORLD</span>
     <div class="right">
+      <div data-lang-switch></div>
       <button id="btnSound" type="button" aria-label="Audio">🔊</button>
       <button id="btnPause" type="button" aria-label="Pausa">❚❚</button>
     </div>
@@ -160,17 +163,19 @@
     <div class="pad" id="pad"><div data-dir="-1">←</div><div data-dir="1">→</div></div>
     <div class="actions">
       <div class="btn dash" id="btnDash">DASH</div>
-      <div class="btn jump" id="btnJump">SALTA</div>
+      <div class="btn jump" id="btnJump" data-i18n="aw.jumpBtn">SALTA</div>
     </div>
   </div>
 
-  <div class="keys">
+  <div class="keys" data-i18n-html="aw.keys">
     <b>← →</b> / <b>A D</b> muovi · <b>Spazio</b> / <b>↑</b> salta · <b>Shift</b> / <b>X</b> dash · <b>P</b> pausa · <b>M</b> audio
   </div>
 
+<script src="lang.js"></script>
 <script>
 (() => {
   'use strict';
+  const tr = (k, v) => (window.i18n ? window.i18n.t(k, v) : k);
 
   // ================= Livelli =================
   // #  terreno      ^  punte        F  fondue (non toccare!)
@@ -380,7 +385,7 @@
       }
     }
     return {
-      name: LEVELS[idx].name, w, h, tiles, coins, enemies, checkpoints, goal, start,
+      name: tr('aw.lv' + (idx + 1)), w, h, tiles, coins, enemies, checkpoints, goal, start,
       respawn: { ...start }, totalCoins: coins.length, items: [], bumps: [],
     };
   }
@@ -630,13 +635,13 @@
     const p = player;
     if (it.type === 'L') {
       lives++; SFX.life();
-      popup(it.x + 8, it.y - 4, 'PATATINE ZWEIFEL! +1 VITA');
+      popup(it.x + 8, it.y - 4, tr('aw.chips'));
     } else if (it.type === 'V') {
       p.van = VAN_TIME; SFX.power();
-      popup(it.x + 8, it.y - 4, 'FURGONE AROMAT! INVINCIBILE');
+      popup(it.x + 8, it.y - 4, tr('aw.van'));
     } else {
       p.magnet = MAGNET_TIME; SFX.power();
-      popup(it.x + 8, it.y - 4, 'CALAMITA! ATTIRA I GRANELLI');
+      popup(it.x + 8, it.y - 4, tr('aw.magnet'));
     }
     burst(it.x + 8, it.y + 8, '#f0d04f', 14, 110);
   }
@@ -737,7 +742,7 @@
         burst(c.x + 4, c.y + 4, '#fff6c8', 6, 70);
         popup(c.x + 4, c.y, '+10');
         if (world.coins.every(k => k.taken)) {
-          score += 200; popup(p.x + 6, p.y - 10, 'TUTTI I GRANELLI! +200');
+          score += 200; popup(p.x + 6, p.y - 10, tr('aw.allCoins'));
         }
       }
     }
@@ -777,7 +782,7 @@
         c.on = true;
         world.respawn = { x: c.x + 2, y: c.y + 2 * T - p.h };
         SFX.flag();
-        popup(c.x + 8, c.y - 4, 'CHECKPOINT');
+        popup(c.x + 8, c.y - 4, tr('aw.checkpoint'));
         burst(c.x + 8, c.y, '#ff3b4d', 10, 80);
       }
     }
@@ -1140,19 +1145,20 @@
     }
     ctx.globalAlpha = 1;
 
-    const tapHint = document.body.classList.contains('touch') ? 'Tocca SALTA' : 'Premi INVIO o SPAZIO';
+    const hint = tr(document.body.classList.contains('touch') ? 'aw.hintTouch' : 'aw.hintKeys');
+    const levelName = tr('aw.lv' + (levelIndex + 1));
     const blinkOn = Math.floor(time * 2) % 2 === 0;
 
     if (state !== 'title') {
       text(lives > 5 ? `♥ x${lives}` : '♥'.repeat(Math.max(0, lives)) + '♡'.repeat(Math.max(0, START_LIVES - lives)), 10, 14, 11, '#ff5a6a', 'left');
-      text(`GRANELLI ${score}`, VW / 2, 14, 9, '#fff6c8');
-      text(`${levelIndex + 1}/${LEVELS.length} ${world.name.toUpperCase()}`, VW - 10, 14, 7, '#cfe0ff', 'right');
+      text(tr('aw.coins', { s: score }), VW / 2, 14, 9, '#fff6c8');
+      text(`${levelIndex + 1}/${LEVELS.length} ${levelName.toUpperCase()}`, VW - 10, 14, 7, '#cfe0ff', 'right');
       if (state === 'play' && player.dashCool > 0) {
         ctx.fillStyle = 'rgba(207,224,255,.6)';
         ctx.fillRect(10 * S, 24 * S, 30 * (1 - player.dashCool / DASH_COOLDOWN) * S, 2 * S);
       }
       let py = 34;
-      for (const [t, max, label, col] of [[player.van, VAN_TIME, 'FURGONE', '#f0d04f'], [player.magnet, MAGNET_TIME, 'CALAMITA', '#ff5a6a']]) {
+      for (const [t, max, label, col] of [[player.van, VAN_TIME, tr('aw.vanBar'), '#f0d04f'], [player.magnet, MAGNET_TIME, tr('aw.magnetBar'), '#ff5a6a']]) {
         if (t <= 0 || state !== 'play') continue;
         text(label, 10, py, 6, col, 'left');
         ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(52 * S, (py - 2) * S, 40 * S, 4 * S);
@@ -1161,8 +1167,8 @@
       }
       if (state === 'play' && stateTime < 2.2) {
         ctx.globalAlpha = Math.min(1, (2.2 - stateTime) * 2);
-        text(`LIVELLO ${levelIndex + 1}`, VW / 2, 90, 10, C.yellow);
-        text(world.name.toUpperCase(), VW / 2, 108, 16);
+        text(tr('aw.level', { n: levelIndex + 1 }), VW / 2, 90, 10, C.yellow);
+        text(levelName.toUpperCase(), VW / 2, 108, 16);
         ctx.globalAlpha = 1;
       }
     }
@@ -1171,34 +1177,34 @@
       ctx.fillStyle = 'rgba(7,11,24,.45)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
       text('AROMAT', VW / 2, 70, 34, C.yellow);
       text('WORLD', VW / 2, 104, 26, '#ff5a6a');
-      text('Raccogli i granelli, evita la fondue', VW / 2, 140, 8);
-      text('e arriva alla bandiera svizzera!', VW / 2, 153, 8);
-      text('Colpisci da sotto le scatole ? per le sorprese', VW / 2, 166, 7, '#9fd88a');
-      if (blinkOn) text(tapHint + ' per iniziare', VW / 2, 196, 9, '#fff6c8');
-      if (best > 0) text(`RECORD ${best}`, VW / 2, 226, 8, '#9bc2ff');
+      text(tr('aw.intro1'), VW / 2, 140, 8);
+      text(tr('aw.intro2'), VW / 2, 153, 8);
+      text(tr('aw.intro3'), VW / 2, 166, 7, '#9fd88a');
+      if (blinkOn) text(tr('aw.start', { hint }), VW / 2, 196, 9, '#fff6c8');
+      if (best > 0) text(tr('aw.record', { b: best }), VW / 2, 226, 8, '#9bc2ff');
     } else if (state === 'pause') {
       panel(90);
-      text('PAUSA', VW / 2, 120, 18, C.yellow);
-      text(tapHint + ' per riprendere', VW / 2, 150, 8);
+      text(tr('aw.pause'), VW / 2, 120, 18, C.yellow);
+      text(tr('aw.resume', { hint }), VW / 2, 150, 8);
     } else if (state === 'clear') {
       const got = world.coins.filter(c => c.taken).length;
       panel(120);
-      text('LIVELLO COMPLETATO!', VW / 2, 102, 13, C.yellow);
-      text(`Granelli raccolti: ${got}/${world.totalCoins}`, VW / 2, 128, 8);
-      text(`Punteggio: ${score}`, VW / 2, 142, 8);
-      if (stateTime > 0.5 && blinkOn) text(tapHint + ' per continuare', VW / 2, 166, 8, '#fff6c8');
+      text(tr('aw.clear'), VW / 2, 102, 13, C.yellow);
+      text(tr('aw.coinsGot', { a: got, b: world.totalCoins }), VW / 2, 128, 8);
+      text(tr('aw.score', { s: score }), VW / 2, 142, 8);
+      if (stateTime > 0.5 && blinkOn) text(tr('aw.continue', { hint }), VW / 2, 166, 8, '#fff6c8');
     } else if (state === 'gameover') {
       panel(120);
-      text('GAME OVER', VW / 2, 104, 18, '#ff5a6a');
-      text(`Punteggio: ${score} · Record: ${best}`, VW / 2, 132, 8);
-      if (stateTime > 0.5 && blinkOn) text(tapHint + ' per riprovare il livello', VW / 2, 160, 8, '#fff6c8');
+      text(tr('aw.gameover'), VW / 2, 104, 18, '#ff5a6a');
+      text(tr('aw.scoreRecord', { s: score, b: best }), VW / 2, 132, 8);
+      if (stateTime > 0.5 && blinkOn) text(tr('aw.retry', { hint }), VW / 2, 160, 8, '#fff6c8');
     } else if (state === 'win') {
       panel(140);
-      text('HAI VINTO!', VW / 2, 94, 20, C.yellow);
-      text('Aromat ovunque, anche nel Castello del Sale.', VW / 2, 122, 7);
-      text(`Punteggio finale: ${score}`, VW / 2, 140, 9);
-      text(score >= best ? 'NUOVO RECORD!' : `Record: ${best}`, VW / 2, 156, 8, '#9bc2ff');
-      if (blinkOn) text(tapHint + ' per rigiocare', VW / 2, 178, 8, '#fff6c8');
+      text(tr('aw.win'), VW / 2, 94, 20, C.yellow);
+      text(tr('aw.winLine'), VW / 2, 122, 7);
+      text(tr('aw.final', { s: score }), VW / 2, 140, 9);
+      text(score >= best ? tr('aw.newRecord') : tr('aw.recordLine', { b: best }), VW / 2, 156, 8, '#9bc2ff');
+      if (blinkOn) text(tr('aw.replay', { hint }), VW / 2, 178, 8, '#fff6c8');
     }
   }
 
