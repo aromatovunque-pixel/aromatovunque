@@ -84,7 +84,7 @@
     body.touch .keys { display: none; }
     .pad {
       display: flex;
-      width: 172px;
+      width: min(172px, 42vw);
       height: 84px;
       border-radius: 20px;
       overflow: hidden;
@@ -114,8 +114,9 @@
       letter-spacing: .5px;
       touch-action: none;
     }
-    .btn.dash { width: 70px; height: 70px; font-size: 12px; margin-bottom: 26px; }
-    .btn.jump { width: 92px; height: 92px; font-size: 14px; color: #f0d04f; }
+    .btn.dash { width: min(70px, 18vw); height: min(70px, 18vw); font-size: 12px; margin-bottom: 26px; }
+    .btn.jump { width: min(92px, 24vw); height: min(92px, 24vw); font-size: 14px; color: #f0d04f; }
+    .actions { gap: min(12px, 2.5vw); }
 
     /* Telefono in orizzontale: i controlli stanno ai lati del gioco */
     @media (orientation: landscape) {
@@ -266,7 +267,10 @@
 
   // ================= Costanti =================
   const T = 16;            // dimensione di un blocco
-  const VW = 480, VH = 272; // risoluzione "pixel" del gioco
+  const WH = 272;          // altezza del mondo (17 blocchi)
+  const RW = 960;          // larghezza di ripetizione delle montagne
+  // Vista in pixel di gioco: orizzontale su PC, verticale (più cielo) su telefono
+  let VW = 480, VH = 272, OY = 0, MY = 0;
   const STEP = 1 / 120;
 
   const RUN = 140, DASH = 270, DASH_TIME = 0.18, DASH_COOLDOWN = 0.55;
@@ -291,6 +295,18 @@
     const cs = getComputedStyle(stage);
     const availW = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 16;
     const availH = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 16;
+    if (availH > availW * 0.9) {
+      // telefono in verticale: vista stretta e alta, il mondo resta in basso
+      VW = 256;
+      let k = availW / VW;
+      VH = Math.floor(availH / k);
+      if (VH < WH) { k = availH / WH; VH = WH; VW = Math.max(240, Math.floor(availW / k)); }
+      VH = Math.min(VH, WH + 200);
+    } else {
+      VW = 480; VH = WH;
+    }
+    OY = VH - WH; MY = Math.round(OY / 2);
+    if (buf.width !== VW || buf.height !== VH) { buf.width = VW; buf.height = VH; }
     const s = Math.max(0.5, Math.min(availW / VW, availH / VH));
     const cssW = Math.floor(VW * s), cssH = Math.floor(VH * s);
     const dpr = window.devicePixelRatio || 1;
@@ -725,7 +741,7 @@
     p.anim += Math.abs(p.vx) * dt;
 
     const hz = touchingHazard(p);
-    if (hz === 'F' || (hz === '^' && p.van <= 0) || p.y > VH + 20) return loseLife();
+    if (hz === 'F' || (hz === '^' && p.van <= 0) || p.y > WH + 20) return loseLife();
 
     // Sorprese uscite dalle scatole
     for (const it of world.items) {
@@ -770,7 +786,7 @@
       e.hitWall = false;
       moveAndCollide(e, dt);
       if (e.hitWall) e.vx = -want; else e.vx = want;
-      if (e.y > VH || touchingHazard(e)) { e.alive = false; e.squish = 0; continue; }
+      if (e.y > WH || touchingHazard(e)) { e.alive = false; e.squish = 0; continue; }
 
       if (overlap(p, e)) {
         const stomp = p.vy > 0 && prevBottom <= e.y + 6;
@@ -807,7 +823,7 @@
     }
 
     // Camera
-    const target = p.x + p.w / 2 - VW * 0.4 + p.facing * 30;
+    const target = p.x + p.w / 2 - VW * 0.4 + p.facing * (VW < 400 ? 20 : 30);
     cam.x += (clampCam(target) - cam.x) * Math.min(1, dt * 6);
   }
 
@@ -820,23 +836,23 @@
   // Montagne generate una volta sola
   function ridge(seed, base, amp) {
     const pts = [];
-    for (let x = 0; x <= VW * 2; x += 8) {
+    for (let x = 0; x <= RW; x += 8) {
       const y = base - amp * (0.55 * Math.sin(x * 0.011 + seed) + 0.3 * Math.sin(x * 0.027 + seed * 2) + 0.15 * Math.sin(x * 0.063 + seed * 3));
       pts.push([x, y]);
     }
     return pts;
   }
   const farRidge = ridge(1.3, 170, 60), nearRidge = ridge(4.1, 210, 40);
-  const stars = Array.from({ length: 70 }, (_, i) => [(i * 137) % (VW * 2), (i * 53) % 140, i % 3]);
+  const stars = Array.from({ length: 70 }, (_, i) => [(i * 137) % RW, (i * 53) % 140, i % 3]);
 
   function drawRidge(pts, par, color, snow) {
-    const off = -((cam.x * par) % (VW * 2));
-    for (const shift of [0, VW * 2]) {
+    const off = -((cam.x * par) % RW);
+    for (const shift of [0, RW]) {
       g.fillStyle = color;
       g.beginPath();
-      g.moveTo(off + shift, VH);
+      g.moveTo(off + shift, WH);
       for (const [x, y] of pts) g.lineTo(off + shift + x, y);
-      g.lineTo(off + shift + VW * 2, VH);
+      g.lineTo(off + shift + RW, WH);
       g.fill();
       if (snow) {
         g.fillStyle = 'rgba(235,242,255,.55)';
@@ -857,15 +873,18 @@
     sky.addColorStop(0, '#0b1230'); sky.addColorStop(0.6, '#24305e'); sky.addColorStop(1, '#3b3a6b');
     g.fillStyle = sky; g.fillRect(0, 0, VW, VH);
     for (const [x, y, k] of stars) {
-      const sx = ((x - cam.x * 0.05) % (VW * 2) + VW * 2) % (VW * 2);
+      const sx = ((x - cam.x * 0.05) % RW + RW) % RW;
       g.fillStyle = k === 0 ? '#9bc2ff' : '#dfe8ff';
       g.globalAlpha = 0.4 + 0.4 * Math.sin(time * 2 + x);
-      g.fillRect(Math.floor(sx), y, 1, 1);
+      g.fillRect(Math.floor(sx), Math.round(y * (VH - 100) / 140), 1, 1);
     }
     g.globalAlpha = 1;
-    g.fillStyle = '#f7f0c6'; g.beginPath(); g.arc(390 - cam.x * 0.02, 50, 14, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#f7f0c6'; g.beginPath(); g.arc(VW - 90 - cam.x * 0.02, 50, 14, 0, Math.PI * 2); g.fill();
+    g.save(); g.translate(0, OY);
     drawRidge(farRidge, 0.15, '#2b3a6e', true);
     drawRidge(nearRidge, 0.35, '#1d2a52', false);
+    g.restore();
+    if (OY > 0) { g.fillStyle = '#1d2a52'; g.fillRect(0, VH - 1, VW, 1); }
   }
 
   function hash(x, y) { return ((x * 73856093) ^ (y * 19349663)) >>> 0; }
@@ -1071,6 +1090,7 @@
 
   function drawWorld(time) {
     drawBackground(time);
+    g.save(); g.translate(0, OY); // il mondo sta in fondo alla vista
     const ox = -Math.round(cam.x);
     drawTiles(time);
 
@@ -1128,6 +1148,7 @@
         }
       }
     }
+    g.restore();
   }
 
   // Testo sul canvas grande (più nitido)
@@ -1141,7 +1162,7 @@
   }
   function panel(h) {
     ctx.fillStyle = 'rgba(7,11,24,.72)';
-    const w = 300, x = (VW - w) / 2, y = (VH - h) / 2;
+    const w = Math.min(300, VW - 16), x = (VW - w) / 2, y = (VH - h) / 2;
     ctx.fillRect(x * S, y * S, w * S, h * S);
     ctx.strokeStyle = 'rgba(120,160,255,.35)'; ctx.lineWidth = Math.max(1, S);
     ctx.strokeRect(x * S, y * S, w * S, h * S);
@@ -1151,7 +1172,7 @@
     // popup "+10"
     for (const p of popups) {
       ctx.globalAlpha = Math.min(1, p.life * 2);
-      text(p.text, p.x - cam.x, p.y, 7, '#fff6c8');
+      text(p.text, p.x - cam.x, p.y + OY, 7, '#fff6c8');
     }
     ctx.globalAlpha = 1;
 
@@ -1162,7 +1183,7 @@
     if (state !== 'title') {
       text(lives > 5 ? `♥ x${lives}` : '♥'.repeat(Math.max(0, lives)) + '♡'.repeat(Math.max(0, START_LIVES - lives)), 10, 14, 11, '#ff5a6a', 'left');
       text(tr('aw.coins', { s: score }), VW / 2, 14, 9, '#fff6c8');
-      text(`${levelIndex + 1}/${LEVELS.length} ${levelName.toUpperCase()}`, VW - 10, 14, 7, '#cfe0ff', 'right');
+      text(`${levelIndex + 1}/${LEVELS.length} ${levelName.toUpperCase()}`, VW - 10, VW < 400 ? 27 : 14, 7, '#cfe0ff', 'right');
       if (state === 'play' && player.dashCool > 0) {
         ctx.fillStyle = 'rgba(207,224,255,.6)';
         ctx.fillRect(10 * S, 24 * S, 30 * (1 - player.dashCool / DASH_COOLDOWN) * S, 2 * S);
@@ -1177,45 +1198,45 @@
       }
       if (state === 'play' && stateTime < 2.2) {
         ctx.globalAlpha = Math.min(1, (2.2 - stateTime) * 2);
-        text(tr('aw.level', { n: levelIndex + 1 }), VW / 2, 90, 10, C.yellow);
-        text(levelName.toUpperCase(), VW / 2, 108, 16);
+        text(tr('aw.level', { n: levelIndex + 1 }), VW / 2, MY + 90, 10, C.yellow);
+        text(levelName.toUpperCase(), VW / 2, MY + 108, 16);
         ctx.globalAlpha = 1;
       }
     }
 
     if (state === 'title') {
       ctx.fillStyle = 'rgba(7,11,24,.45)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-      text('AROMAT', VW / 2, 70, 34, C.yellow);
-      text('WORLD', VW / 2, 104, 26, '#ff5a6a');
-      text(tr('aw.intro1'), VW / 2, 140, 8);
-      text(tr('aw.intro2'), VW / 2, 153, 8);
-      text(tr('aw.intro3'), VW / 2, 166, 7, '#9fd88a');
-      text(tr('aw.intro4'), VW / 2, 178, 7, '#9fd88a');
-      if (blinkOn) text(tr('aw.start', { hint }), VW / 2, 196, 9, '#fff6c8');
-      if (best > 0) text(tr('aw.record', { b: best }), VW / 2, 226, 8, '#9bc2ff');
+      text('AROMAT', VW / 2, MY + 70, 34, C.yellow);
+      text('WORLD', VW / 2, MY + 104, 26, '#ff5a6a');
+      text(tr('aw.intro1'), VW / 2, MY + 140, 8);
+      text(tr('aw.intro2'), VW / 2, MY + 153, 8);
+      text(tr('aw.intro3'), VW / 2, MY + 166, 7, '#9fd88a');
+      text(tr('aw.intro4'), VW / 2, MY + 178, 7, '#9fd88a');
+      if (blinkOn) text(tr('aw.start', { hint }), VW / 2, MY + 196, 9, '#fff6c8');
+      if (best > 0) text(tr('aw.record', { b: best }), VW / 2, MY + 226, 8, '#9bc2ff');
     } else if (state === 'pause') {
       panel(90);
-      text(tr('aw.pause'), VW / 2, 120, 18, C.yellow);
-      text(tr('aw.resume', { hint }), VW / 2, 150, 8);
+      text(tr('aw.pause'), VW / 2, MY + 120, 18, C.yellow);
+      text(tr('aw.resume', { hint }), VW / 2, MY + 150, 8);
     } else if (state === 'clear') {
       const got = world.coins.filter(c => c.taken).length;
       panel(120);
-      text(tr('aw.clear'), VW / 2, 102, 13, C.yellow);
-      text(tr('aw.coinsGot', { a: got, b: world.totalCoins }), VW / 2, 128, 8);
-      text(tr('aw.score', { s: score }), VW / 2, 142, 8);
-      if (stateTime > 0.5 && blinkOn) text(tr('aw.continue', { hint }), VW / 2, 166, 8, '#fff6c8');
+      text(tr('aw.clear'), VW / 2, MY + 102, 13, C.yellow);
+      text(tr('aw.coinsGot', { a: got, b: world.totalCoins }), VW / 2, MY + 128, 8);
+      text(tr('aw.score', { s: score }), VW / 2, MY + 142, 8);
+      if (stateTime > 0.5 && blinkOn) text(tr('aw.continue', { hint }), VW / 2, MY + 166, 8, '#fff6c8');
     } else if (state === 'gameover') {
       panel(120);
-      text(tr('aw.gameover'), VW / 2, 104, 18, '#ff5a6a');
-      text(tr('aw.scoreRecord', { s: score, b: best }), VW / 2, 132, 8);
-      if (stateTime > 0.5 && blinkOn) text(tr('aw.retry', { hint }), VW / 2, 160, 8, '#fff6c8');
+      text(tr('aw.gameover'), VW / 2, MY + 104, 18, '#ff5a6a');
+      text(tr('aw.scoreRecord', { s: score, b: best }), VW / 2, MY + 132, 8);
+      if (stateTime > 0.5 && blinkOn) text(tr('aw.retry', { hint }), VW / 2, MY + 160, 8, '#fff6c8');
     } else if (state === 'win') {
       panel(140);
-      text(tr('aw.win'), VW / 2, 94, 20, C.yellow);
-      text(tr('aw.winLine'), VW / 2, 122, 7);
-      text(tr('aw.final', { s: score }), VW / 2, 140, 9);
-      text(score >= best ? tr('aw.newRecord') : tr('aw.recordLine', { b: best }), VW / 2, 156, 8, '#9bc2ff');
-      if (blinkOn) text(tr('aw.replay', { hint }), VW / 2, 178, 8, '#fff6c8');
+      text(tr('aw.win'), VW / 2, MY + 94, 20, C.yellow);
+      text(tr('aw.winLine'), VW / 2, MY + 122, 7);
+      text(tr('aw.final', { s: score }), VW / 2, MY + 140, 9);
+      text(score >= best ? tr('aw.newRecord') : tr('aw.recordLine', { b: best }), VW / 2, MY + 156, 8, '#9bc2ff');
+      if (blinkOn) text(tr('aw.replay', { hint }), VW / 2, MY + 178, 8, '#fff6c8');
     }
   }
 
