@@ -2,642 +2,1038 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <title>Aromat World Mobile</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+  <meta name="theme-color" content="#070b18" />
+  <title>Aromat World</title>
   <style>
     :root { color-scheme: dark; }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
     html, body {
       height: 100%;
       margin: 0;
-      background:#0b1020;
+      background: #070b18;
+      color: #dfe8ff;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      touch-action: none; /* important: avoid scroll/pinch while playing */
       overscroll-behavior: none;
+      overflow: hidden;
     }
-    .wrap {
-      height: 100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+    body {
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    /* --- Barra in alto --- */
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+    .top a, .top button {
+      color: #dfe8ff;
+      text-decoration: none;
+      background: rgba(20, 30, 60, .7);
+      border: 1px solid rgba(120, 160, 255, .25);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font: inherit;
+      cursor: pointer;
+    }
+    .top .title { font-weight: 800; letter-spacing: 1px; color: #f0d04f; }
+    .top .right { display: flex; gap: 6px; }
+
+    /* --- Area di gioco --- */
+    .stage {
+      flex: 1;
+      min-height: 0;
       position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: none;
     }
     canvas {
-      width: 100vw;
-      height: 100vh;
-      image-rendering: pixelated;
-      image-rendering: crisp-edges;
-      background:#1a2a4a;
-      display:block;
+      display: block;
+      border-radius: 8px;
+      box-shadow: 0 0 0 2px #22345c, 0 12px 40px rgba(0, 0, 0, .5);
+      touch-action: none;
     }
-    .hud {
-      position: fixed;
-      top: 10px; left: 10px; right: 10px;
-      display:flex; justify-content:space-between; gap:10px;
-      pointer-events:none;
-      z-index: 20;
-      font-size: 12px;
-    }
-    .pill {
-      background: rgba(10,15,30,.55);
-      border:1px solid rgba(120,160,255,.25);
-      padding:8px 10px;
-      border-radius:999px;
-      pointer-events:none;
-      max-width: 70vw;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .pill strong { color:#cfe0ff; }
 
-    /* --- Touch controls --- */
+    /* --- Controlli touch (solo su telefono/tablet) --- */
     .controls {
-      position: fixed;
-      left: 0; right: 0; bottom: 0;
-      height: 42vh;
-      max-height: 340px;
-      display:flex;
+      display: none;
       justify-content: space-between;
       align-items: flex-end;
-      padding: 14px;
-      z-index: 30;
-      pointer-events: none; /* enable only on buttons */
-      background: linear-gradient(to top, rgba(0,0,0,.25), rgba(0,0,0,0));
-    }
-    .pad, .actions { display:flex; gap:12px; pointer-events: auto; }
-    .btn {
-      width: 76px; height: 76px;
-      border-radius: 18px;
-      border: 1px solid rgba(180,210,255,.22);
-      background: rgba(10,15,30,.45);
-      box-shadow: 0 10px 22px rgba(0,0,0,.35);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-touch-callout: none;
+      padding: 12px 16px 18px;
       touch-action: none;
-      font-weight: 800;
+    }
+    body.touch .controls { display: flex; }
+    body.touch .keys { display: none; }
+    .pad {
+      display: flex;
+      width: 172px;
+      height: 84px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(180, 210, 255, .25);
+      background: rgba(10, 15, 30, .55);
+      touch-action: none;
+    }
+    .pad div {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 900;
+    }
+    .pad div + div { border-left: 1px solid rgba(180, 210, 255, .18); }
+    .pad div.on, .btn.on { background: rgba(240, 208, 79, .28); }
+    .actions { display: flex; gap: 12px; align-items: flex-end; }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 1px solid rgba(180, 210, 255, .25);
+      background: rgba(10, 15, 30, .55);
+      font-weight: 900;
       letter-spacing: .5px;
+      touch-action: none;
     }
-    .btn:active { transform: translateY(1px); background: rgba(10,15,30,.60); }
-    .btn.small { width: 70px; height: 70px; border-radius: 16px; font-weight: 900; }
-    .btn.jump { width: 92px; height: 92px; border-radius: 22px; font-size: 14px; }
-    .btn.dash { width: 82px; height: 82px; border-radius: 20px; font-size: 13px; }
-    .btn span { opacity: .92; }
-    .hint2 {
-      position: fixed;
-      bottom: calc(42vh + 6px);
-      left: 10px; right: 10px;
-      text-align:center;
-      z-index: 25;
-      opacity: .7;
-      font-size: 11px;
-      pointer-events:none;
+    .btn.dash { width: 70px; height: 70px; font-size: 12px; margin-bottom: 26px; }
+    .btn.jump { width: 92px; height: 92px; font-size: 14px; color: #f0d04f; }
+
+    /* Telefono in orizzontale: i controlli stanno ai lati del gioco */
+    @media (orientation: landscape) {
+      body.touch .stage { padding: 0 150px; }
+      body.touch .controls {
+        position: fixed;
+        left: env(safe-area-inset-left);
+        right: env(safe-area-inset-right);
+        bottom: env(safe-area-inset-bottom);
+        padding: 10px;
+        pointer-events: none;
+      }
+      body.touch .pad, body.touch .actions { pointer-events: auto; }
+      body.touch .pad { width: 132px; height: 70px; }
+      body.touch .actions { flex-direction: column-reverse; align-items: center; gap: 10px; }
+      body.touch .btn.dash { width: 60px; height: 60px; margin: 0; }
+      body.touch .btn.jump { width: 84px; height: 84px; }
     }
-    @media (min-width: 900px) {
-      /* On desktop it still works, but buttons are less annoying */
-      .controls { height: 240px; }
-      canvas { width: 960px; height: 540px; border:2px solid #22345c; border-radius:10px; }
+
+    .keys {
+      text-align: center;
+      font-size: 12px;
+      opacity: .6;
+      padding: 8px 12px 14px;
     }
+    .keys b { color: #f0d04f; font-weight: 700; }
   </style>
 </head>
 <body>
-  <div class="hud">
-    <div class="pill"><strong>AROMAT WORLD</strong> · touch controls</div>
-    <div class="pill" id="hudRight">Granelli: 0 · Vite: 3 · Livello: 1</div>
+  <div class="top">
+    <a href="shop.html">← Shop</a>
+    <span class="title">AROMAT WORLD</span>
+    <div class="right">
+      <button id="btnSound" type="button" aria-label="Audio">🔊</button>
+      <button id="btnPause" type="button" aria-label="Pausa">❚❚</button>
+    </div>
   </div>
 
-  <div class="wrap">
-    <canvas id="c" width="960" height="540"></canvas>
+  <div class="stage" id="stage">
+    <canvas id="c"></canvas>
   </div>
-
-  <div class="hint2">Suggerimento: tieni premuto ←/→ per correre, SALTA per saltare, DASH per sprint</div>
 
   <div class="controls">
-    <div class="pad">
-      <div class="btn small" id="btnLeft"><span>←</span></div>
-      <div class="btn small" id="btnRight"><span>→</span></div>
-    </div>
+    <div class="pad" id="pad"><div data-dir="-1">←</div><div data-dir="1">→</div></div>
     <div class="actions">
-      <div class="btn dash" id="btnDash"><span>DASH</span></div>
-      <div class="btn jump" id="btnJump"><span>SALTA</span></div>
+      <div class="btn dash" id="btnDash">DASH</div>
+      <div class="btn jump" id="btnJump">SALTA</div>
     </div>
+  </div>
+
+  <div class="keys">
+    <b>← →</b> / <b>A D</b> muovi · <b>Spazio</b> / <b>↑</b> salta · <b>Shift</b> / <b>X</b> dash · <b>P</b> pausa · <b>M</b> audio
   </div>
 
 <script>
 (() => {
-  const canvas = document.getElementById('c');
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  const hudRight = document.getElementById('hudRight');
+  'use strict';
 
-  // --- Touch input state (mobile-first) ---
-  const input = {
-    left:false, right:false,
-    jumpPressed:false, // edge
-    dashPressed:false  // edge
-  };
-
-  function bindHold(btn, onDown, onUp) {
-    const down = (e) => { e.preventDefault(); onDown(); };
-    const up = (e) => { e.preventDefault(); onUp(); };
-
-    btn.addEventListener('pointerdown', down, {passive:false});
-    btn.addEventListener('pointerup', up, {passive:false});
-    btn.addEventListener('pointercancel', up, {passive:false});
-    btn.addEventListener('pointerleave', up, {passive:false});
-    btn.addEventListener('lostpointercapture', up, {passive:false});
-  }
-
-  bindHold(document.getElementById('btnLeft'),
-    () => { input.left = true; },
-    () => { input.left = false; }
-  );
-  bindHold(document.getElementById('btnRight'),
-    () => { input.right = true; },
-    () => { input.right = false; }
-  );
-  bindHold(document.getElementById('btnJump'),
-    () => { input.jumpPressed = true; },
-    () => {}
-  );
-  bindHold(document.getElementById('btnDash'),
-    () => { input.dashPressed = true; },
-    () => {}
-  );
-
-  // Optional: swipe up anywhere to jump, quick tap right side to dash (kept simple)
-  let touchStartY = null, touchStartX = null;
-  window.addEventListener('pointerdown', (e) => {
-    // ignore if pressing buttons (they already handle)
-    if (e.target.classList && e.target.classList.contains('btn')) return;
-    touchStartY = e.clientY;
-    touchStartX = e.clientX;
-  }, {passive:true});
-
-  window.addEventListener('pointerup', (e) => {
-    if (touchStartY == null) return;
-    const dy = touchStartY - e.clientY;
-    const dx = Math.abs((touchStartX ?? e.clientX) - e.clientX);
-
-    // swipe up to jump
-    if (dy > 35 && dx < 120) input.jumpPressed = true;
-
-    // quick tap on right third to dash (if not a swipe)
-    const tap = Math.abs(dy) < 15 && dx < 15;
-    if (tap && e.clientX > window.innerWidth * 0.66) input.dashPressed = true;
-
-    touchStartY = null; touchStartX = null;
-  }, {passive:true});
-
-  // Prevent double-tap zoom on iOS-ish browsers
-  let lastTap = 0;
-  window.addEventListener('touchend', (e) => {
-    const now = Date.now();
-    if (now - lastTap < 300) e.preventDefault();
-    lastTap = now;
-  }, {passive:false});
-
-  // --- Helpers ---
-  const clamp = (v,a,b) => Math.max(a, Math.min(b,v));
-  const aabb = (a,b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
-
-  // --- World/physics ---
-  const TILE = 24;
-  const GRAV = 1700;
-  const FRICTION = 0.86;
-  const AIR_FRICTION = 0.93;
-
-  const levels = [
-`................................................................
-................................................................
-................................................................
-....................o....o.................o....................
-.............o..................o...............................
-......................#######...................................
-...............####.............................................
-....................................................o...........
-...........o..............................#######...............
-.....................E..........................................
-################..###########.....##############################
-################..###########.....##############################
-`,
-`................................................................
-................................................................
-................................................................
-..............o..............o..................................
-.....................#######....................................
-.............####...............................................
-..............................................o.................
-.......o...........................#####........................
-..................E.............................................
-##############.............####################.....G...........
-##############....^..^..^..####################..#######..######
-##############..###############################..#######..######
-`
+  // ================= Livelli =================
+  // #  terreno      ^  punte        F  fondue (non toccare!)
+  // o  granello     E  nemico       P  partenza
+  // C  checkpoint   G  traguardo
+  const LEVELS = [
+    { name: "Prati di Aromat", map: [
+      "..............................................................................................................",
+      "..............................................................................................................",
+      "..............................................................................................................",
+      "..............................................................................................................",
+      "..............................................................................................................",
+      "..............................................................................................................",
+      "..............................................................................................................",
+      "..............................................................................................................",
+      "..............................................................................................................",
+      "..............................................................................................................",
+      "...............o.o.o......................o..........o.o......................................................",
+      "...............#####...........o.........###........#####.............oo.....oEo..............oo..............",
+      ".........................................###................oo..............#####.............##..............",
+      ".......o.o.o..........................######..................................................##..............",
+      "..P......................E............######......E..............C....^^................E.....##........G.....",
+      "##############################...##########################....###############################################",
+      "##############################FFF##########################FFFF###############################################",
+    ]},
+    { name: "Fiume di Fondue", map: [
+      "..................................................................................................................................",
+      "..................................................................................................................................",
+      "..................................................................................................................................",
+      "..................................................................................................................................",
+      "..................................................................................................................................",
+      "..................................................................................................................................",
+      "..................................................................................................................................",
+      "..................................................................................................................................",
+      "...............................................................................................................o..................",
+      "..........................................................o............oo.....................................###.................",
+      "......................................................................####........................................................",
+      ".....................................E.....o...............................................................o........o.............",
+      ".............oo..............oo....####...............###...###..................oo.......................###......###............",
+      "............................####..........###.........###...###...................................................................",
+      "..P.................E...........................C.....###^^^###.....E.....E.............^...^.........C....................E...G..",
+      "############....##########....................##################################....############....####................##########",
+      "############FFFF##########FFFFFFFFFFFFFFFFFFFF##################################FFFF############FFFF####FFFFFFFFFFFFFFFF##########",
+    ]},
+    { name: "Monti Ticinesi", map: [
+      "............................................................................................................................................",
+      "............................................................................................................................................",
+      "............................................................................................................................................",
+      "............................................................................................................................................",
+      "............................................................................................................................................",
+      "............................................................................................................................................",
+      "............................................................................................................................................",
+      "...............o.....o.E............................................oo......................................................................",
+      "..............###....####..................................oo......####...............................oo....................................",
+      "............o.###............oo......................................................................####...................................",
+      "...........######...........####............ooo.............................................................................................",
+      ".........o.######..........................#####.....................................E.........oo..........oo...............................",
+      "........#########.......................................##....##....................###.......####........####..............................",
+      "........#########.......................................##....##....................###.....................................................",
+      "..P.....#########...................E...E...^^^.....C...##^^^^##................E...###..........................C..^^...^^...E...E.....G...",
+      "#################...............########################################....################...................#############################",
+      "#################FFFFFFFFFFFFFFF########################################FFFF################FFFFFFFFFFFFFFFFFFF#############################",
+    ]},
+    { name: "Castello del Sale", map: [
+      "......................................................................................................................................................",
+      "......................................................................................................................................................",
+      "......................................................................................................................................................",
+      "......................................................................................................................................................",
+      "......................................................................................................................................................",
+      ".................................................................................................................o....................................",
+      "................................................................................................................###...................................",
+      ".........................................................oo....oo.....................................................................................",
+      ".................................oo.........................................................................o.........o...............................",
+      "................................####.......................................................................###.......###..............................",
+      "......................................................##....##.............ooo........................................................................",
+      ".......................................o..............##....##............#####........................o...................o..........................",
+      "...........................####.......###...........####....##....##..................................###.................###.........................",
+      "...........................................##.......####....##....##..................................................................................",
+      "..P............^^...E...E........................C..####^^^^##^^^^##....E...E...E.................C.................................E...E...^.....G...",
+      "########....##################................######################################....###....######..........................#######################",
+      "########FFFF##################FFFFFFFFFFFFFFFF######################################FFFF###FFFF######FFFFFFFFFFFFFFFFFFFFFFFFFF#######################",
+    ]},
   ];
 
-  function makeEnemy(x,y){
-    return { x,y,w:18,h:18, vx:(Math.random()<.5?-1:1)*120, vy:0, alive:true, stompedTimer:0 };
+  // ================= Costanti =================
+  const T = 16;            // dimensione di un blocco
+  const VW = 480, VH = 272; // risoluzione "pixel" del gioco
+  const STEP = 1 / 120;
+
+  const RUN = 140, DASH = 270, DASH_TIME = 0.18, DASH_COOLDOWN = 0.55;
+  const ACC_GROUND = 1100, ACC_AIR = 800;
+  const GRAV = 1250, JUMP = 400, MAX_FALL = 520;
+  const COYOTE = 0.09, JUMP_BUFFER = 0.12;
+  const START_LIVES = 3;
+
+  // ================= Canvas =================
+  const stage = document.getElementById('stage');
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const buf = document.createElement('canvas');
+  buf.width = VW; buf.height = VH;
+  const g = buf.getContext('2d');
+  let S = 1; // scala tra pixel di gioco e pixel reali
+
+  function resize() {
+    const cs = getComputedStyle(stage);
+    const availW = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 16;
+    const availH = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 16;
+    const s = Math.max(0.5, Math.min(availW / VW, availH / VH));
+    const cssW = Math.floor(VW * s), cssH = Math.floor(VH * s);
+    const dpr = window.devicePixelRatio || 1;
+    canvas.style.width = cssW + 'px';
+    canvas.style.height = cssH + 'px';
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    S = canvas.width / VW;
   }
+  window.addEventListener('resize', resize);
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(stage);
+  window.addEventListener('orientationchange', () => setTimeout(resize, 200));
 
-  function parseLevel(str){
-    const rows = str.trimEnd().split("\n");
-    const h = rows.length;
-    const w = Math.max(...rows.map(r => r.length));
-    const tiles = [];
-    const items = [];
-    const enemies = [];
-    let goal = null;
+  // ================= Salvataggi (opzionali) =================
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+  let best = store.get('aromatWorld.best', 0);
+  let soundOn = store.get('aromatWorld.sound', true);
 
-    for (let y=0;y<h;y++){
-      tiles[y]=[];
-      const row = rows[y].padEnd(w,'.');
-      for (let x=0;x<w;x++){
-        const ch = row[x];
-        if (ch === '#') tiles[y][x] = '#';
-        else if (ch === '^') tiles[y][x] = '^';
-        else tiles[y][x] = '.';
+  // ================= Audio =================
+  const music = new Audio('8bit.mp3');
+  music.loop = true;
+  music.volume = 0.35;
+  music.preload = 'none';
+  let actx = null;
 
-        if (ch === 'o') items.push({x:x*TILE+8,y:y*TILE+8,w:8,h:8,taken:false});
-        if (ch === 'E') enemies.push(makeEnemy(x*TILE+2,y*TILE+6));
-        if (ch === 'G') goal = {x:x*TILE,y:y*TILE,w:TILE,h:TILE};
-      }
+  function unlockAudio() {
+    if (!actx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) actx = new AC();
     }
-    if (!goal) goal = {x:(w-3)*TILE, y:(h-4)*TILE, w:TILE, h:TILE};
-    return { tiles, w, h, items, enemies, goal };
+    if (actx && actx.state === 'suspended') actx.resume();
+    if (soundOn && music.paused && state !== 'pause') music.play().catch(() => {});
   }
 
-  function tileAt(world, px, py){
-    const tx = Math.floor(px / TILE), ty = Math.floor(py / TILE);
-    if (ty<0 || ty>=world.h || tx<0 || tx>=world.w) return '.';
-    return world.tiles[ty][tx] || '.';
+  function sfx(freq, dur, type = 'square', slide = 0, vol = 0.08) {
+    if (!soundOn || !actx) return;
+    const t = actx.currentTime;
+    const o = actx.createOscillator(), v = actx.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(freq, t);
+    if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(30, freq + slide), t + dur);
+    v.gain.setValueAtTime(vol, t);
+    v.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(v); v.connect(actx.destination);
+    o.start(t); o.stop(t + dur);
   }
-  const isSolid = (t) => t === '#';
-  const isSpike = (t) => t === '^';
-
-  const cam = {x:0,y:0};
-
-  const player = {
-    x:72,y:72,w:18,h:26,
-    vx:0,vy:0,
-    onGround:false,
-    facing:1,
-    coyote:0,
-    jumpBuffer:0,
-    dashTimer:0,
-    invuln:0,
-    lives:3,
-    score:0,
-    level:0
+  const SFX = {
+    jump:  () => sfx(320, 0.12, 'square', 380),
+    coin:  () => { sfx(988, 0.06); setTimeout(() => sfx(1319, 0.1), 50); },
+    stomp: () => sfx(220, 0.12, 'triangle', -150, 0.12),
+    dash:  () => sfx(160, 0.15, 'sawtooth', 300, 0.05),
+    hurt:  () => sfx(300, 0.45, 'square', -260, 0.1),
+    flag:  () => { sfx(660, 0.08); setTimeout(() => sfx(880, 0.12), 80); },
+    clear: () => [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => sfx(f, 0.14), i * 110)),
   };
 
-  function respawn(){
-    player.x = 72; player.y = 48;
-    player.vx = 0; player.vy = 0;
-    player.onGround = false;
-    player.coyote = 0;
-    player.jumpBuffer = 0;
-    player.dashTimer = 0;
-    player.invuln = 1.1;
+  const btnSound = document.getElementById('btnSound');
+  function setSound(on) {
+    soundOn = on;
+    store.set('aromatWorld.sound', on);
+    btnSound.textContent = on ? '🔊' : '🔇';
+    if (!on) music.pause();
+    else if (state !== 'title' && state !== 'pause') unlockAudio();
+  }
+  btnSound.addEventListener('click', () => setSound(!soundOn));
+
+  // ================= Mondo =================
+  let world, levelIndex = 0;
+
+  function parseLevel(idx) {
+    const L = LEVELS[idx];
+    const rows = L.map;
+    const h = rows.length, w = rows[0].length;
+    const tiles = [], coins = [], enemies = [], checkpoints = [];
+    let start = { x: 2 * T, y: 13 * T }, goal = null;
+    for (let y = 0; y < h; y++) {
+      tiles.push([]);
+      for (let x = 0; x < w; x++) {
+        const ch = rows[y][x];
+        tiles[y].push('#^F'.includes(ch) ? ch : '.');
+        const px = x * T, py = y * T;
+        if (ch === 'o') coins.push({ x: px + 4, y: py + 4, w: 8, h: 8, taken: false, phase: x * 0.7 });
+        if (ch === 'E') enemies.push({ x: px + 1, y: py + 4, w: 14, h: 12, vx: -40, vy: 0, onGround: false, alive: true, squish: 0 });
+        if (ch === 'P') start = { x: px + 2, y: py + T - 22 };
+        if (ch === 'C') checkpoints.push({ x: px, y: py - T, w: T, h: 2 * T, on: false });
+        if (ch === 'G') goal = { x: px, y: py - 3 * T, w: T, h: 4 * T };
+      }
+    }
+    return {
+      name: LEVELS[idx].name, w, h, tiles, coins, enemies, checkpoints, goal, start,
+      respawn: { ...start }, totalCoins: coins.length,
+    };
   }
 
-  function loadLevel(idx){
-    const w = parseLevel(levels[idx % levels.length]);
-    respawn();
-    return w;
+  function tileAt(px, py) {
+    const tx = Math.floor(px / T), ty = Math.floor(py / T);
+    if (tx < 0 || tx >= world.w) return '#'; // muri invisibili ai bordi
+    if (ty < 0 || ty >= world.h) return '.';
+    return world.tiles[ty][tx];
+  }
+  const solidAt = (px, py) => tileAt(px, py) === '#';
+  const overlap = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+
+  function moveAndCollide(e, dt) {
+    e.x += e.vx * dt;
+    if (e.vx > 0) {
+      if (solidAt(e.x + e.w, e.y + 1) || solidAt(e.x + e.w, e.y + e.h / 2) || solidAt(e.x + e.w, e.y + e.h - 1)) {
+        e.x = Math.floor((e.x + e.w) / T) * T - e.w; e.vx = 0; e.hitWall = true;
+      }
+    } else if (e.vx < 0) {
+      if (solidAt(e.x, e.y + 1) || solidAt(e.x, e.y + e.h / 2) || solidAt(e.x, e.y + e.h - 1)) {
+        e.x = Math.floor(e.x / T) * T + T; e.vx = 0; e.hitWall = true;
+      }
+    }
+    e.y += e.vy * dt;
+    e.onGround = false;
+    if (e.vy > 0) {
+      if (solidAt(e.x + 1, e.y + e.h) || solidAt(e.x + e.w - 1, e.y + e.h)) {
+        e.y = Math.floor((e.y + e.h) / T) * T - e.h; e.vy = 0; e.onGround = true;
+      }
+    } else if (e.vy < 0) {
+      if (solidAt(e.x + 1, e.y) || solidAt(e.x + e.w - 1, e.y)) {
+        e.y = Math.floor(e.y / T) * T + T; e.vy = 0;
+      }
+    }
   }
 
-  let world = loadLevel(player.level);
-
-  function restartGame(){
-    player.lives = 3;
-    player.score = 0;
-    player.level = 0;
-    world = loadLevel(player.level);
+  function touchingHazard(e) {
+    // punte e fondue: si controlla solo la parte bassa del blocco
+    const x0 = Math.floor((e.x + 2) / T), x1 = Math.floor((e.x + e.w - 3) / T);
+    const y0 = Math.floor((e.y + 2) / T), y1 = Math.floor((e.y + e.h - 1) / T);
+    for (let ty = y0; ty <= y1; ty++) {
+      for (let tx = x0; tx <= x1; tx++) {
+        const t = world.tiles[ty] && world.tiles[ty][tx];
+        if (t === '^' && overlap(e, { x: tx * T + 3, y: ty * T + 7, w: 10, h: 9 })) return true;
+        if (t === 'F' && overlap(e, { x: tx * T, y: ty * T + 5, w: T, h: 11 })) return true;
+      }
+    }
+    return false;
   }
 
-  function moveAndCollide(ent, dt, world){
-    // X
-    ent.x += ent.vx * dt;
-    let left = Math.floor(ent.x / TILE);
-    let right = Math.floor((ent.x + ent.w - 1) / TILE);
-    let top = Math.floor(ent.y / TILE);
-    let bottom = Math.floor((ent.y + ent.h - 1) / TILE);
+  // ================= Giocatore =================
+  const player = {
+    x: 0, y: 0, w: 12, h: 22, vx: 0, vy: 0,
+    onGround: false, facing: 1, coyote: 0, jumpBuffer: 0,
+    dashTime: 0, dashCool: 0, invuln: 0, anim: 0, blink: 2,
+  };
+  let lives = START_LIVES, score = 0, levelStartScore = 0;
 
-    for (let ty=top; ty<=bottom; ty++){
-      for (let tx=left; tx<=right; tx++){
-        const t = (world.tiles[ty] && world.tiles[ty][tx]) ? world.tiles[ty][tx] : '.';
-        if (!isSolid(t)) continue;
-        const r = {x:tx*TILE,y:ty*TILE,w:TILE,h:TILE};
-        if (aabb(ent,r)){
-          if (ent.vx > 0) ent.x = r.x - ent.w;
-          else if (ent.vx < 0) ent.x = r.x + r.w;
-          ent.vx = 0;
+  function placePlayer() {
+    Object.assign(player, {
+      x: world.respawn.x, y: world.respawn.y, vx: 0, vy: 0, onGround: false,
+      facing: 1, coyote: 0, jumpBuffer: 0, dashTime: 0, dashCool: 0, invuln: 1.2,
+    });
+    cam.x = clampCam(player.x - VW * 0.35);
+  }
+
+  // ================= Camera, particelle =================
+  const cam = { x: 0, shake: 0 };
+  const clampCam = (x) => Math.max(0, Math.min(world.w * T - VW, x));
+  let particles = [], popups = [];
+
+  function burst(x, y, color, n = 8, speed = 90) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, s = speed * (0.4 + Math.random() * 0.6);
+      particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 40, life: 0.5 + Math.random() * 0.3, color });
+    }
+  }
+  function popup(x, y, text) { popups.push({ x, y, text, life: 0.8 }); }
+
+  // ================= Stato del gioco =================
+  // title · play · pause · dying · clear · gameover · win
+  let state = 'title', prevState = 'play', prevTime = 0, stateTime = 0;
+  let deathFx = null;
+
+  function setState(s) { state = s; stateTime = 0; }
+
+  function startLevel(idx) {
+    levelIndex = idx;
+    world = parseLevel(idx);
+    levelStartScore = score;
+    particles = []; popups = [];
+    placePlayer();
+    setState('play');
+  }
+
+  function newGame() {
+    lives = START_LIVES; score = 0;
+    startLevel(0);
+  }
+
+  function loseLife() {
+    if (state !== 'play') return;
+    SFX.hurt();
+    cam.shake = 0.25;
+    lives--;
+    deathFx = { x: player.x, y: player.y, vy: -320 };
+    setState('dying');
+  }
+
+  function saveBest() {
+    if (score > best) { best = score; store.set('aromatWorld.best', best); }
+  }
+
+  // Azione "conferma": SALTA, Invio o tocco sullo schermo
+  function confirm() {
+    unlockAudio();
+    if (state === 'title' || state === 'win') newGame();
+    else if (state === 'clear' && stateTime > 0.5) {
+      if (levelIndex + 1 < LEVELS.length) startLevel(levelIndex + 1);
+      else { saveBest(); setState('win'); }
+    } else if (state === 'gameover' && stateTime > 0.5) {
+      lives = START_LIVES; score = levelStartScore;
+      startLevel(levelIndex);
+    } else if (state === 'pause') togglePause();
+  }
+
+  function togglePause() {
+    if (state === 'play' || state === 'dying') {
+      prevState = state; prevTime = stateTime; setState('pause'); music.pause();
+    } else if (state === 'pause') {
+      state = prevState; stateTime = prevTime; if (soundOn) music.play().catch(() => {});
+    }
+    btnPause.textContent = state === 'pause' ? '▶' : '❚❚';
+  }
+  const btnPause = document.getElementById('btnPause');
+  btnPause.addEventListener('click', togglePause);
+  document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'play') togglePause(); });
+
+  // ================= Input =================
+  const input = { left: false, right: false, jumpHeld: false, padDir: 0 };
+
+  function pressJump() {
+    if (state === 'play') { player.jumpBuffer = JUMP_BUFFER; unlockAudio(); }
+    else confirm();
+  }
+  function pressDash() {
+    if (state === 'play') tryDash();
+  }
+
+  const KEYS_LEFT = ['ArrowLeft', 'KeyA'], KEYS_RIGHT = ['ArrowRight', 'KeyD'];
+  const KEYS_JUMP = ['ArrowUp', 'KeyW', 'Space', 'KeyZ'], KEYS_DASH = ['ShiftLeft', 'ShiftRight', 'KeyX', 'KeyK'];
+
+  window.addEventListener('keydown', (e) => {
+    const k = e.code;
+    if ([...KEYS_LEFT, ...KEYS_RIGHT, ...KEYS_JUMP, 'ArrowDown'].includes(k)) e.preventDefault();
+    if (e.repeat) return;
+    if (KEYS_LEFT.includes(k)) input.left = true;
+    else if (KEYS_RIGHT.includes(k)) input.right = true;
+    else if (KEYS_JUMP.includes(k)) { input.jumpHeld = true; pressJump(); }
+    else if (KEYS_DASH.includes(k)) pressDash();
+    else if (k === 'Enter') confirm();
+    else if (k === 'KeyP' || k === 'Escape') togglePause();
+    else if (k === 'KeyM') setSound(!soundOn);
+  });
+  window.addEventListener('keyup', (e) => {
+    const k = e.code;
+    if (KEYS_LEFT.includes(k)) input.left = false;
+    else if (KEYS_RIGHT.includes(k)) input.right = false;
+    else if (KEYS_JUMP.includes(k)) input.jumpHeld = false;
+  });
+  window.addEventListener('blur', () => { input.left = input.right = input.jumpHeld = false; input.padDir = 0; });
+
+  // Croce direzionale touch: si può far scivolare il dito da ← a →
+  const pad = document.getElementById('pad');
+  const padHalves = pad.querySelectorAll('div');
+  const padPointers = new Map();
+  function updatePad() {
+    const r = pad.getBoundingClientRect();
+    let dir = 0;
+    for (const x of padPointers.values()) dir = x < r.left + r.width / 2 ? -1 : 1;
+    input.padDir = dir;
+    padHalves[0].classList.toggle('on', dir === -1);
+    padHalves[1].classList.toggle('on', dir === 1);
+  }
+  pad.addEventListener('pointerdown', (e) => {
+    e.preventDefault(); unlockAudio();
+    pad.setPointerCapture(e.pointerId);
+    padPointers.set(e.pointerId, e.clientX); updatePad();
+  });
+  pad.addEventListener('pointermove', (e) => {
+    if (padPointers.has(e.pointerId)) { padPointers.set(e.pointerId, e.clientX); updatePad(); }
+  });
+  for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+    pad.addEventListener(ev, (e) => { padPointers.delete(e.pointerId); updatePad(); });
+  }
+
+  function bindButton(el, onDown, onUp) {
+    el.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      el.setPointerCapture(e.pointerId);
+      el.classList.add('on');
+      onDown();
+    });
+    const up = () => { el.classList.remove('on'); onUp && onUp(); };
+    el.addEventListener('pointerup', up);
+    el.addEventListener('pointercancel', up);
+  }
+  bindButton(document.getElementById('btnJump'), () => { input.jumpHeld = true; pressJump(); }, () => { input.jumpHeld = false; });
+  bindButton(document.getElementById('btnDash'), pressDash);
+
+  // Tocco sullo schermo di gioco = conferma nei menu
+  canvas.addEventListener('pointerdown', (e) => { if (state !== 'play') { e.preventDefault(); confirm(); } });
+
+  // Mostra i controlli touch su telefoni e tablet
+  function enableTouch() { if (!document.body.classList.contains('touch')) { document.body.classList.add('touch'); resize(); } }
+  if (window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window) enableTouch();
+  window.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') enableTouch(); }, true);
+  window.addEventListener('contextmenu', (e) => e.preventDefault());
+  document.addEventListener('dblclick', (e) => e.preventDefault());
+
+  // ================= Aggiornamento =================
+  function tryDash() {
+    if (player.dashCool > 0) return;
+    player.dashTime = DASH_TIME;
+    player.dashCool = DASH_COOLDOWN;
+    player.vx = player.facing * DASH;
+    if (player.vy > 0) player.vy = 0;
+    SFX.dash();
+    burst(player.x + player.w / 2, player.y + player.h - 4, '#cfe0ff', 6, 60);
+  }
+
+  function update(dt) {
+    stateTime += dt;
+    for (const p of particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 500 * dt; p.life -= dt; }
+    particles = particles.filter(p => p.life > 0);
+    for (const p of popups) { p.y -= 30 * dt; p.life -= dt; }
+    popups = popups.filter(p => p.life > 0);
+    cam.shake = Math.max(0, cam.shake - dt);
+
+    if (state === 'dying') {
+      deathFx.vy += GRAV * dt; deathFx.y += deathFx.vy * dt;
+      if (stateTime > 1.1) {
+        if (lives <= 0) { saveBest(); setState('gameover'); }
+        else { placePlayer(); setState('play'); }
+      }
+      return;
+    }
+    if (state !== 'play') return;
+
+    const p = player;
+    p.coyote = Math.max(0, p.coyote - dt);
+    p.jumpBuffer = Math.max(0, p.jumpBuffer - dt);
+    p.dashTime = Math.max(0, p.dashTime - dt);
+    p.dashCool = Math.max(0, p.dashCool - dt);
+    p.invuln = Math.max(0, p.invuln - dt);
+    p.blink -= dt; if (p.blink < -0.12) p.blink = 2 + Math.random() * 2;
+
+    // Movimento orizzontale
+    const dir = input.padDir || ((input.right ? 1 : 0) - (input.left ? 1 : 0));
+    if (p.dashTime > 0) {
+      p.vx = p.facing * DASH;
+    } else {
+      const acc = p.onGround ? ACC_GROUND : ACC_AIR;
+      if (dir) {
+        p.facing = dir;
+        p.vx += dir * acc * dt;
+        if (Math.abs(p.vx) > RUN) p.vx = Math.sign(p.vx) * Math.max(RUN, Math.abs(p.vx) - 900 * dt);
+      } else {
+        const fr = (p.onGround ? 1400 : 300) * dt;
+        p.vx = Math.abs(p.vx) <= fr ? 0 : p.vx - Math.sign(p.vx) * fr;
+      }
+    }
+
+    // Salto (più a lungo tieni premuto, più in alto vai)
+    if (p.onGround) p.coyote = COYOTE;
+    if (p.jumpBuffer > 0 && p.coyote > 0) {
+      p.vy = -JUMP; p.jumpBuffer = 0; p.coyote = 0; p.onGround = false;
+      SFX.jump();
+    }
+    const gravity = (p.vy < 0 && !input.jumpHeld) ? GRAV * 2.4 : GRAV;
+    p.vy = p.dashTime > 0 ? Math.min(p.vy, 0) * 0.5 : Math.min(MAX_FALL, p.vy + gravity * dt);
+
+    const wasGround = p.onGround;
+    const prevBottom = p.y + p.h;
+    moveAndCollide(p, dt);
+    if (!wasGround && p.onGround) burst(p.x + p.w / 2, p.y + p.h, '#9fd88a', 4, 40);
+    p.anim += Math.abs(p.vx) * dt;
+
+    if (touchingHazard(p) || p.y > VH + 20) return loseLife();
+
+    // Granelli
+    for (const c of world.coins) {
+      if (!c.taken && overlap(p, c)) {
+        c.taken = true; score += 10;
+        SFX.coin();
+        burst(c.x + 4, c.y + 4, '#fff6c8', 6, 70);
+        popup(c.x + 4, c.y, '+10');
+        if (world.coins.every(k => k.taken)) {
+          score += 200; popup(p.x + 6, p.y - 10, 'TUTTI I GRANELLI! +200');
         }
       }
     }
 
-    // Y
-    ent.y += ent.vy * dt;
-    ent.onGround = false;
+    // Nemici
+    for (const e of world.enemies) {
+      if (!e.alive) { e.squish -= dt; continue; }
+      e.vy = Math.min(MAX_FALL, e.vy + GRAV * dt);
+      // gira se c'è un muro o un buco davanti
+      if (e.onGround) {
+        const aheadX = e.vx > 0 ? e.x + e.w + 1 : e.x - 1;
+        if (!solidAt(aheadX, e.y + e.h + 2) || solidAt(aheadX, e.y + e.h / 2)) e.vx = -e.vx;
+      }
+      const want = e.vx;
+      e.hitWall = false;
+      moveAndCollide(e, dt);
+      if (e.hitWall) e.vx = -want; else e.vx = want;
+      if (e.y > VH || touchingHazard(e)) { e.alive = false; e.squish = 0; continue; }
 
-    left = Math.floor(ent.x / TILE);
-    right = Math.floor((ent.x + ent.w - 1) / TILE);
-    top = Math.floor(ent.y / TILE);
-    bottom = Math.floor((ent.y + ent.h - 1) / TILE);
+      if (overlap(p, e)) {
+        const stomp = p.vy > 0 && prevBottom <= e.y + 6;
+        if (stomp || p.dashTime > 0) {
+          e.alive = false; e.squish = 0.35;
+          score += 25; popup(e.x + 7, e.y, '+25');
+          burst(e.x + 7, e.y + 6, '#e0b352', 10, 100);
+          SFX.stomp();
+          if (stomp) { p.vy = input.jumpHeld ? -JUMP * 0.95 : -JUMP * 0.6; }
+        } else if (p.invuln <= 0) {
+          return loseLife();
+        }
+      }
+    }
 
-    for (let ty=top; ty<=bottom; ty++){
-      for (let tx=left; tx<=right; tx++){
-        const t = (world.tiles[ty] && world.tiles[ty][tx]) ? world.tiles[ty][tx] : '.';
-        if (!isSolid(t)) continue;
-        const r = {x:tx*TILE,y:ty*TILE,w:TILE,h:TILE};
-        if (aabb(ent,r)){
-          if (ent.vy > 0){ ent.y = r.y - ent.h; ent.onGround = true; }
-          else if (ent.vy < 0){ ent.y = r.y + r.h; }
-          ent.vy = 0;
+    // Checkpoint
+    for (const c of world.checkpoints) {
+      if (!c.on && overlap(p, c)) {
+        c.on = true;
+        world.respawn = { x: c.x + 2, y: c.y + 2 * T - p.h };
+        SFX.flag();
+        popup(c.x + 8, c.y - 4, 'CHECKPOINT');
+        burst(c.x + 8, c.y, '#ff3b4d', 10, 80);
+      }
+    }
+
+    // Traguardo
+    if (world.goal && overlap(p, world.goal)) {
+      score += 100;
+      saveBest();
+      SFX.clear();
+      burst(world.goal.x + 8, world.goal.y + 10, '#f0d04f', 24, 140);
+      setState('clear');
+    }
+
+    // Camera
+    const target = p.x + p.w / 2 - VW * 0.4 + p.facing * 30;
+    cam.x += (clampCam(target) - cam.x) * Math.min(1, dt * 6);
+  }
+
+  // ================= Disegno =================
+  const C = {
+    red: '#e3343b', yellow: '#f0d04f', green: '#1f7a49', grass: '#4cb85f',
+    dirt: '#6b4428', dirtDark: '#4e3019', ink: '#1b1f2a',
+  };
+
+  // Montagne generate una volta sola
+  function ridge(seed, base, amp) {
+    const pts = [];
+    for (let x = 0; x <= VW * 2; x += 8) {
+      const y = base - amp * (0.55 * Math.sin(x * 0.011 + seed) + 0.3 * Math.sin(x * 0.027 + seed * 2) + 0.15 * Math.sin(x * 0.063 + seed * 3));
+      pts.push([x, y]);
+    }
+    return pts;
+  }
+  const farRidge = ridge(1.3, 170, 60), nearRidge = ridge(4.1, 210, 40);
+  const stars = Array.from({ length: 70 }, (_, i) => [(i * 137) % (VW * 2), (i * 53) % 140, i % 3]);
+
+  function drawRidge(pts, par, color, snow) {
+    const off = -((cam.x * par) % (VW * 2));
+    for (const shift of [0, VW * 2]) {
+      g.fillStyle = color;
+      g.beginPath();
+      g.moveTo(off + shift, VH);
+      for (const [x, y] of pts) g.lineTo(off + shift + x, y);
+      g.lineTo(off + shift + VW * 2, VH);
+      g.fill();
+      if (snow) {
+        g.fillStyle = 'rgba(235,242,255,.55)';
+        for (let i = 1; i < pts.length - 1; i++) {
+          const [x, y] = pts[i];
+          if (y < pts[i - 1][1] && y < pts[i + 1][1] && y < 140) {
+            g.beginPath();
+            g.moveTo(off + shift + x - 12, y + 9); g.lineTo(off + shift + x, y); g.lineTo(off + shift + x + 12, y + 9);
+            g.fill();
+          }
         }
       }
     }
   }
 
-  function touchingSpikes(ent, world){
-    const pts = [
-      [ent.x+2, ent.y+ent.h-1],
-      [ent.x+ent.w-3, ent.y+ent.h-1],
-      [ent.x+ent.w/2, ent.y+ent.h-1],
-      [ent.x+2, ent.y+2],
-      [ent.x+ent.w-3, ent.y+2],
-    ];
-    return pts.some(([px,py]) => isSpike(tileAt(world, px, py)));
+  function drawBackground(time) {
+    const sky = g.createLinearGradient(0, 0, 0, VH);
+    sky.addColorStop(0, '#0b1230'); sky.addColorStop(0.6, '#24305e'); sky.addColorStop(1, '#3b3a6b');
+    g.fillStyle = sky; g.fillRect(0, 0, VW, VH);
+    for (const [x, y, k] of stars) {
+      const sx = ((x - cam.x * 0.05) % (VW * 2) + VW * 2) % (VW * 2);
+      g.fillStyle = k === 0 ? '#9bc2ff' : '#dfe8ff';
+      g.globalAlpha = 0.4 + 0.4 * Math.sin(time * 2 + x);
+      g.fillRect(Math.floor(sx), y, 1, 1);
+    }
+    g.globalAlpha = 1;
+    g.fillStyle = '#f7f0c6'; g.beginPath(); g.arc(390 - cam.x * 0.02, 50, 14, 0, Math.PI * 2); g.fill();
+    drawRidge(farRidge, 0.15, '#2b3a6e', true);
+    drawRidge(nearRidge, 0.35, '#1d2a52', false);
   }
 
-  function hurt(){
-    if (player.invuln > 0) return;
-    player.lives--;
-    player.invuln = 1.4;
-    player.vx = -player.facing * 220;
-    player.vy = -420;
-    if (player.lives < 0) restartGame();
-  }
+  function hash(x, y) { return ((x * 73856093) ^ (y * 19349663)) >>> 0; }
 
-  // --- Loop ---
-  let last = performance.now();
-  function loop(now){
-    const dt = Math.min(0.033, (now-last)/1000);
-    last = now;
-    update(dt);
-    draw();
-    requestAnimationFrame(loop);
-  }
-
-  function update(dt){
-    // timers
-    player.coyote = Math.max(0, player.coyote - dt);
-    player.jumpBuffer = Math.max(0, player.jumpBuffer - dt);
-    player.dashTimer = Math.max(0, player.dashTimer - dt);
-    player.invuln = Math.max(0, player.invuln - dt);
-
-    // Convert touch presses into buffers (edge)
-    if (input.jumpPressed) { player.jumpBuffer = 0.12; input.jumpPressed = false; }
-    const dashEdge = input.dashPressed; input.dashPressed = false;
-
-    // movement
-    const left = input.left;
-    const right = input.right;
-
-    const maxSpeed = (player.dashTimer > 0) ? 360 : 210;
-    const accel = (player.onGround ? 1350 : 900);
-
-    if (left){ player.vx -= accel * dt; player.facing = -1; }
-    if (right){ player.vx += accel * dt; player.facing =  1; }
-
-    if (player.onGround) player.vx *= (left || right) ? 0.94 : FRICTION;
-    else player.vx *= AIR_FRICTION;
-
-    player.vx = clamp(player.vx, -maxSpeed, maxSpeed);
-
-    if (dashEdge && player.dashTimer <= 0){
-      player.dashTimer = 0.22;
-      player.vx = player.facing * 360;
-      player.vy = Math.min(player.vy, 80);
-    }
-
-    player.vy += GRAV * dt;
-    player.vy = Math.min(player.vy, 1200);
-
-    if (player.onGround) player.coyote = 0.10;
-
-    if (player.jumpBuffer > 0 && (player.onGround || player.coyote > 0)){
-      player.jumpBuffer = 0;
-      player.coyote = 0;
-      player.vy = -560;
-      player.onGround = false;
-    }
-
-    moveAndCollide(player, dt, world);
-
-    if (touchingSpikes(player, world)) hurt();
-    if (player.y > world.h*TILE + 200) hurt();
-
-    // collect
-    for (const g of world.items){
-      if (!g.taken && aabb(player, g)){
-        g.taken = true;
-        player.score += 10;
-      }
-    }
-
-    // enemies
-    for (const e of world.enemies){
-      if (!e.alive) continue;
-
-      e.vy += GRAV * dt;
-      e.vy = Math.min(e.vy, 1200);
-
-      const aheadX = e.x + (e.vx > 0 ? e.w + 2 : -2);
-      const footY = e.y + e.h + 2;
-      const groundAhead = isSolid(tileAt(world, aheadX, footY));
-      const wallAhead = isSolid(tileAt(world, aheadX, e.y + e.h/2));
-      if (!groundAhead || wallAhead) e.vx *= -1;
-
-      moveAndCollide(e, dt, world);
-
-      if (aabb(player, e) && player.invuln <= 0){
-        const playerBottomPrev = player.y + player.h - player.vy * dt;
-        const stomp = (player.vy > 120) && (playerBottomPrev <= e.y + 6);
-        if (stomp){
-          e.alive = false;
-          e.stompedTimer = 0.18;
-          player.vy = -360;
-          player.score += 25;
-        } else {
-          hurt();
-        }
-      }
-    }
-
-    // goal
-    if (aabb(player, world.goal)){
-      player.level++;
-      world = loadLevel(player.level);
-      player.score += 100;
-    }
-
-    // camera
-    const targetX = player.x + player.w/2 - W/2;
-    const targetY = player.y + player.h/2 - H/2;
-    cam.x += (targetX - cam.x) * 0.12;
-    cam.y += (targetY - cam.y) * 0.10;
-    cam.x = clamp(cam.x, 0, Math.max(0, world.w*TILE - W));
-    cam.y = clamp(cam.y, 0, Math.max(0, world.h*TILE - H));
-
-    const remaining = world.items.filter(i => !i.taken).length;
-    hudRight.textContent = `Granelli: ${player.score} · Vite: ${Math.max(0, player.lives)} · Livello: ${player.level+1} · Rimasti: ${remaining}`;
-  }
-
-  // --- Draw ---
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-
-    // sky dots parallax
-    ctx.save();
-    ctx.translate(-cam.x*0.2, -cam.y*0.2);
-    ctx.globalAlpha = 0.35;
-    for (let i=0;i<140;i++){
-      const x = (i*97)% (world.w*TILE + W);
-      const y = (i*53)% (world.h*TILE + H);
-      ctx.fillStyle = (i%3===0) ? "#9bc2ff" : "#cfe0ff";
-      ctx.fillRect(x, y, 2, 2);
-    }
-    ctx.restore();
-    ctx.globalAlpha = 1;
-
-    ctx.save();
-    ctx.translate(-Math.floor(cam.x), -Math.floor(cam.y));
-
-    for (let y=0;y<world.h;y++){
-      for (let x=0;x<world.w;x++){
-        const t = world.tiles[y][x];
+  function drawTiles(time) {
+    const x0 = Math.max(0, Math.floor(cam.x / T)), x1 = Math.min(world.w - 1, x0 + Math.ceil(VW / T) + 1);
+    for (let ty = 0; ty < world.h; ty++) {
+      for (let tx = x0; tx <= x1; tx++) {
+        const t = world.tiles[ty][tx];
         if (t === '.') continue;
-        const px = x*TILE, py = y*TILE;
-        if (t === '#') drawBlock(px,py);
-        if (t === '^') drawSpike(px,py);
+        const x = tx * T - Math.round(cam.x), y = ty * T;
+        if (t === '#') {
+          const top = ty === 0 || world.tiles[ty - 1][tx] !== '#';
+          g.fillStyle = C.dirt; g.fillRect(x, y, T, T);
+          g.fillStyle = C.dirtDark;
+          const h = hash(tx, ty);
+          g.fillRect(x + (h % 11) + 2, y + ((h >> 4) % 9) + 5, 2, 2);
+          g.fillRect(x + ((h >> 8) % 9) + 3, y + ((h >> 12) % 6) + 2, 2, 1);
+          if (top) {
+            g.fillStyle = C.grass; g.fillRect(x, y, T, 5);
+            g.fillStyle = C.yellow; g.fillRect(x, y + 5, T, 1);
+            g.fillStyle = '#7ad66f'; g.fillRect(x + (h % 12), y, 2, 1);
+          }
+        } else if (t === '^') {
+          g.fillStyle = '#dfe8ff';
+          for (let i = 0; i < 2; i++) {
+            g.beginPath();
+            g.moveTo(x + i * 8 + 1, y + T); g.lineTo(x + i * 8 + 4, y + 6); g.lineTo(x + i * 8 + 7, y + T);
+            g.fill();
+          }
+          g.fillStyle = '#9bb0e0'; g.fillRect(x, y + T - 2, T, 2);
+        } else if (t === 'F') {
+          g.fillStyle = '#e8a91f'; g.fillRect(x, y + 4, T, T - 4);
+          g.fillStyle = '#ffd34d';
+          for (let i = 0; i < T; i += 2) g.fillRect(x + i, y + 3 + Math.round(Math.sin(time * 4 + (tx * T + i) * 0.4) * 1.5), 2, 2);
+          const b = (time * 0.8 + tx * 0.37) % 1;
+          if (b < 0.5) { g.fillStyle = '#fff1a8'; g.fillRect(x + (hash(tx, 1) % 10) + 2, y + 10 - b * 12, 2, 2); }
+        }
+      }
+    }
+  }
+
+  function drawFlag(x, y, height, on, big) {
+    g.fillStyle = '#c9d4ff'; g.fillRect(x + 6, y, 2, height);
+    g.fillStyle = C.yellow; g.fillRect(x + 5, y - 2, 4, 3);
+    const fw = big ? 22 : 12, fh = big ? 16 : 9;
+    g.fillStyle = on ? '#ff3b4d' : '#5a6488';
+    g.fillRect(x + 8, y + 2, fw, fh);
+    if (on) {
+      g.fillStyle = '#fff';
+      const cx = x + 8 + fw / 2, cy = y + 2 + fh / 2, a = big ? 3 : 2, b = big ? 9 : 5;
+      g.fillRect(cx - a / 2, cy - b / 2, a, b);
+      g.fillRect(cx - b / 2, cy - a / 2, b, a);
+    }
+  }
+
+  function drawHero(x, y, p, upsideDown) {
+    g.save();
+    if (upsideDown) { g.translate(x + p.w / 2, y + p.h / 2); g.scale(1, -1); g.translate(-(x + p.w / 2), -(y + p.h / 2)); }
+    const w = p.w, h = p.h;
+    // tappo rosso
+    g.fillStyle = C.red; g.fillRect(x, y, w, 5);
+    g.fillStyle = 'rgba(255,255,255,.35)'; g.fillRect(x + 2, y + 1, 3, 2);
+    g.fillStyle = '#b5232a'; g.fillRect(x, y + 4, w, 1);
+    // barattolo giallo con fascia verde
+    g.fillStyle = C.yellow; g.fillRect(x, y + 5, w, h - 7);
+    g.fillStyle = C.green; g.fillRect(x, y + 10, w, 6);
+    g.fillStyle = 'rgba(255,255,255,.25)'; g.fillRect(x + 1, y + 6, 2, h - 9);
+    // occhi
+    const ex = p.facing > 0 ? 2 : 0;
+    g.fillStyle = '#fff';
+    g.fillRect(x + 2 + ex, y + 11, 3, 3); g.fillRect(x + 6 + ex, y + 11, 3, 3);
+    g.fillStyle = C.ink;
+    if (p.blink > 0) { g.fillRect(x + 3 + ex, y + 12, 2, 2); g.fillRect(x + 7 + ex, y + 12, 2, 2); }
+    else { g.fillRect(x + 2 + ex, y + 13, 3, 1); g.fillRect(x + 6 + ex, y + 13, 3, 1); }
+    g.fillRect(x + 4 + ex, y + 17, 3, 1);
+    // piedi
+    const walking = p.onGround && Math.abs(p.vx) > 10;
+    const step = walking ? Math.floor(p.anim / 6) % 2 : 0;
+    g.fillStyle = C.ink;
+    g.fillRect(x + 1, y + h - 2 - step, 4, 2);
+    g.fillRect(x + w - 5, y + h - 2 - (walking ? 1 - step : 0), 4, 2);
+    g.restore();
+  }
+
+  function drawWorld(time) {
+    drawBackground(time);
+    const ox = -Math.round(cam.x);
+    drawTiles(time);
+
+    for (const c of world.checkpoints) drawFlag(c.x + ox, c.y, 2 * T, c.on, false);
+    if (world.goal) {
+      const gl = world.goal;
+      drawFlag(gl.x + ox, gl.y, gl.h, true, true);
+      g.fillStyle = C.yellow; g.fillRect(gl.x + ox + 2, gl.y + gl.h - 4, 10, 4);
+    }
+
+    for (const c of world.coins) {
+      if (c.taken) continue;
+      const bob = Math.round(Math.sin(time * 3 + c.phase) * 1.5);
+      const x = c.x + ox, y = c.y + bob;
+      g.fillStyle = '#f7f0c6'; g.fillRect(x + 1, y, 6, 8); g.fillRect(x, y + 1, 8, 6);
+      g.fillStyle = '#d9c98a'; g.fillRect(x + 1, y + 5, 6, 2);
+      g.fillStyle = '#fff'; g.fillRect(x + 2, y + 1, 2, 2);
+    }
+
+    for (const e of world.enemies) {
+      const x = Math.round(e.x) + ox, y = Math.round(e.y);
+      if (!e.alive) {
+        if (e.squish > 0) { g.fillStyle = '#c58a2a'; g.fillRect(x, y + e.h - 4, e.w, 4); }
+        continue;
+      }
+      // crostino arrabbiato
+      g.fillStyle = '#c58a2a'; g.fillRect(x, y + 1, e.w, e.h - 1); g.fillRect(x + 1, y, e.w - 2, 1);
+      g.fillStyle = '#e0b352'; g.fillRect(x + 2, y + 2, e.w - 4, e.h - 5);
+      g.fillStyle = '#8a5a1a'; g.fillRect(x + 3, y + 3, 1, 1); g.fillRect(x + 9, y + 4, 1, 1);
+      const look = e.vx > 0 ? 1 : 0;
+      g.fillStyle = C.ink;
+      g.fillRect(x + 3 + look, y + 5, 2, 2); g.fillRect(x + 8 + look, y + 5, 2, 2);
+      g.fillRect(x + 2 + look, y + 4, 3, 1); g.fillRect(x + 8 + look, y + 4, 3, 1);
+      const f = Math.floor(time * 8 + e.x) % 2;
+      g.fillRect(x + 1 + f, y + e.h - 1, 3, 1); g.fillRect(x + e.w - 4 - f, y + e.h - 1, 3, 1);
+    }
+
+    for (const p of particles) {
+      g.globalAlpha = Math.min(1, p.life * 2);
+      g.fillStyle = p.color; g.fillRect(Math.round(p.x) + ox, Math.round(p.y), 2, 2);
+    }
+    g.globalAlpha = 1;
+
+    if (state === 'dying' && deathFx) {
+      drawHero(Math.round(deathFx.x) + ox, Math.round(deathFx.y), player, true);
+    } else if (state !== 'title') {
+      const p = player;
+      if (!(p.invuln > 0 && Math.floor(p.invuln * 16) % 2 === 0)) {
+        if (p.dashTime > 0) {
+          g.fillStyle = 'rgba(207,224,255,.5)';
+          g.fillRect(Math.round(p.x) + ox - p.facing * 10, Math.round(p.y) + 6, p.w, p.h - 8);
+        }
+        drawHero(Math.round(p.x) + ox, Math.round(p.y), p, false);
+      }
+    }
+  }
+
+  // Testo sul canvas grande (più nitido)
+  function text(str, x, y, size, color = '#dfe8ff', align = 'center') {
+    ctx.font = `800 ${Math.round(size * S)}px ui-monospace, Menlo, Consolas, monospace`;
+    ctx.textAlign = align; ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(0,0,0,.6)';
+    ctx.fillText(str, x * S + Math.max(1, S * 0.6), y * S + Math.max(1, S * 0.6));
+    ctx.fillStyle = color;
+    ctx.fillText(str, x * S, y * S);
+  }
+  function panel(h) {
+    ctx.fillStyle = 'rgba(7,11,24,.72)';
+    const w = 300, x = (VW - w) / 2, y = (VH - h) / 2;
+    ctx.fillRect(x * S, y * S, w * S, h * S);
+    ctx.strokeStyle = 'rgba(120,160,255,.35)'; ctx.lineWidth = Math.max(1, S);
+    ctx.strokeRect(x * S, y * S, w * S, h * S);
+  }
+
+  function drawOverlay(time) {
+    // popup "+10"
+    for (const p of popups) {
+      ctx.globalAlpha = Math.min(1, p.life * 2);
+      text(p.text, p.x - cam.x, p.y, 7, '#fff6c8');
+    }
+    ctx.globalAlpha = 1;
+
+    const tapHint = document.body.classList.contains('touch') ? 'Tocca SALTA' : 'Premi INVIO o SPAZIO';
+    const blinkOn = Math.floor(time * 2) % 2 === 0;
+
+    if (state !== 'title') {
+      text('♥'.repeat(Math.max(0, lives)) + '♡'.repeat(Math.max(0, START_LIVES - lives)), 10, 14, 11, '#ff5a6a', 'left');
+      text(`GRANELLI ${score}`, VW / 2, 14, 9, '#fff6c8');
+      text(`${levelIndex + 1}/${LEVELS.length} ${world.name.toUpperCase()}`, VW - 10, 14, 7, '#cfe0ff', 'right');
+      if (state === 'play' && player.dashCool > 0) {
+        ctx.fillStyle = 'rgba(207,224,255,.6)';
+        ctx.fillRect(10 * S, 24 * S, 30 * (1 - player.dashCool / DASH_COOLDOWN) * S, 2 * S);
+      }
+      if (state === 'play' && stateTime < 2.2) {
+        ctx.globalAlpha = Math.min(1, (2.2 - stateTime) * 2);
+        text(`LIVELLO ${levelIndex + 1}`, VW / 2, 90, 10, C.yellow);
+        text(world.name.toUpperCase(), VW / 2, 108, 16);
+        ctx.globalAlpha = 1;
       }
     }
 
-    drawGoal(world.goal.x, world.goal.y);
-
-    for (const g of world.items) if (!g.taken) drawGranule(g.x,g.y);
-
-    for (const e of world.enemies){
-      if (e.alive) drawEnemy(e);
-      else if (e.stompedTimer > 0){ drawPuff(e.x,e.y); e.stompedTimer -= 1/60; }
-    }
-
-    drawAromatHero(player);
-
-    ctx.restore();
-  }
-
-  function drawBlock(x,y){
-    ctx.fillStyle = "#2d8a4d"; ctx.fillRect(x,y,TILE,TILE);
-    ctx.fillStyle = "#38a85f"; ctx.fillRect(x+2,y+2,TILE-4,TILE-4);
-    ctx.fillStyle = "rgba(0,0,0,.25)"; ctx.fillRect(x+2,y+TILE-6,TILE-4,4);
-    ctx.fillStyle = "#f0d04f"; ctx.fillRect(x+3,y+9,TILE-6,4);
-    ctx.fillStyle = "rgba(255,255,255,.20)"; ctx.fillRect(x+3,y+6,4,12);
-  }
-
-  function drawSpike(x,y){
-    ctx.fillStyle = "#c9d4ff";
-    ctx.fillRect(x, y, TILE, TILE);
-    ctx.fillStyle = "#ff5a6a";
-    for (let i=0;i<4;i++){
-      const sx = x + i*(TILE/4);
-      ctx.beginPath();
-      ctx.moveTo(sx+2, y+TILE-2);
-      ctx.lineTo(sx+TILE/8+2, y+6);
-      ctx.lineTo(sx+TILE/4-2, y+TILE-2);
-      ctx.closePath();
-      ctx.fill();
+    if (state === 'title') {
+      ctx.fillStyle = 'rgba(7,11,24,.45)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      text('AROMAT', VW / 2, 70, 34, C.yellow);
+      text('WORLD', VW / 2, 104, 26, '#ff5a6a');
+      text('Raccogli i granelli, evita la fondue', VW / 2, 140, 8);
+      text('e arriva alla bandiera svizzera!', VW / 2, 153, 8);
+      if (blinkOn) text(tapHint + ' per iniziare', VW / 2, 190, 9, '#fff6c8');
+      if (best > 0) text(`RECORD ${best}`, VW / 2, 222, 8, '#9bc2ff');
+    } else if (state === 'pause') {
+      panel(90);
+      text('PAUSA', VW / 2, 120, 18, C.yellow);
+      text(tapHint + ' per riprendere', VW / 2, 150, 8);
+    } else if (state === 'clear') {
+      const got = world.coins.filter(c => c.taken).length;
+      panel(120);
+      text('LIVELLO COMPLETATO!', VW / 2, 102, 13, C.yellow);
+      text(`Granelli raccolti: ${got}/${world.totalCoins}`, VW / 2, 128, 8);
+      text(`Punteggio: ${score}`, VW / 2, 142, 8);
+      if (stateTime > 0.5 && blinkOn) text(tapHint + ' per continuare', VW / 2, 166, 8, '#fff6c8');
+    } else if (state === 'gameover') {
+      panel(120);
+      text('GAME OVER', VW / 2, 104, 18, '#ff5a6a');
+      text(`Punteggio: ${score} · Record: ${best}`, VW / 2, 132, 8);
+      if (stateTime > 0.5 && blinkOn) text(tapHint + ' per riprovare il livello', VW / 2, 160, 8, '#fff6c8');
+    } else if (state === 'win') {
+      panel(140);
+      text('HAI VINTO!', VW / 2, 94, 20, C.yellow);
+      text('Aromat ovunque, anche nel Castello del Sale.', VW / 2, 122, 7);
+      text(`Punteggio finale: ${score}`, VW / 2, 140, 9);
+      text(score >= best ? 'NUOVO RECORD!' : `Record: ${best}`, VW / 2, 156, 8, '#9bc2ff');
+      if (blinkOn) text(tapHint + ' per rigiocare', VW / 2, 178, 8, '#fff6c8');
     }
   }
 
-  function drawGranule(x,y){
-    ctx.fillStyle = "#f7f0c6";
-    ctx.fillRect(x, y, 8, 8);
-    ctx.fillStyle = "rgba(0,0,0,.20)";
-    ctx.fillRect(x+1, y+5, 6, 2);
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x+2, y+2, 2, 2);
+  function render(time) {
+    if (state === 'title') { cam.x = (time * 25) % Math.max(1, world.w * T - VW); }
+    const shake = cam.shake > 0 ? (Math.random() - 0.5) * 4 : 0;
+    drawWorld(time);
+    ctx.imageSmoothingEnabled = false;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(buf, Math.round(shake * S), 0, canvas.width, canvas.height);
+    drawOverlay(time);
   }
 
-  function drawGoal(x,y){
-    ctx.fillStyle = "#dfe8ff";
-    ctx.fillRect(x+10, y-48, 4, 72);
-    ctx.fillStyle = "#ff3b4d";
-    ctx.fillRect(x+14, y-44, 22, 14);
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x+22, y-41, 6, 8);
-    ctx.fillRect(x+20, y-39, 10, 4);
-    ctx.fillStyle = "#f0d04f";
-    ctx.fillRect(x, y, TILE, TILE);
-    ctx.fillStyle = "#2d8a4d";
-    ctx.fillRect(x+3, y+3, TILE-6, TILE-6);
-  }
-
-  function drawEnemy(e){
-    ctx.fillStyle = "#c58a2a";
-    ctx.fillRect(e.x, e.y, e.w, e.h);
-    ctx.fillStyle = "#e0b352";
-    ctx.fillRect(e.x+2, e.y+2, e.w-4, e.h-4);
-    ctx.fillStyle = "#2b1a0c";
-    ctx.fillRect(e.x+5, e.y+7, 3, 3);
-    ctx.fillRect(e.x+e.w-8, e.y+7, 3, 3);
-    ctx.fillRect(e.x+7, e.y+12, e.w-14, 2);
-  }
-
-  function drawPuff(x,y){
-    ctx.fillStyle = "rgba(255,255,255,.7)";
-    ctx.fillRect(x+4,y+8,6,4);
-    ctx.fillRect(x+10,y+6,6,6);
-    ctx.fillRect(x+14,y+10,4,4);
-  }
-
-  function drawAromatHero(p){
-    if (p.invuln > 0 && Math.floor(p.invuln*18)%2===0) ctx.globalAlpha = 0.45;
-
-    const x=p.x, y=p.y;
-    ctx.fillStyle = "#e3343b"; ctx.fillRect(x, y, p.w, 6);
-    ctx.fillStyle = "rgba(255,255,255,.25)"; ctx.fillRect(x+2, y+1, 4, 3);
-
-    ctx.fillStyle = "#f0d04f"; ctx.fillRect(x, y+6, p.w, p.h-6);
-    ctx.fillStyle = "#1f7a49"; ctx.fillRect(x, y+12, p.w, 7);
-    ctx.fillStyle = "rgba(255,255,255,.18)"; ctx.fillRect(x+2, y+8, 3, p.h-10);
-
-    ctx.fillStyle = "#1b1f2a";
-    ctx.fillRect(x+5, y+16, 3, 3);
-    ctx.fillRect(x+p.w-8, y+16, 3, 3);
-    ctx.fillRect(x+7, y+21, p.w-14, 2);
-
-    ctx.fillStyle = "#2b1a0c";
-    ctx.fillRect(x+3, y+p.h-2, 5, 2);
-    ctx.fillRect(x+p.w-8, y+p.h-2, 5, 2);
-
-    if (p.dashTimer > 0){
-      ctx.fillStyle = "#cfe0ff";
-      const sx = x - p.facing*8;
-      ctx.fillRect(sx, y+16, 6, 2);
-      ctx.fillRect(sx-2, y+14, 4, 2);
-      ctx.fillRect(sx-1, y+18, 4, 2);
+  // ================= Loop =================
+  let last = performance.now(), acc = 0;
+  function frame(now) {
+    const dt = Math.min(0.1, (now - last) / 1000);
+    last = now;
+    if (state !== 'pause') {
+      acc += dt;
+      while (acc >= STEP) { update(STEP); acc -= STEP; }
     }
-
-    ctx.globalAlpha = 1;
+    render(now / 1000);
+    requestAnimationFrame(frame);
   }
 
-  requestAnimationFrame(loop);
+  world = parseLevel(0);
+  setSound(soundOn);
+  resize();
+  requestAnimationFrame(frame);
 })();
 </script>
 </body>
