@@ -2,7 +2,27 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="Fan site satirico e non ufficiale, fatto per amore dell’Aromat. Prodotti inventati, sconti random e due giochi." />
+  <meta name="theme-color" content="#0b0b0b" />
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Aromat Ovunque*" />
+  <meta property="og:title" content="Aromat Ovunque*" />
+  <meta property="og:description" content="Fan site satirico e non ufficiale, fatto per amore dell’Aromat. Prodotti inventati, sconti random e due giochi." />
+  <meta property="og:url" content="https://aromatovunque.info/" />
+  <meta property="og:image" content="https://aromatovunque.info/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="it_CH" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" />
+  <link rel="stylesheet" href="site.css" />
   <title data-i18n="idx.doctitle">Aromat Ovunque*</title>
 
   <style>
@@ -32,7 +52,7 @@
         radial-gradient(900px 520px at 12% 10%, rgba(255,212,0,.16), transparent 62%),
         radial-gradient(900px 520px at 92% 18%, rgba(31,163,74,.12), transparent 62%),
         radial-gradient(900px 520px at 55% 95%, rgba(225,29,46,.12), transparent 62%),
-        url("Hero.jpg") center/cover no-repeat;
+        url("Hero.webp") center/cover no-repeat;
       filter:saturate(1.05) contrast(1.02);
       transform:scale(1.02);
     }
@@ -74,6 +94,7 @@
     }
 
     .panel{
+      position:relative;
       width:min(760px, 92vw);
       text-align:center;
       padding:28px 22px 24px;
@@ -95,6 +116,7 @@
 
     h1{
       margin:0;
+      font-family:var(--font-display);
       font-size: clamp(34px, 5vw, 54px);
       letter-spacing:-.6px;
       line-height:1.02;
@@ -123,6 +145,8 @@
     /* CTA button (Aromat-ish) */
     .cta{
       margin-top:10px;
+      font-family:var(--font-display);
+      font-size:18px;
       display:inline-flex;
       align-items:center;
       justify-content:center;
@@ -165,11 +189,22 @@
       color: rgba(255,255,255,.92);
     }
 
-    /* Lingua */
+    /* Striscia in alto e lingua */
+    .top-marquee{position:fixed; top:0; left:0; right:0; z-index:6; padding-top:env(safe-area-inset-top); background:var(--a-yellow)}
     .lang-fixed{
-      position:fixed; top:14px; right:14px; z-index:5;
-      top:calc(14px + env(safe-area-inset-top));
+      position:fixed; right:14px; z-index:5;
+      top:calc(50px + env(safe-area-inset-top));
     }
+    .home-sticker{position:absolute; top:-16px; left:18px; z-index:2}
+    @media (max-width:520px){ .home-sticker{top:-12px; left:12px; font-size:12px; padding:6px 11px} .lang-fixed{top:calc(48px + env(safe-area-inset-top))} }
+    .mini-foot{
+      margin:14px auto 0;
+      font-size:11px;
+      color:rgba(255,255,255,.55);
+      opacity:0;
+      animation: popIn .65s ease .4s forwards;
+    }
+    body{-webkit-tap-highlight-color:transparent}
 
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce){
@@ -184,10 +219,20 @@
   <div class="overlay" aria-hidden="true"></div>
   <div class="sparkles" aria-hidden="true"></div>
 
+  <div class="top-marquee" aria-hidden="true">
+    <div class="marquee"><div class="marquee-track">
+      <span data-i18n="ui.marquee">SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+      <span data-i18n="ui.marquee">SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+      <span data-i18n="ui.marquee">SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+      <span data-i18n="ui.marquee">SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+    </div></div>
+  </div>
+
   <div class="lang-fixed" data-lang-switch></div>
 
   <main class="wrap">
     <section class="panel">
+      <span class="fan-sticker home-sticker" data-i18n="ui.fan">Fan site non ufficiale ♥</span>
       <div class="stack">
         <h1 data-i18n="idx.title">Aromat Ovunque*</h1>
         <p class="subtitle">Stay strong. Stay Aromat.</p>
@@ -200,8 +245,17 @@
         <br><br>
         Buon Carnevale a tutti.
       </p>
+      <p class="mini-foot" data-i18n="ui.footerShort">Fan site satirico non ufficiale · non affiliato a Knorr/Unilever</p>
     </section>
   </main>
   <script src="lang.js"></script>
+  <script src="site.js"></script>
+  <script>
+    // Tocco sullo schermo: spruzzo di granelli di sale
+    window.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('a, button')) return;
+      window.aromat.saltBurst(e.clientX, e.clientY, 18);
+    });
+  </script>
 </body>
 </html>

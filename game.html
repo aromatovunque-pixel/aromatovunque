@@ -3,6 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="description" content="Spara l’Aromat sulla pizza: il minigioco di Aromat Ovunque*, fan site satirico e non ufficiale." />
+  <meta name="theme-color" content="#070b18" />
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Aromat Ovunque*" />
+  <meta property="og:title" content="Aromat Game – Aromat Ovunque*" />
+  <meta property="og:description" content="Spara l’Aromat sulla pizza: il minigioco di Aromat Ovunque*, fan site satirico e non ufficiale." />
+  <meta property="og:url" content="https://aromatovunque.info/game.html" />
+  <meta property="og:image" content="https://aromatovunque.info/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="it_CH" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" />
+  <link rel="stylesheet" href="site.css" />
 <title>Aromat Game</title>
 
 <style>
@@ -32,8 +52,9 @@ button:focus, canvas:focus{
 body{
   margin:0;
   background:#070b18;
-  height:100vh;
+  min-height:100vh;
   display:flex;
+  flex-direction:column;
   justify-content:center;
   align-items:center;
   font-family: monospace;
@@ -176,6 +197,7 @@ canvas{
 .restart:active{
   transform:translateY(1px);
 }
+.site-footer.compact{border:0; padding:12px 16px; justify-content:center; text-align:center; font-size:11px}
 </style>
 </head>
 
@@ -222,6 +244,10 @@ canvas{
   </div>
 
 </div>
+
+<footer class="site-footer dark compact">
+  <p data-i18n="ui.footerShort">Fan site satirico non ufficiale · non affiliato a Knorr/Unilever</p>
+</footer>
 
 <script src="lang.js"></script>
 <script>

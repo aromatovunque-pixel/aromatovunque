@@ -1,0 +1,92 @@
+/* Aromat Ovunque* — stili comuni a tutte le pagine
+ * (caratteri, striscia che scorre, adesivi, piè di pagina) */
+
+:root{
+  --a-yellow:#ffd400;
+  --a-green:#1fa34a;
+  --a-red:#e11d2e;
+  --a-ink:#0b0b0b;
+  --font-display:"Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* ---------- Striscia di testo che scorre ---------- */
+.marquee{
+  position:relative;
+  overflow:hidden;
+  background:var(--a-yellow);
+  color:var(--a-ink);
+  border-bottom:2px solid var(--a-ink);
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:13px;
+  letter-spacing:.8px;
+  line-height:1;
+  white-space:nowrap;
+  user-select:none;
+}
+.marquee-track{
+  display:inline-flex;
+  padding:9px 0;
+  animation:marquee 28s linear infinite;
+}
+.marquee-track span{padding-right:0}
+@keyframes marquee{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+
+/* ---------- Adesivo "fan site" ---------- */
+.fan-sticker{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 13px;
+  border-radius:999px;
+  background:var(--a-red);
+  color:#fff;
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:13px;
+  letter-spacing:.2px;
+  border:2px solid #fff;
+  box-shadow:0 8px 18px rgba(0,0,0,.18);
+  transform:rotate(-4deg);
+  white-space:nowrap;
+}
+
+/* ---------- Piè di pagina ---------- */
+.site-footer{
+  max-width:1200px;
+  margin:0 auto;
+  padding:26px 16px 30px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px 22px;
+  font-size:13px;
+  line-height:1.5;
+  color:rgba(0,0,0,.62);
+  border-top:1px solid rgba(0,0,0,.08);
+}
+.site-footer p{margin:0; max-width:70ch}
+.site-footer b{color:rgba(0,0,0,.85)}
+.site-footer .foot-links{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+.site-footer a{color:inherit; font-weight:700; text-decoration:none; border-bottom:1px solid currentColor}
+.site-footer.dark{color:rgba(255,255,255,.62); border-top-color:rgba(255,255,255,.12)}
+.site-footer.dark b{color:rgba(255,255,255,.9)}
+
+/* ---------- Granelli di sale (animazione al tocco) ---------- */
+.salt{
+  position:fixed;
+  width:7px; height:7px;
+  border-radius:2px;
+  background:#fffbe8;
+  box-shadow:0 0 0 1px rgba(0,0,0,.08);
+  pointer-events:none;
+  z-index:9999;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .marquee-track{animation:none}
+}
