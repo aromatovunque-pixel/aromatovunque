@@ -176,6 +176,10 @@
   // #  terreno      ^  punte        F  fondue (non toccare!)
   // o  granello     E  nemico       P  partenza
   // C  checkpoint   G  traguardo
+  // Scatole sorpresa (si colpiscono da sotto):
+  // L  patatine Zweifel Aromat (+1 vita)
+  // V  furgone Aromat (salto più alto + invincibile 5 s)
+  // M  calamita (attira i granelli per 10 s)
   const LEVELS = [
     { name: "Prati di Aromat", map: [
       "..............................................................................................................",
@@ -188,8 +192,8 @@
       "..............................................................................................................",
       "..............................................................................................................",
       "..............................................................................................................",
-      "...............o.o.o......................o..........o.o......................................................",
-      "...............#####...........o.........###........#####.............oo.....oEo..............oo..............",
+      ".........M.....o.o.o......................o..........o.o......................................................",
+      "...............#####...........o.........###..V.....#####.............oo.....oEo......L.......oo..............",
       ".........................................###................oo..............#####.............##..............",
       ".......o.o.o..........................######..................................................##..............",
       "..P......................E............######......E..............C....^^................E.....##........G.....",
@@ -208,7 +212,7 @@
       "...............................................................................................................o..................",
       "..........................................................o............oo.....................................###.................",
       "......................................................................####........................................................",
-      ".....................................E.....o...............................................................o........o.............",
+      "........M............................E.....o.......V..............L........................................o........o.............",
       ".............oo..............oo....####...............###...###..................oo.......................###......###............",
       "............................####..........###.........###...###...................................................................",
       "..P.................E...........................C.....###^^^###.....E.....E.............^...^.........C....................E...G..",
@@ -227,7 +231,7 @@
       "..............###....####..................................oo......####...............................oo....................................",
       "............o.###............oo......................................................................####...................................",
       "...........######...........####............ooo.............................................................................................",
-      ".........o.######..........................#####.....................................E.........oo..........oo...............................",
+      ".........o.######.................V........#####..............................L......E.........oo..........oo..........M....................",
       "........#########.......................................##....##....................###.......####........####..............................",
       "........#########.......................................##....##....................###.....................................................",
       "..P.....#########...................E...E...^^^.....C...##^^^^##................E...###..........................C..^^...^^...E...E.....G...",
@@ -246,7 +250,7 @@
       ".................................oo.........................................................................o.........o...............................",
       "................................####.......................................................................###.......###..............................",
       "......................................................##....##.............ooo........................................................................",
-      ".......................................o..............##....##............#####........................o...................o..........................",
+      ".......................................o...........L..##....##........V...#####........................o...................o......M...................",
       "...........................####.......###...........####....##....##..................................###.................###.........................",
       "...........................................##.......####....##....##..................................................................................",
       "..P............^^...E...E........................C..####^^^^##^^^^##....E...E...E.................C.................................E...E...^.....G...",
@@ -265,6 +269,8 @@
   const GRAV = 1250, JUMP = 400, MAX_FALL = 520;
   const COYOTE = 0.09, JUMP_BUFFER = 0.12;
   const START_LIVES = 3;
+  const JUMP_VAN = 470, VAN_TIME = 5, MAGNET_TIME = 10, MAGNET_RANGE = 90;
+  const SOLID = '#LVMU', BOXES = 'LVM';
 
   // ================= Canvas =================
   const stage = document.getElementById('stage');
@@ -334,6 +340,9 @@
     stomp: () => sfx(220, 0.12, 'triangle', -150, 0.12),
     dash:  () => sfx(160, 0.15, 'sawtooth', 300, 0.05),
     hurt:  () => sfx(300, 0.45, 'square', -260, 0.1),
+    box:   () => sfx(180, 0.1, 'square', 120, 0.1),
+    power: () => [392, 523, 659, 784, 1047].forEach((f, i) => setTimeout(() => sfx(f, 0.09, 'triangle', 0, 0.1), i * 60)),
+    life:  () => [659, 784, 1319, 1047, 1175, 1568].forEach((f, i) => setTimeout(() => sfx(f, 0.09), i * 80)),
     flag:  () => { sfx(660, 0.08); setTimeout(() => sfx(880, 0.12), 80); },
     clear: () => [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => sfx(f, 0.14), i * 110)),
   };
@@ -361,10 +370,10 @@
       tiles.push([]);
       for (let x = 0; x < w; x++) {
         const ch = rows[y][x];
-        tiles[y].push('#^F'.includes(ch) ? ch : '.');
+        tiles[y].push(('#^F' + BOXES).includes(ch) ? ch : '.');
         const px = x * T, py = y * T;
         if (ch === 'o') coins.push({ x: px + 4, y: py + 4, w: 8, h: 8, taken: false, phase: x * 0.7 });
-        if (ch === 'E') enemies.push({ x: px + 1, y: py + 4, w: 14, h: 12, vx: -40, vy: 0, onGround: false, alive: true, squish: 0 });
+        if (ch === 'E') enemies.push({ x: px + 1, y: py + 4, w: 14, h: 12, vx: -40, vy: 0, onGround: false, alive: true, squish: 0, kind: enemies.length % HERBS.length });
         if (ch === 'P') start = { x: px + 2, y: py + T - 22 };
         if (ch === 'C') checkpoints.push({ x: px, y: py - T, w: T, h: 2 * T, on: false });
         if (ch === 'G') goal = { x: px, y: py - 3 * T, w: T, h: 4 * T };
@@ -372,7 +381,7 @@
     }
     return {
       name: LEVELS[idx].name, w, h, tiles, coins, enemies, checkpoints, goal, start,
-      respawn: { ...start }, totalCoins: coins.length,
+      respawn: { ...start }, totalCoins: coins.length, items: [], bumps: [],
     };
   }
 
@@ -382,7 +391,7 @@
     if (ty < 0 || ty >= world.h) return '.';
     return world.tiles[ty][tx];
   }
-  const solidAt = (px, py) => tileAt(px, py) === '#';
+  const solidAt = (px, py) => SOLID.includes(tileAt(px, py));
   const overlap = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
 
   function moveAndCollide(e, dt) {
@@ -404,6 +413,7 @@
       }
     } else if (e.vy < 0) {
       if (solidAt(e.x + 1, e.y) || solidAt(e.x + e.w - 1, e.y)) {
+        e.headHit = { x: e.x, y: e.y };
         e.y = Math.floor(e.y / T) * T + T; e.vy = 0;
       }
     }
@@ -416,25 +426,25 @@
     for (let ty = y0; ty <= y1; ty++) {
       for (let tx = x0; tx <= x1; tx++) {
         const t = world.tiles[ty] && world.tiles[ty][tx];
-        if (t === '^' && overlap(e, { x: tx * T + 3, y: ty * T + 7, w: 10, h: 9 })) return true;
-        if (t === 'F' && overlap(e, { x: tx * T, y: ty * T + 5, w: T, h: 11 })) return true;
+        if (t === '^' && overlap(e, { x: tx * T + 3, y: ty * T + 7, w: 10, h: 9 })) return '^';
+        if (t === 'F' && overlap(e, { x: tx * T, y: ty * T + 5, w: T, h: 11 })) return 'F';
       }
     }
-    return false;
+    return null;
   }
 
   // ================= Giocatore =================
   const player = {
     x: 0, y: 0, w: 12, h: 22, vx: 0, vy: 0,
     onGround: false, facing: 1, coyote: 0, jumpBuffer: 0,
-    dashTime: 0, dashCool: 0, invuln: 0, anim: 0, blink: 2,
+    dashTime: 0, dashCool: 0, invuln: 0, anim: 0, blink: 2, van: 0, magnet: 0,
   };
   let lives = START_LIVES, score = 0, levelStartScore = 0;
 
   function placePlayer() {
     Object.assign(player, {
       x: world.respawn.x, y: world.respawn.y, vx: 0, vy: 0, onGround: false,
-      facing: 1, coyote: 0, jumpBuffer: 0, dashTime: 0, dashCool: 0, invuln: 1.2,
+      facing: 1, coyote: 0, jumpBuffer: 0, dashTime: 0, dashCool: 0, invuln: 1.2, van: 0, magnet: 0,
     });
     cam.x = clampCam(player.x - VW * 0.35);
   }
@@ -604,6 +614,33 @@
     burst(player.x + player.w / 2, player.y + player.h - 4, '#cfe0ff', 6, 60);
   }
 
+  // Scatola colpita da sotto: esce la sorpresa
+  function hitBox(tx, ty) {
+    const type = world.tiles[ty][tx];
+    world.tiles[ty][tx] = 'U';
+    world.bumps.push({ tx, ty, t: 0.15 });
+    world.items.push({ type, x: tx * T, y: ty * T, w: T, h: T, targetY: (ty - 1) * T, rising: true, taken: false });
+    SFX.box();
+    burst(tx * T + 8, ty * T, '#fff6c8', 6, 60);
+  }
+
+  function collectItem(it) {
+    it.taken = true;
+    score += 50;
+    const p = player;
+    if (it.type === 'L') {
+      lives++; SFX.life();
+      popup(it.x + 8, it.y - 4, 'PATATINE ZWEIFEL! +1 VITA');
+    } else if (it.type === 'V') {
+      p.van = VAN_TIME; SFX.power();
+      popup(it.x + 8, it.y - 4, 'FURGONE AROMAT! INVINCIBILE');
+    } else {
+      p.magnet = MAGNET_TIME; SFX.power();
+      popup(it.x + 8, it.y - 4, 'CALAMITA! ATTIRA I GRANELLI');
+    }
+    burst(it.x + 8, it.y + 8, '#f0d04f', 14, 110);
+  }
+
   function update(dt) {
     stateTime += dt;
     for (const p of particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 500 * dt; p.life -= dt; }
@@ -628,6 +665,10 @@
     p.dashTime = Math.max(0, p.dashTime - dt);
     p.dashCool = Math.max(0, p.dashCool - dt);
     p.invuln = Math.max(0, p.invuln - dt);
+    p.van = Math.max(0, p.van - dt);
+    p.magnet = Math.max(0, p.magnet - dt);
+    for (const b of world.bumps) b.t -= dt;
+    world.bumps = world.bumps.filter(b => b.t > 0);
     p.blink -= dt; if (p.blink < -0.12) p.blink = 2 + Math.random() * 2;
 
     // Movimento orizzontale
@@ -649,7 +690,7 @@
     // Salto (più a lungo tieni premuto, più in alto vai)
     if (p.onGround) p.coyote = COYOTE;
     if (p.jumpBuffer > 0 && p.coyote > 0) {
-      p.vy = -JUMP; p.jumpBuffer = 0; p.coyote = 0; p.onGround = false;
+      p.vy = p.van > 0 ? -JUMP_VAN : -JUMP; p.jumpBuffer = 0; p.coyote = 0; p.onGround = false;
       SFX.jump();
     }
     const gravity = (p.vy < 0 && !input.jumpHeld) ? GRAV * 2.4 : GRAV;
@@ -657,11 +698,36 @@
 
     const wasGround = p.onGround;
     const prevBottom = p.y + p.h;
+    p.headHit = null;
     moveAndCollide(p, dt);
+    if (p.headHit) {
+      const ty = Math.floor(p.headHit.y / T);
+      const cands = [p.headHit.x + p.w / 2, p.headHit.x + 1, p.headHit.x + p.w - 1].map(x => Math.floor(x / T));
+      const tx = cands.find(c => world.tiles[ty] && BOXES.includes(world.tiles[ty][c]));
+      if (tx !== undefined) hitBox(tx, ty);
+    }
     if (!wasGround && p.onGround) burst(p.x + p.w / 2, p.y + p.h, '#9fd88a', 4, 40);
     p.anim += Math.abs(p.vx) * dt;
 
-    if (touchingHazard(p) || p.y > VH + 20) return loseLife();
+    const hz = touchingHazard(p);
+    if (hz === 'F' || (hz === '^' && p.van <= 0) || p.y > VH + 20) return loseLife();
+
+    // Sorprese uscite dalle scatole
+    for (const it of world.items) {
+      if (it.taken) continue;
+      if (it.rising) { it.y = Math.max(it.targetY, it.y - 60 * dt); if (it.y === it.targetY) it.rising = false; }
+      else if (overlap(p, it)) collectItem(it);
+    }
+
+    // Calamita: i granelli vicini volano verso il giocatore
+    if (p.magnet > 0) {
+      const cx = p.x + p.w / 2, cy = p.y + p.h / 2;
+      for (const c of world.coins) {
+        if (c.taken) continue;
+        const dx = cx - (c.x + 4), dy = cy - (c.y + 4), d = Math.hypot(dx, dy);
+        if (d < MAGNET_RANGE && d > 0) { c.x += dx / d * 260 * dt; c.y += dy / d * 260 * dt; }
+      }
+    }
 
     // Granelli
     for (const c of world.coins) {
@@ -693,7 +759,7 @@
 
       if (overlap(p, e)) {
         const stomp = p.vy > 0 && prevBottom <= e.y + 6;
-        if (stomp || p.dashTime > 0) {
+        if (stomp || p.dashTime > 0 || p.van > 0) {
           e.alive = false; e.squish = 0.35;
           score += 25; popup(e.x + 7, e.y, '+25');
           burst(e.x + 7, e.y + 6, '#e0b352', 10, 100);
@@ -808,6 +874,9 @@
             g.fillStyle = C.yellow; g.fillRect(x, y + 5, T, 1);
             g.fillStyle = '#7ad66f'; g.fillRect(x + (h % 12), y, 2, 1);
           }
+        } else if (BOXES.includes(t) || t === 'U') {
+          const bump = world.bumps.find(b => b.tx === tx && b.ty === ty);
+          drawBox(x, y - (bump ? Math.round(Math.sin(bump.t / 0.15 * Math.PI) * 4) : 0), t !== 'U', time);
         } else if (t === '^') {
           g.fillStyle = '#dfe8ff';
           for (let i = 0; i < 2; i++) {
@@ -830,14 +899,15 @@
   function drawFlag(x, y, height, on, big) {
     g.fillStyle = '#c9d4ff'; g.fillRect(x + 6, y, 2, height);
     g.fillStyle = C.yellow; g.fillRect(x + 5, y - 2, 4, 3);
-    const fw = big ? 22 : 12, fh = big ? 16 : 9;
-    g.fillStyle = on ? '#ff3b4d' : '#5a6488';
-    g.fillRect(x + 8, y + 2, fw, fh);
+    // bandiera svizzera: quadrata, croce bianca al centro
+    const f = big ? 18 : 10, fx = x + 8, fy = y + 2;
+    g.fillStyle = on ? '#ff0000' : '#5a6488';
+    g.fillRect(fx, fy, f, f);
     if (on) {
+      const len = big ? 10 : 6, th = big ? 4 : 2;
       g.fillStyle = '#fff';
-      const cx = x + 8 + fw / 2, cy = y + 2 + fh / 2, a = big ? 3 : 2, b = big ? 9 : 5;
-      g.fillRect(cx - a / 2, cy - b / 2, a, b);
-      g.fillRect(cx - b / 2, cy - a / 2, b, a);
+      g.fillRect(fx + (f - th) / 2, fy + (f - len) / 2, th, len);
+      g.fillRect(fx + (f - len) / 2, fy + (f - th) / 2, len, th);
     }
   }
 
@@ -870,6 +940,120 @@
     g.restore();
   }
 
+  // Scatola sorpresa "?" (o vuota dopo il colpo)
+  function drawBox(x, y, full, time) {
+    if (!full) {
+      g.fillStyle = '#7a5a3a'; g.fillRect(x, y, T, T);
+      g.fillStyle = '#5c4129'; g.fillRect(x + 1, y + 1, T - 2, T - 2);
+      g.fillStyle = '#7a5a3a';
+      for (const [a, b] of [[2, 2], [12, 2], [2, 12], [12, 12]]) g.fillRect(x + a, y + b, 2, 2);
+      return;
+    }
+    const glow = Math.floor(time * 3) % 2;
+    g.fillStyle = '#b5232a'; g.fillRect(x, y, T, T);
+    g.fillStyle = glow ? '#ffd84a' : C.yellow; g.fillRect(x + 1, y + 1, T - 2, T - 2);
+    g.fillStyle = '#c99a1a'; g.fillRect(x + 1, y + T - 3, T - 2, 2);
+    g.fillStyle = '#b5232a';
+    for (const [a, b] of [[2, 2], [12, 2], [2, 12], [12, 12]]) g.fillRect(x + a, y + b, 1, 1);
+    // punto di domanda
+    g.fillStyle = C.red;
+    g.fillRect(x + 5, y + 3, 6, 2); g.fillRect(x + 10, y + 4, 2, 3); g.fillRect(x + 7, y + 7, 4, 2);
+    g.fillRect(x + 7, y + 9, 2, 1); g.fillRect(x + 7, y + 11, 2, 2);
+    g.fillRect(x + 4, y + 4, 2, 2);
+  }
+
+  // Sorprese
+  function drawItem(type, x, y) {
+    if (type === 'L') {
+      // sacchetto di patatine Zweifel Aromat
+      g.fillStyle = C.yellow; g.fillRect(x + 2, y + 2, 12, 13);
+      g.fillStyle = '#d9b632';
+      for (let i = 0; i < 6; i++) { g.fillRect(x + 2 + i * 2, y + 1, 1, 2); g.fillRect(x + 3 + i * 2, y + 14, 1, 2); }
+      g.fillStyle = C.green; g.fillRect(x + 2, y + 9, 12, 3);
+      g.fillStyle = C.red; g.fillRect(x + 4, y + 4, 8, 4);
+      g.fillStyle = '#fff'; g.fillRect(x + 6, y + 5, 4, 1); g.fillRect(x + 8, y + 6, 1, 1); g.fillRect(x + 6, y + 7, 4, 1);
+      g.fillStyle = '#e8c26a'; g.fillRect(x + 5, y + 12, 3, 2); g.fillRect(x + 9, y + 12, 2, 2);
+      g.fillStyle = 'rgba(255,255,255,.35)'; g.fillRect(x + 3, y + 3, 1, 10);
+    } else if (type === 'V') {
+      // furgone Aromat
+      g.fillStyle = C.yellow; g.fillRect(x, y + 4, 16, 9);
+      g.fillStyle = C.yellow; g.fillRect(x, y + 3, 11, 1);
+      g.fillStyle = '#9bd1ff'; g.fillRect(x + 12, y + 5, 3, 3);
+      g.fillStyle = C.green; g.fillRect(x, y + 9, 16, 2);
+      g.fillStyle = C.red; g.fillRect(x + 2, y + 5, 8, 3);
+      g.fillStyle = '#fff'; g.fillRect(x + 3, y + 6, 6, 1);
+      g.fillStyle = C.ink; g.fillRect(x + 2, y + 12, 4, 4); g.fillRect(x + 10, y + 12, 4, 4);
+      g.fillStyle = '#9aa3b8'; g.fillRect(x + 3, y + 13, 2, 2); g.fillRect(x + 11, y + 13, 2, 2);
+      g.fillStyle = '#ffe9a0'; g.fillRect(x + 15, y + 10, 1, 2);
+    } else {
+      // calamita
+      g.fillStyle = '#e3343b';
+      g.fillRect(x + 3, y + 3, 4, 9); g.fillRect(x + 9, y + 3, 4, 9); g.fillRect(x + 4, y + 11, 8, 3);
+      g.fillStyle = '#b5232a'; g.fillRect(x + 5, y + 12, 6, 2);
+      g.fillStyle = '#dfe8ff'; g.fillRect(x + 3, y + 2, 4, 3); g.fillRect(x + 9, y + 2, 4, 3);
+      g.fillStyle = 'rgba(255,255,255,.4)'; g.fillRect(x + 4, y + 6, 1, 4);
+    }
+  }
+
+  // Nemici: erbe aromatiche fresche
+  function herbFace(x, y, e, eyeY) {
+    const look = e.vx > 0 ? 1 : 0;
+    g.fillStyle = '#fff';
+    g.fillRect(x + 3 + look, eyeY, 3, 3); g.fillRect(x + 8 + look, eyeY, 3, 3);
+    g.fillStyle = C.ink;
+    g.fillRect(x + 4 + look * 1, eyeY + 1, 2, 2); g.fillRect(x + 9 + look * 1, eyeY + 1, 2, 2);
+    g.fillRect(x + 3 + look, eyeY - 1, 3, 1); g.fillRect(x + 8 + look, eyeY - 1, 3, 1); // sopracciglia arrabbiate
+  }
+  function herbFeet(x, y, e, time) {
+    const f = Math.floor(time * 8 + e.x) % 2;
+    g.fillStyle = '#5a3d22';
+    g.fillRect(x + 6, y + 9, 2, 2);
+    g.fillRect(x + 2 + f, y + e.h - 1, 3, 1); g.fillRect(x + e.w - 5 - f, y + e.h - 1, 3, 1);
+  }
+  const HERBS = [
+    { name: 'rosmarino', color: '#4f9e5a', draw(x, y, e, time) {
+        g.fillStyle = '#8a6440'; g.fillRect(x + 6, y - 4, 2, 15);
+        g.fillStyle = '#4f9e5a';
+        for (let i = 0; i < 7; i++) {
+          const yy = y - 4 + i * 2;
+          g.fillRect(x + 2 + (i % 2), yy, 4, 1); g.fillRect(x + 8 - (i % 2), yy, 4, 1);
+        }
+        g.fillStyle = '#62b56c'; g.fillRect(x + 3, y + 1, 8, 6);
+        g.fillStyle = '#c9b6f0'; g.fillRect(x + 6, y - 6, 2, 2); g.fillRect(x + 3, y - 3, 1, 1);
+        herbFace(x, y, e, y + 2); herbFeet(x, y, e, time);
+      } },
+    { name: 'basilico', color: '#3fa34d', draw(x, y, e, time) {
+        g.fillStyle = '#3fa34d';
+        g.beginPath(); g.ellipse(x + 4, y + 4, 5, 6, -0.5, 0, Math.PI * 2); g.fill();
+        g.beginPath(); g.ellipse(x + 10, y + 4, 5, 6, 0.5, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#58c065';
+        g.beginPath(); g.ellipse(x + 7, y - 1, 3, 4, 0, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#7fd36b'; g.fillRect(x + 7, y - 3, 1, 4);
+        herbFace(x, y, e, y + 3); herbFeet(x, y, e, time);
+      } },
+    { name: 'prezzemolo', color: '#5cc24a', draw(x, y, e, time) {
+        g.fillStyle = '#3d9a35';
+        g.fillRect(x + 4, y + 6, 1, 4); g.fillRect(x + 9, y + 6, 1, 4);
+        g.fillStyle = '#5cc24a';
+        for (const [a, b, rr] of [[3, 2, 3.5], [7, 0, 4], [11, 2, 3.5], [5, 5, 3.5], [9, 5, 3.5]]) {
+          g.beginPath(); g.arc(x + a, y + b, rr, 0, Math.PI * 2); g.fill();
+        }
+        g.fillStyle = '#86dc6f';
+        g.fillRect(x + 6, y - 2, 2, 1); g.fillRect(x + 2, y + 1, 1, 1); g.fillRect(x + 11, y + 1, 1, 1);
+        herbFace(x, y, e, y + 3); herbFeet(x, y, e, time);
+      } },
+    { name: 'salvia', color: '#8fae86', draw(x, y, e, time) {
+        g.fillStyle = '#7a9a72';
+        g.beginPath(); g.ellipse(x + 3, y + 2, 3, 6, -0.35, 0, Math.PI * 2); g.fill();
+        g.beginPath(); g.ellipse(x + 11, y + 2, 3, 6, 0.35, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#8fae86';
+        g.beginPath(); g.ellipse(x + 7, y + 3, 5, 7, 0, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#b9cfb2';
+        for (const [a, b] of [[5, 0], [9, 1], [6, 7], [10, 6], [2, 3], [12, 3]]) g.fillRect(x + a, y + b, 1, 1);
+        herbFace(x, y, e, y + 3); herbFeet(x, y, e, time);
+      } },
+  ];
+
   function drawWorld(time) {
     drawBackground(time);
     const ox = -Math.round(cam.x);
@@ -891,22 +1075,19 @@
       g.fillStyle = '#fff'; g.fillRect(x + 2, y + 1, 2, 2);
     }
 
+    for (const it of world.items) {
+      if (it.taken) continue;
+      const bob = it.rising ? 0 : Math.round(Math.sin(time * 4) * 1.5);
+      drawItem(it.type, Math.round(it.x) + ox, Math.round(it.y) + bob);
+    }
+
     for (const e of world.enemies) {
       const x = Math.round(e.x) + ox, y = Math.round(e.y);
       if (!e.alive) {
-        if (e.squish > 0) { g.fillStyle = '#c58a2a'; g.fillRect(x, y + e.h - 4, e.w, 4); }
+        if (e.squish > 0) { g.fillStyle = HERBS[e.kind].color; g.fillRect(x, y + e.h - 3, e.w, 3); }
         continue;
       }
-      // crostino arrabbiato
-      g.fillStyle = '#c58a2a'; g.fillRect(x, y + 1, e.w, e.h - 1); g.fillRect(x + 1, y, e.w - 2, 1);
-      g.fillStyle = '#e0b352'; g.fillRect(x + 2, y + 2, e.w - 4, e.h - 5);
-      g.fillStyle = '#8a5a1a'; g.fillRect(x + 3, y + 3, 1, 1); g.fillRect(x + 9, y + 4, 1, 1);
-      const look = e.vx > 0 ? 1 : 0;
-      g.fillStyle = C.ink;
-      g.fillRect(x + 3 + look, y + 5, 2, 2); g.fillRect(x + 8 + look, y + 5, 2, 2);
-      g.fillRect(x + 2 + look, y + 4, 3, 1); g.fillRect(x + 8 + look, y + 4, 3, 1);
-      const f = Math.floor(time * 8 + e.x) % 2;
-      g.fillRect(x + 1 + f, y + e.h - 1, 3, 1); g.fillRect(x + e.w - 4 - f, y + e.h - 1, 3, 1);
+      HERBS[e.kind].draw(x, y, e, time);
     }
 
     for (const p of particles) {
@@ -925,6 +1106,11 @@
           g.fillRect(Math.round(p.x) + ox - p.facing * 10, Math.round(p.y) + 6, p.w, p.h - 8);
         }
         drawHero(Math.round(p.x) + ox, Math.round(p.y), p, false);
+        if (p.van > 0 && (p.van > 1.5 || Math.floor(time * 10) % 2 === 0)) {
+          // effetto invincibile (arcobaleno)
+          g.fillStyle = `hsla(${(time * 720) % 360},100%,60%,.45)`;
+          g.fillRect(Math.round(p.x) + ox - 1, Math.round(p.y) - 1, p.w + 2, p.h + 2);
+        }
       }
     }
   }
@@ -958,12 +1144,20 @@
     const blinkOn = Math.floor(time * 2) % 2 === 0;
 
     if (state !== 'title') {
-      text('♥'.repeat(Math.max(0, lives)) + '♡'.repeat(Math.max(0, START_LIVES - lives)), 10, 14, 11, '#ff5a6a', 'left');
+      text(lives > 5 ? `♥ x${lives}` : '♥'.repeat(Math.max(0, lives)) + '♡'.repeat(Math.max(0, START_LIVES - lives)), 10, 14, 11, '#ff5a6a', 'left');
       text(`GRANELLI ${score}`, VW / 2, 14, 9, '#fff6c8');
       text(`${levelIndex + 1}/${LEVELS.length} ${world.name.toUpperCase()}`, VW - 10, 14, 7, '#cfe0ff', 'right');
       if (state === 'play' && player.dashCool > 0) {
         ctx.fillStyle = 'rgba(207,224,255,.6)';
         ctx.fillRect(10 * S, 24 * S, 30 * (1 - player.dashCool / DASH_COOLDOWN) * S, 2 * S);
+      }
+      let py = 34;
+      for (const [t, max, label, col] of [[player.van, VAN_TIME, 'FURGONE', '#f0d04f'], [player.magnet, MAGNET_TIME, 'CALAMITA', '#ff5a6a']]) {
+        if (t <= 0 || state !== 'play') continue;
+        text(label, 10, py, 6, col, 'left');
+        ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(52 * S, (py - 2) * S, 40 * S, 4 * S);
+        ctx.fillStyle = col; ctx.fillRect(52 * S, (py - 2) * S, 40 * (t / max) * S, 4 * S);
+        py += 11;
       }
       if (state === 'play' && stateTime < 2.2) {
         ctx.globalAlpha = Math.min(1, (2.2 - stateTime) * 2);
@@ -979,8 +1173,9 @@
       text('WORLD', VW / 2, 104, 26, '#ff5a6a');
       text('Raccogli i granelli, evita la fondue', VW / 2, 140, 8);
       text('e arriva alla bandiera svizzera!', VW / 2, 153, 8);
-      if (blinkOn) text(tapHint + ' per iniziare', VW / 2, 190, 9, '#fff6c8');
-      if (best > 0) text(`RECORD ${best}`, VW / 2, 222, 8, '#9bc2ff');
+      text('Colpisci da sotto le scatole ? per le sorprese', VW / 2, 166, 7, '#9fd88a');
+      if (blinkOn) text(tapHint + ' per iniziare', VW / 2, 196, 9, '#fff6c8');
+      if (best > 0) text(`RECORD ${best}`, VW / 2, 226, 8, '#9bc2ff');
     } else if (state === 'pause') {
       panel(90);
       text('PAUSA', VW / 2, 120, 18, C.yellow);
