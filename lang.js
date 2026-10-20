@@ -63,6 +63,12 @@
     },
 
     de: {
+      // Parti comuni (striscia, adesivo, piè di pagina)
+      'ui.marquee': 'ZUFALLSRABATTE ✦ 100% INOFFIZIELL ✦ STAY STRONG ✦ STAY AROMAT ✦ ',
+      'ui.fan': 'Inoffizielle Fan-Seite ♥',
+      'ui.footer': 'Satirische Fan-Seite, aus Liebe zu Aromat gemacht. <b>Inoffiziell</b> und nicht mit Knorr oder Unilever verbunden. Die gezeigten Produkte sind erfunden.',
+      'ui.footerShort': 'Satirische, inoffizielle Fan-Seite · nicht mit Knorr/Unilever verbunden',
+
       // Home
       'idx.doctitle': 'Aromat Überall*',
       'idx.title': 'Aromat Überall*',
@@ -205,6 +211,12 @@
     },
 
     fr: {
+      // Parti comuni (striscia, adesivo, piè di pagina)
+      'ui.marquee': 'PROMOS AU HASARD ✦ 100% NON OFFICIEL ✦ STAY STRONG ✦ STAY AROMAT ✦ ',
+      'ui.fan': 'Site de fans non officiel ♥',
+      'ui.footer': 'Site satirique fait par des fans, par amour de l’Aromat. <b>Non officiel</b> et sans lien avec Knorr ou Unilever. Les produits présentés sont inventés.',
+      'ui.footerShort': 'Site de fans satirique non officiel · sans lien avec Knorr/Unilever',
+
       // Home
       'idx.doctitle': 'Aromat Partout*',
       'idx.title': 'Aromat Partout*',
@@ -346,6 +358,12 @@
       'aw.lv4': 'Château du Sel'
     },
     rm: {
+      // Parti comuni (striscia, adesivo, piè di pagina)
+      'ui.marquee': 'RABATS CASUALS ✦ 100% BETG UFFIZIAL ✦ STAY STRONG ✦ STAY AROMAT ✦ ',
+      'ui.fan': 'Pagina da fans betg uffiziala ♥',
+      'ui.footer': 'Pagina satirica fatga da fans, per amur da l’Aromat. <b>Betg uffiziala</b> e betg colliada cun Knorr u Unilever. Ils products mussads èn inventads.',
+      'ui.footerShort': 'Pagina da fans satirica betg uffiziala · betg colliada cun Knorr/Unilever',
+
       // Home
       'idx.doctitle': 'Aromat Dapertut*',
       'idx.title': 'Aromat Dapertut*',

@@ -3,7 +3,30 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+  <meta name="description" content="Il platform di Aromat Ovunque*: raccogli i granelli, evita la fondue e arriva alla bandiera svizzera. Fan site satirico e non ufficiale." />
   <meta name="theme-color" content="#070b18" />
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-world-192.png" />
+  <link rel="manifest" href="aromat-world.webmanifest" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Aromat World" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Aromat Ovunque*" />
+  <meta property="og:title" content="Aromat World – Aromat Ovunque*" />
+  <meta property="og:description" content="Il platform di Aromat Ovunque*: raccogli i granelli, evita la fondue e arriva alla bandiera svizzera. Fan site satirico e non ufficiale." />
+  <meta property="og:url" content="https://aromatovunque.info/Giochino.html" />
+  <meta property="og:image" content="https://aromatovunque.info/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="it_CH" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" />
+  <link rel="stylesheet" href="site.css" />
   <title>Aromat World</title>
   <style>
     :root { color-scheme: dark; }
@@ -143,6 +166,9 @@
       padding: 8px 12px 14px;
     }
     .keys b { color: #f0d04f; font-weight: 700; }
+    .mini-foot { text-align: center; font-size: 10px; opacity: .45; padding: 0 12px 6px; }
+    body.touch .mini-foot { padding-bottom: 4px; }
+    @media (orientation: landscape) { body.touch .mini-foot { display: none; } }
   </style>
 </head>
 <body>
@@ -171,6 +197,8 @@
   <div class="keys" data-i18n-html="aw.keys">
     <b>← →</b> / <b>A D</b> muovi · <b>Spazio</b> / <b>↑</b> salta (2× doppio salto) · <b>Shift</b> / <b>X</b> dash · <b>P</b> pausa · <b>M</b> audio
   </div>
+
+  <div class="mini-foot" data-i18n="ui.footerShort">Fan site satirico non ufficiale · non affiliato a Knorr/Unilever</div>
 
 <script src="lang.js"></script>
 <script>

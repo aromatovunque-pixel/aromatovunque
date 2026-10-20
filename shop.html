@@ -2,7 +2,32 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="Le azioni settimanali più discutibili: prodotti all’Aromat inventati, sconti random dal 20 al 50%. Fan site satirico e non ufficiale." />
+  <meta name="theme-color" content="#ffd400" />
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Aromat Ovunque*" />
+  <meta property="og:title" content="Aromat Ovunque* – Shop" />
+  <meta property="og:description" content="Le azioni settimanali più discutibili: prodotti all’Aromat inventati, sconti random dal 20 al 50%. Fan site satirico e non ufficiale." />
+  <meta property="og:url" content="https://aromatovunque.info/shop.html" />
+  <meta property="og:image" content="https://aromatovunque.info/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="it_CH" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" />
+  <link rel="stylesheet" href="site.css" />
+  <script>
+    // Le card compaiono mentre scorri (solo se il browser lo supporta)
+    if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches)
+      document.documentElement.classList.add('js-reveal');
+  </script>
   <title data-i18n="shop.doctitle">Aromat Ovunque* – Shop</title>
 
   <style>
@@ -459,22 +484,214 @@
     }
 
     .hidden{display:none !important;}
+
+    /* ===== Look 2025: tipografia, adesivi, menu in basso, scheda prodotto ===== */
+    h1, .content h3, .sale, .pill, .catbtn, .toggle, .open, .bottom-nav a{font-family:var(--font-display)}
+    h1{letter-spacing:-1px}
+    .hero-row{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; margin-bottom:6px}
+    .hero-row h1{margin:0}
+
+    /* sconto come adesivo un po' storto */
+    .sale{
+      transform:rotate(var(--rot, 6deg));
+      border:2px solid #fff;
+      border-radius:14px;
+      font-size:17px;
+      padding:7px 11px;
+      box-shadow:0 10px 20px rgba(0,0,0,.18);
+    }
+
+    .card{cursor:pointer}
+    .js-reveal .card{opacity:0; transform:translateY(18px); transition:opacity .5s ease, transform .5s ease, box-shadow .18s ease}
+    .js-reveal .card.in{opacity:1; transform:none}
+    .js-reveal .card.in:hover{transform:translateY(-4px)}
+
+    .marquee-wrap{padding-top:env(safe-area-inset-top); background:var(--a-yellow)}
+
+    /* categorie: pastiglie da scorrere su telefono e tablet */
+    @media (max-width:960px){
+      .wrap{padding-top:8px}
+      aside{
+        position:sticky; top:var(--header-h, 56px); z-index:40;
+        margin:0 -14px; padding:8px 0 8px 14px;
+        border:0; border-radius:0; box-shadow:none;
+        background:rgba(251,251,247,.88);
+        background:color-mix(in srgb, var(--bg) 86%, transparent);
+        backdrop-filter:blur(10px);
+      }
+      .toggle{display:none}
+      .catlist, aside.collapsed .catlist{
+        display:flex; gap:8px; overflow-x:auto; max-height:none; opacity:1;
+        padding:2px 14px 4px 0; scrollbar-width:none;
+      }
+      .catlist::-webkit-scrollbar{display:none}
+      .catbtn{width:auto; flex:0 0 auto; padding:9px 13px; border-radius:999px; gap:8px; white-space:nowrap}
+      .catbtn:hover{transform:none}
+    }
+
+    /* menu in basso, come nelle app */
+    .bottom-nav{display:none}
+    @media (max-width:620px){
+      .header-inner{flex-direction:row; align-items:center; padding:8px 14px}
+      .nav{width:auto; flex-direction:row; align-items:center}
+      .nav .pill{display:none}
+      .brand img{height:34px}
+      .bottom-nav{
+        display:flex; position:fixed; z-index:60;
+        left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom));
+        justify-content:space-around; gap:4px; padding:6px;
+        border-radius:22px;
+        background:rgba(255,255,255,.88);
+        backdrop-filter:blur(14px);
+        border:1px solid var(--line);
+        box-shadow:0 12px 30px rgba(0,0,0,.18);
+      }
+      .bottom-nav a{
+        flex:1; min-width:0;
+        display:flex; flex-direction:column; align-items:center; gap:3px;
+        padding:6px 2px; border-radius:16px;
+        text-decoration:none; color:var(--ink);
+        font-size:11px; font-weight:800; white-space:nowrap;
+      }
+      .bottom-nav a span:last-child{overflow:hidden; text-overflow:ellipsis; max-width:100%}
+      .bottom-nav .ico{font-size:20px; line-height:1}
+      .bottom-nav img{width:20px; height:20px; border-radius:6px}
+      .bottom-nav a.hot{background:linear-gradient(135deg, rgba(255,212,0,.55), rgba(255,212,0,.18))}
+      .site-footer{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+
+      /* griglia a 2 colonne con card compatte */
+      .grid{grid-template-columns:1fr 1fr; gap:10px}
+      .card{min-height:0; border-radius:20px}
+      .stage{height:170px}
+      .stage img{padding:12px 10px 6px}
+      .tag{display:none}
+      .sale{top:8px; right:8px; font-size:14px; padding:5px 8px; border-radius:12px}
+      .content{padding:10px 11px 12px; gap:5px}
+      .content h3{font-size:15px; line-height:1.15}
+      .content p{font-size:12px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+      .rating{padding:7px 8px; gap:4px; margin-top:auto}
+      .stars{gap:2px}
+      .star{width:16px; height:16px; font-size:15px}
+      .meta{font-size:11px}
+      .meta br, .meta [data-votes], .meta [data-i18n="shop.votes"]{display:none}
+      .actions-row{display:none}
+      h1{font-size:30px}
+      .lead{font-size:14px; margin-bottom:12px}
+    }
+
+    /* scheda prodotto */
+    .sheet{
+      border:0; padding:0;
+      width:min(780px, 94vw); max-width:94vw;
+      border-radius:28px;
+      background:#fff; color:var(--ink);
+      box-shadow:0 30px 80px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .sheet::backdrop{background:rgba(0,0,0,.45); backdrop-filter:blur(4px)}
+    .sheet[open]{animation:sheetIn .28s cubic-bezier(.2,.8,.3,1)}
+    .sheet-body{display:grid; grid-template-columns:1.1fr 1fr}
+    .sheet-stage{position:relative; min-height:400px; overflow:hidden; background:#fff}
+    .sheet-stage img{
+      position:absolute; inset:0; width:100%; height:100%; object-fit:contain; padding:26px;
+    }
+    .sheet-body:focus{outline:none}
+    .sheet-close:focus{outline:none}
+    .sheet-close:focus-visible{outline:3px solid var(--yellow); outline-offset:2px}
+    .toggle{color:var(--ink)}
+    .catbtn{color:var(--ink)}
+    .sheet-stage .sale{top:16px; right:16px; font-size:20px}
+    .sheet-stage .tag{top:16px; left:16px; display:inline-block}
+    .sheet-info{padding:30px 26px; display:flex; flex-direction:column; gap:12px; justify-content:center}
+    .sheet-info h2{font-family:var(--font-display); font-size:32px; margin:0; letter-spacing:-.8px; line-height:1.05}
+    .sheet-info p{margin:0; color:var(--muted); font-size:16px; line-height:1.4}
+    .sheet-info .rating{margin-top:8px}
+    .sheet-info .star{width:28px; height:28px; font-size:26px}
+    .sheet-info .meta br, .sheet-info .meta [data-votes], .sheet-info .meta [data-i18n="shop.votes"]{display:initial}
+    .sheet-close{
+      position:absolute; top:12px; right:12px; z-index:4;
+      width:40px; height:40px; border-radius:50%;
+      border:1px solid var(--line); background:rgba(255,255,255,.92); color:var(--ink);
+      font-size:17px; font-weight:900; cursor:pointer;
+    }
+    .sheet-grab{display:none}
+    @keyframes sheetIn{from{transform:scale(.96); opacity:0} to{transform:none; opacity:1}}
+    @keyframes sheetUp{from{transform:translateY(100%)} to{transform:none}}
+    @media (max-width:620px){
+      .sheet{width:100%; max-width:100%; margin:auto 0 0; border-radius:26px 26px 0 0; max-height:92vh; padding-bottom:env(safe-area-inset-bottom)}
+      .sheet[open]{animation:sheetUp .3s cubic-bezier(.2,.8,.3,1)}
+      .sheet-body{grid-template-columns:1fr}
+      .sheet-stage{min-height:0; height:44vh}
+      .sheet-stage .sale{right:62px; top:14px}
+      .sheet-grab{display:block; position:absolute; top:8px; left:0; right:0; margin:auto; z-index:4; width:44px; height:5px; border-radius:3px; background:rgba(0,0,0,.2)}
+      .sheet-info{padding:18px 18px 24px}
+      .sheet-info h2{font-size:26px}
+    }
+    html.sheet-open{overflow:hidden}
+
+    @media (prefers-reduced-motion: reduce){
+      .sheet[open]{animation:none}
+    }
+
+    /* ===== Tema scuro automatico ===== */
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg:#0f1115; --ink:#f3f4f6; --muted:#9aa3b2;
+        --line:rgba(255,255,255,.12); --chip:#1d212a; --card:#171a21;
+      }
+      body{background:
+        radial-gradient(900px 520px at 8% -10%, rgba(255,212,0,.10), transparent 62%),
+        radial-gradient(900px 520px at 92% -10%, rgba(31,163,74,.10), transparent 62%),
+        radial-gradient(900px 520px at 50% 120%, rgba(225,29,46,.08), transparent 62%),
+        var(--bg)}
+      header{background:rgba(15,17,21,.82)}
+      aside{background:rgba(23,26,33,.8)}
+      .card, .sheet{background:var(--card)}
+      .pill, .catbtn, .catbtn .count, .toggle .state, .rating, .open, .sheet-close{background:var(--chip); color:var(--ink)}
+      .pill.game{background:
+        radial-gradient(120px 60px at 20% 50%, rgba(255,212,0,.30), transparent 70%),
+        radial-gradient(120px 60px at 80% 50%, rgba(255,212,0,.18), transparent 70%),
+        var(--chip)}
+      .catbtn.active{background:var(--yellow); color:#000; border-color:var(--yellow)}
+      .catbtn.active .count{background:rgba(0,0,0,.12); color:#000; border-color:transparent}
+      .toggle{background:linear-gradient(90deg, rgba(255,212,0,.22), rgba(31,163,74,.14), rgba(225,29,46,.12)), var(--chip)}
+      .open{border-color:var(--line)}
+      .open:hover{color:#000}
+      html .lang-switch.light{background:var(--chip); color:var(--ink); border-color:var(--line)}
+      .bottom-nav{background:rgba(23,26,33,.88)}
+      .bottom-nav a.hot{background:rgba(255,212,0,.16)}
+      .site-footer{color:rgba(255,255,255,.6); border-top-color:var(--line)}
+      .site-footer b{color:#fff}
+      .sheet-grab{background:rgba(255,255,255,.25)}
+    }
+    @media (prefers-color-scheme: dark) and (max-width:960px){
+      aside{background:rgba(15,17,21,.88); background:color-mix(in srgb, var(--bg) 86%, transparent)}
+    }
   </style>
 </head>
 
 <body>
 
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee"><div class="marquee-track">
+    <span data-i18n="ui.marquee">SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+    <span data-i18n="ui.marquee">SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+    <span data-i18n="ui.marquee">SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+    <span data-i18n="ui.marquee">SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+  </div></div>
+</div>
+
 <header>
   <div class="header-inner">
     <div class="brand">
-      <img src="logo.jpg" alt="Aromat Ovunque">
+      <img src="logo.webp" alt="Aromat Ovunque">
     </div>
 
     <nav class="nav" aria-label="Collegamenti">
       <a class="pill" href="index.html"><span class="ico">🏠</span> <span data-i18n="nav.home">Home</span></a>
 
       <a class="pill" href="https://www.instagram.com/aromatovunque.info?igsh=MXBlZjN0YmI3b3IzdA==" target="_blank" rel="noopener">
-        <img src="insta.jpg" alt="Instagram"> Instagram
+        <img src="insta.webp" alt="Instagram"> Instagram
       </a>
 
       <a class="pill game" href="game.html"><span class="ico">🎰</span> <span data-i18n="nav.game">Game</span></a>
@@ -511,7 +728,10 @@
   </aside>
 
   <main>
-    <h1 data-i18n="shop.h1">Azioni settimanali</h1>
+    <div class="hero-row">
+      <h1 data-i18n="shop.h1">Azioni settimanali</h1>
+      <span class="fan-sticker" data-i18n="ui.fan">Fan site non ufficiale ♥</span>
+    </div>
     <p class="lead" data-i18n="shop.lead">Sconti random 20–50%. Se non ti convince, è normale.</p>
 
     <section class="grid" id="grid">
@@ -520,7 +740,7 @@
       <article class="card" data-cat="bevande" data-id="coca">
         <div class="stage">
           <span class="tag" data-i18n="tag.bevande">BEVANDE</span><span class="sale" data-sale></span>
-          <img src="coca.jpg" data-i18n-alt="p.coca.name" alt="Coca Aromat">
+          <img src="coca.webp" data-i18n-alt="p.coca.name" alt="Coca Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.coca.name">Coca Aromat</h3>
@@ -531,14 +751,14 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="coca.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="coca.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
       <article class="card" data-cat="bevande" data-id="sciroppo">
         <div class="stage">
           <span class="tag" data-i18n="tag.bevande">BEVANDE</span><span class="sale" data-sale></span>
-          <img src="sciroppo.jpg" data-i18n-alt="p.sciroppo.name" alt="Sciroppo Aromat">
+          <img src="sciroppo.webp" data-i18n-alt="p.sciroppo.name" alt="Sciroppo Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.sciroppo.name">Sciroppo Aromat</h3>
@@ -549,14 +769,14 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="sciroppo.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="sciroppo.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
       <article class="card" data-cat="bevande" data-id="milk">
         <div class="stage">
           <span class="tag" data-i18n="tag.bevande">BEVANDE</span><span class="sale" data-sale></span>
-          <img src="milk.png" data-i18n-alt="p.milk.name" alt="Milk Aromat">
+          <img src="milk.webp" data-i18n-alt="p.milk.name" alt="Milk Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.milk.name">Milk Aromat</h3>
@@ -567,7 +787,7 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="milk.png" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="milk.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
@@ -575,7 +795,7 @@
       <article class="card" data-cat="caffe" data-id="caffe">
         <div class="stage">
           <span class="tag" data-i18n="tag.caffe">CAFFÈ</span><span class="sale" data-sale></span>
-          <img src="caffe.jpg" data-i18n-alt="p.caffe.name" alt="Capsule Espresso Aromat">
+          <img src="caffe.webp" data-i18n-alt="p.caffe.name" alt="Capsule Espresso Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.caffe.name">Capsule Espresso</h3>
@@ -586,7 +806,7 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="caffe.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="caffe.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
@@ -594,7 +814,7 @@
       <article class="card" data-cat="dolci" data-id="cioccolato">
         <div class="stage">
           <span class="tag" data-i18n="tag.dolci">DOLCI</span><span class="sale" data-sale></span>
-          <img src="cioccolato.jpg" data-i18n-alt="p.cioccolato.name" alt="Cioccolato fondente Aromat">
+          <img loading="lazy" decoding="async" src="cioccolato.webp" data-i18n-alt="p.cioccolato.name" alt="Cioccolato fondente Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.cioccolato.name">Cioccolato fondente</h3>
@@ -605,14 +825,14 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="cioccolato.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="cioccolato.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
       <article class="card" data-cat="dolci" data-id="gelato">
         <div class="stage">
           <span class="tag" data-i18n="tag.dolci">DOLCI</span><span class="sale" data-sale></span>
-          <img src="gelato.jpg" data-i18n-alt="p.gelato.name" alt="Gelato Aromat Supreme">
+          <img loading="lazy" decoding="async" src="gelato.webp" data-i18n-alt="p.gelato.name" alt="Gelato Aromat Supreme">
         </div>
         <div class="content">
           <h3 data-i18n="p.gelato.name">Gelato Aromat Supreme</h3>
@@ -623,14 +843,14 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="gelato.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="gelato.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
       <article class="card" data-cat="dolci" data-id="aromella">
         <div class="stage">
           <span class="tag" data-i18n="tag.dolci">DOLCI</span><span class="sale" data-sale></span>
-          <img src="aromella.jpg" data-i18n-alt="p.aromella.name" alt="Aromella">
+          <img loading="lazy" decoding="async" src="aromella.webp" data-i18n-alt="p.aromella.name" alt="Aromella">
         </div>
         <div class="content">
           <h3 data-i18n="p.aromella.name">Aromella</h3>
@@ -641,14 +861,14 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="aromella.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="aromella.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
       <article class="card" data-cat="dolci" data-id="kellogs">
         <div class="stage">
           <span class="tag" data-i18n="tag.dolci">DOLCI</span><span class="sale" data-sale></span>
-          <img src="kellogs.jpg" data-i18n-alt="p.kellogs.name" alt="Kellogs Aromat">
+          <img loading="lazy" decoding="async" src="kellogs.webp" data-i18n-alt="p.kellogs.name" alt="Kellogs Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.kellogs.name">Kellogs all’Aromat</h3>
@@ -659,14 +879,14 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="kellogs.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="kellogs.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
       <article class="card" data-cat="dolci" data-id="nesquik">
         <div class="stage">
           <span class="tag" data-i18n="tag.dolci">DOLCI</span><span class="sale" data-sale></span>
-          <img src="nesquik.jpg" data-i18n-alt="p.nesquik.name" alt="Nesquik Aromat">
+          <img loading="lazy" decoding="async" src="nesquik.webp" data-i18n-alt="p.nesquik.name" alt="Nesquik Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.nesquik.name">Nesquik all’Aromat</h3>
@@ -677,7 +897,7 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="nesquik.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="nesquik.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
@@ -685,7 +905,7 @@
       <article class="card" data-cat="cura" data-id="dentifricio">
         <div class="stage">
           <span class="tag" data-i18n="tag.cura">CURA</span><span class="sale" data-sale></span>
-          <img src="dentifricio.jpg" data-i18n-alt="p.dentifricio.name" alt="Dentifricio all'Aromat">
+          <img loading="lazy" decoding="async" src="dentifricio.webp" data-i18n-alt="p.dentifricio.name" alt="Dentifricio all'Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.dentifricio.name">Dentifricio all’Aromat</h3>
@@ -696,14 +916,14 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="dentifricio.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="dentifricio.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
       <article class="card" data-cat="cura" data-id="profumo">
         <div class="stage">
           <span class="tag" data-i18n="tag.cura">CURA</span><span class="sale" data-sale></span>
-          <img src="profumo.jpg" data-i18n-alt="p.profumo.name" alt="Eau de Toilette Aromat">
+          <img loading="lazy" decoding="async" src="profumo.webp" data-i18n-alt="p.profumo.name" alt="Eau de Toilette Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.profumo.name">Eau de Toilette</h3>
@@ -714,14 +934,14 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="profumo.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="profumo.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
       <article class="card" data-cat="cura" data-id="deodorante">
         <div class="stage">
           <span class="tag" data-i18n="tag.cura">CURA</span><span class="sale" data-sale></span>
-          <img src="deodorante.jpg" data-i18n-alt="p.deodorante.name" alt="Deodorante Aromat">
+          <img loading="lazy" decoding="async" src="deodorante.webp" data-i18n-alt="p.deodorante.name" alt="Deodorante Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.deodorante.name">Deodorante Aromat</h3>
@@ -732,7 +952,7 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="deodorante.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="deodorante.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
@@ -740,7 +960,7 @@
       <article class="card" data-cat="casa" data-id="carta">
         <div class="stage">
           <span class="tag" data-i18n="tag.casa">CASA</span><span class="sale" data-sale></span>
-          <img src="carta.jpg" data-i18n-alt="p.carta.name" alt="Carta igienica Aromat">
+          <img loading="lazy" decoding="async" src="carta.webp" data-i18n-alt="p.carta.name" alt="Carta igienica Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.carta.name">Carta igienica Aromat</h3>
@@ -751,7 +971,7 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="carta.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="carta.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
@@ -759,7 +979,7 @@
       <article class="card" data-cat="carne" data-id="luganighetta">
         <div class="stage">
           <span class="tag" data-i18n="tag.carne">CARNE</span><span class="sale" data-sale></span>
-          <img src="luganighetta.jpg" data-i18n-alt="p.luganighetta.name" alt="Luganighetta Aromat">
+          <img loading="lazy" decoding="async" src="luganighetta.webp" data-i18n-alt="p.luganighetta.name" alt="Luganighetta Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.luganighetta.name">Luganighetta Aromat</h3>
@@ -770,7 +990,7 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="luganighetta.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="luganighetta.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
@@ -778,7 +998,7 @@
       <article class="card" data-cat="latticini" data-id="fondue">
         <div class="stage">
           <span class="tag" data-i18n="tag.latticini">LATTICINI</span><span class="sale" data-sale></span>
-          <img src="fondue.png" data-i18n-alt="p.fondue.name" alt="Fondue Aromat">
+          <img loading="lazy" decoding="async" src="fondue.webp" data-i18n-alt="p.fondue.name" alt="Fondue Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.fondue.name">Fondue Aromat</h3>
@@ -789,14 +1009,14 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="fondue.png" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="fondue.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
       <article class="card" data-cat="latticini" data-id="yogurt">
         <div class="stage">
           <span class="tag" data-i18n="tag.latticini">LATTICINI</span><span class="sale" data-sale></span>
-          <img src="yogurt.png" data-i18n-alt="p.yogurt.name" alt="Yogurt Aromat">
+          <img loading="lazy" decoding="async" src="yogurt.webp" data-i18n-alt="p.yogurt.name" alt="Yogurt Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.yogurt.name">Yogurt Aromat</h3>
@@ -807,7 +1027,7 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="yogurt.png" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="yogurt.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
@@ -815,7 +1035,7 @@
       <article class="card" data-cat="animali" data-id="catfood">
         <div class="stage">
           <span class="tag" data-i18n="tag.animali">ANIMALI</span><span class="sale" data-sale></span>
-          <img src="IMG_0525.png" data-i18n-alt="p.catfood.name" alt="Cibo per gatti Aromat">
+          <img loading="lazy" decoding="async" src="IMG_0525.webp" data-i18n-alt="p.catfood.name" alt="Cibo per gatti Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.catfood.name">Cibo per gatti Aromat</h3>
@@ -826,7 +1046,7 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="IMG_0525.png" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="IMG_0525.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
@@ -834,7 +1054,7 @@
       <article class="card" data-cat="salute" data-id="citran">
         <div class="stage">
           <span class="tag" data-i18n="tag.salute">SALUTE</span><span class="sale" data-sale></span>
-          <img src="citran.jpg" data-i18n-alt="p.citran.name" alt="Aromat-Citran Forte">
+          <img loading="lazy" decoding="async" src="citran.webp" data-i18n-alt="p.citran.name" alt="Aromat-Citran Forte">
         </div>
         <div class="content">
           <h3 data-i18n="p.citran.name">Aromat-Citran Forte</h3>
@@ -845,7 +1065,7 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="citran.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="citran.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
@@ -853,7 +1073,7 @@
       <article class="card" data-cat="sanvalentino" data-id="arodor">
         <div class="stage">
           <span class="tag" data-i18n="tag.sanvalentino">SAN VALENTINO</span><span class="sale" data-sale></span>
-          <img src="arodor.jpg" data-i18n-alt="p.arodor.name" alt="Cioccolatini Aromat Arodor">
+          <img loading="lazy" decoding="async" src="arodor.webp" data-i18n-alt="p.arodor.name" alt="Cioccolatini Aromat Arodor">
         </div>
         <div class="content">
           <h3 data-i18n="p.arodor.name">Cioccolatini Arodor</h3>
@@ -864,7 +1084,7 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="arodor.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="arodor.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
@@ -872,7 +1092,7 @@
       <article class="card" data-cat="extra" data-id="sigarette">
         <div class="stage">
           <span class="tag" data-i18n="tag.extra">EXTRA</span><span class="sale" data-sale></span>
-          <img src="sigarette.jpg" data-i18n-alt="p.sigarette.name" alt="Sigarette Aromat">
+          <img loading="lazy" decoding="async" src="sigarette.webp" data-i18n-alt="p.sigarette.name" alt="Sigarette Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.sigarette.name">Sigarette Aromat</h3>
@@ -883,14 +1103,14 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="sigarette.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="sigarette.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
       <article class="card" data-cat="extra" data-id="cicche">
         <div class="stage">
           <span class="tag" data-i18n="tag.extra">EXTRA</span><span class="sale" data-sale></span>
-          <img src="cicche.jpg" data-i18n-alt="p.cicche.name" alt="Cicche Aromat">
+          <img loading="lazy" decoding="async" src="cicche.webp" data-i18n-alt="p.cicche.name" alt="Cicche Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.cicche.name">Cicche all’Aromat</h3>
@@ -901,14 +1121,14 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="cicche.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="cicche.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
       <article class="card" data-cat="extra" data-id="durex">
         <div class="stage">
           <span class="tag" data-i18n="tag.extra">EXTRA</span><span class="sale" data-sale></span>
-          <img src="durex.jpg" data-i18n-alt="p.durex.name" alt="Preservativi Aromat">
+          <img loading="lazy" decoding="async" src="durex.webp" data-i18n-alt="p.durex.name" alt="Preservativi Aromat">
         </div>
         <div class="content">
           <h3 data-i18n="p.durex.name">Preservativi Aromat</h3>
@@ -919,7 +1139,7 @@
             </div>
             <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
           </div>
-          <div class="actions-row"><a class="open" href="durex.jpg" data-i18n="shop.view">Apri</a></div>
+          <div class="actions-row"><a class="open" href="durex.webp" data-i18n="shop.view">Apri</a></div>
         </div>
       </article>
 
@@ -927,23 +1147,66 @@
   </main>
 </div>
 
+<footer class="site-footer">
+  <p data-i18n-html="ui.footer">Sito satirico fatto da fan, per amore dell’Aromat. <b>Non ufficiale</b> e non affiliato a Knorr o Unilever. I prodotti mostrati sono inventati.</p>
+  <div class="foot-links">
+    <a href="https://www.instagram.com/aromatovunque.info?igsh=MXBlZjN0YmI3b3IzdA==" target="_blank" rel="noopener">Instagram</a>
+    <div data-lang-switch="light"></div>
+  </div>
+</footer>
+
+<nav class="bottom-nav" aria-label="Menu">
+  <a href="index.html"><span class="ico">🏠</span><span data-i18n="nav.home">Home</span></a>
+  <a href="https://www.instagram.com/aromatovunque.info?igsh=MXBlZjN0YmI3b3IzdA==" target="_blank" rel="noopener"><img src="insta.webp" alt=""><span>Instagram</span></a>
+  <a class="hot" href="game.html"><span class="ico">🎰</span><span data-i18n="nav.game">Game</span></a>
+  <a class="hot" href="Giochino.html"><span class="ico">🕹️</span><span>Aromat World</span></a>
+</nav>
+
+<dialog class="sheet" id="sheet" aria-labelledby="sheetTitle">
+  <div class="sheet-grab" aria-hidden="true"></div>
+  <button class="sheet-close" type="button" id="sheetClose" aria-label="Chiudi">✕</button>
+  <div class="sheet-body" tabindex="-1" autofocus>
+    <div class="sheet-stage" id="sheetStage">
+      <span class="tag" id="sheetTag"></span><span class="sale" id="sheetSale"></span>
+      <img id="sheetImg" alt="">
+    </div>
+    <div class="sheet-info">
+      <h2 id="sheetTitle"></h2>
+      <p id="sheetDesc"></p>
+      <div class="rating" id="sheetRating">
+        <div class="stars">
+          <span class="star" data-star="1">★</span><span class="star" data-star="2">★</span><span class="star" data-star="3">★</span><span class="star" data-star="4">★</span><span class="star" data-star="5">★</span>
+        </div>
+        <div class="meta"><span data-avg>0.0</span>/5<br><span data-votes>0</span> <span data-i18n="shop.votes">voti</span></div>
+      </div>
+    </div>
+  </div>
+</dialog>
+
 <script src="lang.js"></script>
+<script src="site.js"></script>
 <script>
-  // Toggle categorie
+  const t = (k, it) => (window.i18n ? i18n.t(k) : it);
+  const isPhone = () => window.matchMedia("(max-width: 620px)").matches;
+
+  // Altezza dell'header (serve alla barra delle categorie che resta in alto)
+  const header = document.querySelector("header");
+  function setHeaderH(){ document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px"); }
+  setHeaderH();
+  window.addEventListener("resize", setHeaderH);
+
+  // Toggle categorie (solo su computer: su telefono sono pastiglie da scorrere)
   const sidebar = document.getElementById("sidebar");
   const toggle = document.getElementById("toggleCats");
   const label = document.getElementById("toggleLabel");
 
   function setCollapsed(on){
     sidebar.classList.toggle("collapsed", on);
-    label.textContent = window.i18n ? i18n.t(on ? "shop.open" : "shop.close") : (on ? "Apri" : "Chiudi");
+    label.textContent = t(on ? "shop.open" : "shop.close", on ? "Apri" : "Chiudi");
     toggle.setAttribute("aria-expanded", String(!on));
   }
   toggle.addEventListener("click", () => setCollapsed(!sidebar.classList.contains("collapsed")));
   document.addEventListener("langchange", () => setCollapsed(sidebar.classList.contains("collapsed")));
-
-  // Mobile: parte chiuso
-  if (window.matchMedia("(max-width: 960px)").matches) setCollapsed(true);
 
   // Filtri
   const buttons = Array.from(document.querySelectorAll(".catbtn"));
@@ -953,36 +1216,39 @@
     btn.addEventListener("click", () => {
       buttons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-
       const f = btn.dataset.filter;
       cards.forEach(c => c.classList.toggle("hidden", f !== "all" && c.dataset.cat !== f));
-
-      if (window.matchMedia("(max-width: 960px)").matches) setCollapsed(true);
+      btn.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
     });
   });
 
-  // Sconti random 20–50%
+  // Sconti random 20–50%, come adesivi un po' storti
   function rand(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
-  document.querySelectorAll("[data-sale]").forEach(el => el.textContent = "-" + rand(20, 50) + "%");
+  document.querySelectorAll(".card [data-sale]").forEach(el => {
+    el.textContent = "-" + rand(20, 50) + "%";
+    el.style.setProperty("--rot", (rand(0, 1) ? 1 : -1) * rand(4, 10) + "deg");
+  });
 
   // Conteggi categorie
-  function refreshCounts(){
-    const counts = { all: cards.length };
-    cards.forEach(c => counts[c.dataset.cat] = (counts[c.dataset.cat] || 0) + 1);
-    document.querySelectorAll("[data-count]").forEach(b => {
-      const k = b.getAttribute("data-count");
-      b.textContent = counts[k] || 0;
-    });
-  }
-  refreshCounts();
+  const counts = { all: cards.length };
+  cards.forEach(c => counts[c.dataset.cat] = (counts[c.dataset.cat] || 0) + 1);
+  document.querySelectorAll("[data-count]").forEach(b => b.textContent = counts[b.getAttribute("data-count")] || 0);
 
-  // Rating “per sessione”
+  // Le card compaiono mentre scorri
+  if (document.documentElement.classList.contains("js-reveal")) {
+    const io = new IntersectionObserver(entries => entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+    }), { rootMargin: "0px 0px -8% 0px" });
+    cards.forEach(c => io.observe(c));
+  }
+
+  // ===== Voti “per sessione” (condivisi tra card e scheda prodotto) =====
   function keyFor(id){ return "rating:" + id; }
   function loadRating(id){
     try{ return JSON.parse(sessionStorage.getItem(keyFor(id))) || null; }
     catch(e){ return null; }
   }
-  function saveRating(id, obj){ sessionStorage.setItem(keyFor(id), JSON.stringify(obj)); }
+  function saveRating(id, obj){ try{ sessionStorage.setItem(keyFor(id), JSON.stringify(obj)); }catch(e){} }
   function seededBase(id){
     let h = 0;
     for (let i=0;i<id.length;i++) h = (h*31 + id.charCodeAt(i)) >>> 0;
@@ -991,43 +1257,113 @@
     const baseSum = Math.round((baseAvgTenth/10) * baseVotes);
     return { votes: baseVotes, sum: baseSum, mine: 0 };
   }
-  function paintStars(starsEl, value){
-    starsEl.querySelectorAll(".star").forEach(s => {
-      const n = Number(s.dataset.star);
-      s.classList.toggle("on", n <= value);
-    });
+  const ratings = {};
+  function ratingOf(id){
+    if (!ratings[id]){
+      let data = loadRating(id);
+      if (!data){ data = seededBase(id); saveRating(id, data); }
+      ratings[id] = data;
+    }
+    return ratings[id];
+  }
+  function paintRating(el, id){
+    const data = ratingOf(id);
+    const avg = data.votes ? (data.sum / data.votes) : 0;
+    el.querySelector("[data-avg]").textContent = avg.toFixed(1);
+    el.querySelector("[data-votes]").textContent = data.votes;
+    const value = data.mine || Math.round(avg);
+    el.querySelectorAll(".star").forEach(s => s.classList.toggle("on", Number(s.dataset.star) <= value));
+  }
+  function vote(id, v, star){
+    const data = ratingOf(id);
+    data.votes += 1; data.sum += v; data.mine = v;
+    saveRating(id, data);
+    document.querySelectorAll(`.card[data-id="${id}"] [data-rating]`).forEach(el => paintRating(el, id));
+    if (sheetId === id) paintRating(sheetRating, id);
+    const r = star.getBoundingClientRect();
+    window.aromat.saltBurst(r.left + r.width / 2, r.top + r.height / 2, 10);
+    window.aromat.buzz(12);
+    star.style.transform = "scale(1.25)";
+    setTimeout(() => (star.style.transform = ""), 140);
   }
 
-  document.querySelectorAll("[data-rating]").forEach(r => {
-    const card = r.closest(".card");
-    const id = card.getAttribute("data-id") || "x";
-    let data = loadRating(id);
-    if (!data){ data = seededBase(id); saveRating(id, data); }
+  document.querySelectorAll(".card [data-rating]").forEach(el => {
+    const id = el.closest(".card").getAttribute("data-id") || "x";
+    paintRating(el, id);
+    el.querySelectorAll(".star").forEach(star => star.addEventListener("click", (e) => {
+      e.stopPropagation();
+      vote(id, Number(star.dataset.star), star);
+    }));
+  });
 
-    const starsEl = r.querySelector(".stars");
-    const avgEl = r.querySelector("[data-avg]");
-    const votesEl = r.querySelector("[data-votes]");
+  // ===== Scheda prodotto =====
+  const sheet = document.getElementById("sheet");
+  const sheetRating = document.getElementById("sheetRating");
+  const sheetClose = document.getElementById("sheetClose");
+  let sheetId = null, sheetCard = null;
 
-    function render(){
-      const avg = data.votes ? (data.sum / data.votes) : 0;
-      avgEl.textContent = avg.toFixed(1);
-      votesEl.textContent = data.votes;
-      paintStars(starsEl, data.mine || Math.round(avg));
-    }
-    render();
+  function fillSheet(){
+    if (!sheetCard) return;
+    const img = sheetCard.querySelector(".stage img");
+    document.getElementById("sheetImg").src = img.getAttribute("src");
+    document.getElementById("sheetImg").alt = img.alt;
+    document.getElementById("sheetTitle").textContent = sheetCard.querySelector("h3").textContent;
+    document.getElementById("sheetDesc").textContent = sheetCard.querySelector(".content p").textContent;
+    document.getElementById("sheetTag").textContent = sheetCard.querySelector(".tag").textContent;
+    const sale = document.getElementById("sheetSale");
+    const cardSale = sheetCard.querySelector("[data-sale]");
+    sale.textContent = cardSale.textContent;
+    sale.style.setProperty("--rot", cardSale.style.getPropertyValue("--rot"));
+    sheetClose.setAttribute("aria-label", t("shop.close", "Chiudi"));
+    paintRating(sheetRating, sheetId);
+  }
 
-    starsEl.querySelectorAll(".star").forEach(star => {
-      star.addEventListener("click", () => {
-        const v = Number(star.dataset.star);
-        data.votes += 1;
-        data.sum += v;
-        data.mine = v;
-        saveRating(id, data);
-        render();
-        star.style.transform = "scale(1.18)";
-        setTimeout(() => (star.style.transform = ""), 120);
-      });
+  function openSheet(card){
+    sheetCard = card; sheetId = card.getAttribute("data-id");
+    fillSheet();
+    if (typeof sheet.showModal !== "function") { window.open(card.querySelector(".open").href, "_blank"); return; }
+    sheet.showModal();
+    document.documentElement.classList.add("sheet-open");
+    sheet.querySelector(".sheet-body").scrollTop = 0;
+  }
+  function closeSheet(){ if (sheet.open) sheet.close(); }
+  sheet.addEventListener("close", () => {
+    document.documentElement.classList.remove("sheet-open");
+    sheet.style.transform = "";
+    sheetId = null; sheetCard = null;
+  });
+  sheetClose.addEventListener("click", closeSheet);
+  sheet.addEventListener("click", (e) => { if (e.target === sheet) closeSheet(); }); // clic fuori
+  document.addEventListener("langchange", fillSheet);
+
+  sheetRating.querySelectorAll(".star").forEach(star => star.addEventListener("click", () => {
+    if (sheetId) vote(sheetId, Number(star.dataset.star), star);
+  }));
+
+  cards.forEach(card => {
+    card.addEventListener("click", (e) => {
+      if (e.target.closest(".stars")) return;
+      e.preventDefault();
+      openSheet(card);
     });
+  });
+
+  // Su telefono: trascina in giù la scheda per chiuderla
+  let dragY = null;
+  document.getElementById("sheetStage").addEventListener("pointerdown", (e) => {
+    if (!isPhone()) return;
+    dragY = e.clientY; sheet.style.transition = "none";
+  });
+  window.addEventListener("pointermove", (e) => {
+    if (dragY === null) return;
+    const dy = Math.max(0, e.clientY - dragY);
+    sheet.style.transform = `translateY(${dy}px)`;
+  });
+  window.addEventListener("pointerup", (e) => {
+    if (dragY === null) return;
+    const dy = e.clientY - dragY; dragY = null;
+    sheet.style.transition = "transform .2s ease";
+    if (dy > 90) closeSheet(); else sheet.style.transform = "";
   });
 </script>
 
