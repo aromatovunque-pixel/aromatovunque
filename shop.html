@@ -117,6 +117,7 @@
       box-shadow:0 14px 26px rgba(0,0,0,.10);
     }
     .pill .ico{font-size:16px; line-height:1}
+    .pill.on{background:var(--ink); color:var(--bg); border-color:var(--ink)}
     .nav .lang-switch{align-self:center}
     @media (max-width: 620px){ .nav .lang-switch{align-self:flex-start} }
     .pill img{
@@ -557,6 +558,7 @@
       .bottom-nav .ico{font-size:20px; line-height:1}
       .bottom-nav img{width:20px; height:20px; border-radius:6px}
       .bottom-nav a.hot{background:linear-gradient(135deg, rgba(255,212,0,.55), rgba(255,212,0,.18))}
+      .bottom-nav a.on{box-shadow:inset 0 0 0 2px var(--ink)}
       .site-footer{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
 
       /* griglia a 2 colonne con card compatte */
@@ -690,13 +692,13 @@
     <nav class="nav" aria-label="Collegamenti">
       <a class="pill" href="index.html"><span class="ico">🏠</span> <span data-i18n="nav.home">Home</span></a>
 
+      <a class="pill on" href="shop.html" aria-current="page"><span class="ico">🛒</span> Shop</a>
+
+      <a class="pill game" href="giochi.html"><span class="ico">🎮</span> <span data-i18n="nav.games">Giochi</span></a>
+
       <a class="pill" href="https://www.instagram.com/aromatovunque.info?igsh=MXBlZjN0YmI3b3IzdA==" target="_blank" rel="noopener">
         <img src="insta.webp" alt="Instagram"> Instagram
       </a>
-
-      <a class="pill game" href="game.html"><span class="ico">🎰</span> <span data-i18n="nav.game">Game</span></a>
-
-      <a class="pill game" href="Giochino.html"><span class="ico">🕹️</span> Aromat World</a>
 
       <div data-lang-switch="light"></div>
     </nav>
@@ -1157,9 +1159,9 @@
 
 <nav class="bottom-nav" aria-label="Menu">
   <a href="index.html"><span class="ico">🏠</span><span data-i18n="nav.home">Home</span></a>
+  <a class="on" href="shop.html" aria-current="page"><span class="ico">🛒</span><span>Shop</span></a>
+  <a class="hot" href="giochi.html"><span class="ico">🎮</span><span data-i18n="nav.games">Giochi</span></a>
   <a href="https://www.instagram.com/aromatovunque.info?igsh=MXBlZjN0YmI3b3IzdA==" target="_blank" rel="noopener"><img src="insta.webp" alt=""><span>Instagram</span></a>
-  <a class="hot" href="game.html"><span class="ico">🎰</span><span data-i18n="nav.game">Game</span></a>
-  <a class="hot" href="Giochino.html"><span class="ico">🕹️</span><span>Aromat World</span></a>
 </nav>
 
 <dialog class="sheet" id="sheet" aria-labelledby="sheetTitle">

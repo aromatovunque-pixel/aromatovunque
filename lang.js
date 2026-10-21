@@ -66,7 +66,10 @@
       'aw.bossHintTouch': 'Tieni premuto LANCIA per tirare i granelli',
       'aw.bossHintKeys': 'Tieni premuto F per lanciare i granelli',
       'aw.giant': 'AROMAT GIGANTE! OGNI GRANELLO -20',
-      'aw.bossWin': 'LA PATATA È STATA SALATA!'
+      'aw.bossWin': 'LA PATATA È STATA SALATA!',
+      'aw.end': 'FINE',
+      'aw.thanks': 'Grazie per aver giocato!',
+      'aw.credits': 'Un gioco di Aromat Ovunque* · fatto con ♥ per l’Aromat'
     },
 
     de: {
@@ -222,7 +225,21 @@
       'aw.bossHintKeys': 'Halte F gedrückt, um Körnchen zu werfen',
       'aw.giant': 'RIESEN-AROMAT! JEDES KÖRNCHEN -20',
       'aw.bossWin': 'DIE KARTOFFEL IST GESALZEN!',
-      'aw.throwBtn': 'WIRF'
+      'aw.throwBtn': 'WIRF',
+      'aw.end': 'ENDE',
+      'aw.thanks': 'Danke fürs Spielen!',
+      'aw.credits': 'Ein Spiel von Aromat Überall* · mit ♥ für Aromat gemacht',
+      'aw.again': 'NOCHMAL SPIELEN',
+      'nav.games': 'Spiele',
+      'games.doctitle': 'Spiele – Aromat Überall*',
+      'games.lead': 'Zwei handgemachte Spiele, aus Liebe zu Aromat.',
+      'games.badge': 'EMPFOHLEN',
+      'games.world.desc': 'Jump’n’Run in 5 Levels: Körnchen, ?-Kisten und zum Schluss die Riesenkartoffel.',
+      'games.pizza.name': 'Pizza-Schiessen',
+      'games.pizza.desc': 'Schiess das Aromat auf die Pizza: schnelle Runden von 15 Sekunden bis 1 Minute.',
+      'games.play': 'Spielen',
+      'slot.title': 'PIZZA-SCHIESSEN!',
+      'slot.doctitle': 'Pizza-Schiessen – Aromat Überall*'
     },
 
     fr: {
@@ -378,7 +395,21 @@
       'aw.bossHintKeys': 'Maintiens F pour lancer les grains',
       'aw.giant': 'AROMAT GÉANT ! CHAQUE GRAIN -20',
       'aw.bossWin': 'LA PATATE EST SALÉE !',
-      'aw.throwBtn': 'LANCE'
+      'aw.throwBtn': 'LANCE',
+      'aw.end': 'FIN',
+      'aw.thanks': 'Merci d’avoir joué !',
+      'aw.credits': 'Un jeu d’Aromat Partout* · fait avec ♥ pour l’Aromat',
+      'aw.again': 'REJOUER',
+      'nav.games': 'Jeux',
+      'games.doctitle': 'Jeux – Aromat Partout*',
+      'games.lead': 'Deux jeux faits main, par amour de l’Aromat.',
+      'games.badge': 'RECOMMANDÉ',
+      'games.world.desc': 'Jeu de plateforme en 5 niveaux : grains, boîtes ? et, pour finir, la Patate Géante.',
+      'games.pizza.name': 'Tir à la Pizza',
+      'games.pizza.desc': 'Tire l’Aromat sur la pizza : parties rapides de 15 secondes à 1 minute.',
+      'games.play': 'Jouer',
+      'slot.title': 'TIR À LA PIZZA !',
+      'slot.doctitle': 'Tir à la Pizza – Aromat Partout*'
     },
     rm: {
       // Parti comuni (striscia, adesivo, piè di pagina)
@@ -533,7 +564,21 @@
       'aw.bossHintKeys': 'Tegna smatgà F per bittar grauns',
       'aw.giant': 'AROMAT GIGANTIC! MINTGA GRAUN -20',
       'aw.bossWin': 'LA TRUFFLA È SALADA!',
-      'aw.throwBtn': 'BITTA'
+      'aw.throwBtn': 'BITTA',
+      'aw.end': 'FIN',
+      'aw.thanks': 'Grazia fitg per giugar!',
+      'aw.credits': 'In gieu dad Aromat Dapertut* · fatg cun ♥ per l’Aromat',
+      'aw.again': 'ANC INA GIADA',
+      'nav.games': 'Gieus',
+      'games.doctitle': 'Gieus – Aromat Dapertut*',
+      'games.lead': 'Dus gieus fatgs a maun, per amur da l’Aromat.',
+      'games.badge': 'RECUMANDÀ',
+      'games.world.desc': 'Gieu da plattaforma en 5 nivels: grauns, chaschettas ? e a la fin la Truffla Gigantica.',
+      'games.pizza.name': 'Tir sin la pizza',
+      'games.pizza.desc': 'Sajetta l’Aromat sin la pizza: partidas sveltas da 15 secundas fin 1 minuta.',
+      'games.play': 'Giugar',
+      'slot.title': 'TIR SIN LA PIZZA!',
+      'slot.doctitle': 'Tir sin la pizza – Aromat Dapertut*'
     }
   };
 
