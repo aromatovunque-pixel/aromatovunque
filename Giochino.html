@@ -140,6 +140,10 @@
     .btn.dash { width: min(70px, 18vw); height: min(70px, 18vw); font-size: 12px; margin-bottom: 26px; }
     .btn.jump { width: min(92px, 24vw); height: min(92px, 24vw); font-size: 14px; color: #f0d04f; }
     .actions { gap: min(12px, 2.5vw); }
+    .actions .col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .btn.throw { display: none; width: min(70px, 18vw); height: min(70px, 18vw); font-size: 11px; color: #fff6c8; }
+    body.boss .btn.throw { display: flex; }
+    body.boss .btn.dash { margin-bottom: 0; }
 
     /* Telefono in orizzontale: i controlli stanno ai lati del gioco */
     @media (orientation: landscape) {
@@ -189,13 +193,16 @@
   <div class="controls">
     <div class="pad" id="pad"><div data-dir="-1">←</div><div data-dir="1">→</div></div>
     <div class="actions">
-      <div class="btn dash" id="btnDash">DASH</div>
+      <div class="col">
+        <div class="btn throw" id="btnThrow" data-i18n="aw.throwBtn">LANCIA</div>
+        <div class="btn dash" id="btnDash">DASH</div>
+      </div>
       <div class="btn jump" id="btnJump" data-i18n="aw.jumpBtn">SALTA</div>
     </div>
   </div>
 
   <div class="keys" data-i18n-html="aw.keys">
-    <b>← →</b> / <b>A D</b> muovi · <b>Spazio</b> / <b>↑</b> salta (2× doppio salto) · <b>Shift</b> / <b>X</b> dash · <b>P</b> pausa · <b>M</b> audio
+    <b>← →</b> / <b>A D</b> muovi · <b>Spazio</b> / <b>↑</b> salta (2× doppio salto) · <b>Shift</b> / <b>X</b> dash · <b>P</b> pausa · <b>M</b> audio · <b>F</b> lancia
   </div>
 
   <div class="mini-foot" data-i18n="ui.footerShort">Fan site satirico non ufficiale · non affiliato a Knorr/Unilever</div>
@@ -291,6 +298,25 @@
       "########....##################................######################################....###....######..........................#######################",
       "########FFFF##################FFFFFFFFFFFFFFFF######################################FFFF###FFFF######FFFFFFFFFFFFFFFFFFFFFFFFFF#######################",
     ]},
+    { name: "La Patata Gigante", boss: true, map: [
+      "#............................#",
+      "#............................#",
+      "#............................#",
+      "#............................#",
+      "#............................#",
+      "#............................#",
+      "#............................#",
+      "#............................#",
+      "#............................#",
+      "#....####...####.............#",
+      "#............................#",
+      "#............................#",
+      "#............................#",
+      "#............................#",
+      "#..P....................K....#",
+      "##############################",
+      "##############################",
+    ]},
   ];
 
   // ================= Costanti =================
@@ -309,6 +335,11 @@
   const DOUBLE_JUMP = 360; // secondo salto in aria (doppio tocco)
   const JUMP_VAN = 470, VAN_TIME = 5, MAGNET_TIME = 10, MAGNET_RANGE = 90;
   const SOLID = '#LVMU', BOXES = 'LVM';
+  // Livello finale: duello con la patata gigante
+  const BOSS_HP = 100, PLAYER_HP = 100;
+  const CHIP_DAMAGE = 10, BOSS_TOUCH_DAMAGE = 20, CHIP_GRAV = 500;
+  const GRAIN_DAMAGE = 1, GIANT_GRAIN_DAMAGE = 20, GIANT_SCALE = 3;
+  const THROW_COOLDOWN = 0.22, CHEAT_PRESSES = 10, CHEAT_GAP = 0.6;
 
   // ================= Canvas =================
   const stage = document.getElementById('stage');
@@ -323,7 +354,12 @@
     const cs = getComputedStyle(stage);
     const availW = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 16;
     const availH = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 16;
-    if (availH > availW * 0.9) {
+    const tall = availH > availW * 0.9;
+    if (tall && world && world.boss) {
+      // duello in verticale: arena intera, con più cielo sopra
+      VW = 480;
+      VH = Math.min(WH + 200, Math.max(WH, Math.floor(availH / (availW / VW))));
+    } else if (tall) {
       // telefono in verticale: vista stretta e alta, il mondo resta in basso
       VW = 256;
       let k = availW / VW;
@@ -387,6 +423,9 @@
   const SFX = {
     jump:  () => sfx(320, 0.12, 'square', 380),
     jump2: () => sfx(520, 0.14, 'square', 520),
+    throw: () => sfx(900, 0.05, 'square', -400, 0.04),
+    bossHit: () => sfx(150, 0.08, 'triangle', -70, 0.12),
+    giant: () => [131, 165, 196, 262, 330, 392, 523].forEach((f, i) => setTimeout(() => sfx(f, 0.16, 'sawtooth', 0, 0.06), i * 70)),
     coin:  () => { sfx(988, 0.06); setTimeout(() => sfx(1319, 0.1), 50); },
     stomp: () => sfx(220, 0.12, 'triangle', -150, 0.12),
     dash:  () => sfx(160, 0.15, 'sawtooth', 300, 0.05),
@@ -416,7 +455,7 @@
     const rows = L.map;
     const h = rows.length, w = rows[0].length;
     const tiles = [], coins = [], enemies = [], checkpoints = [];
-    let start = { x: 2 * T, y: 13 * T }, goal = null;
+    let start = { x: 2 * T, y: 13 * T }, goal = null, bossStart = { x: 22 * T, y: 9 * T };
     for (let y = 0; y < h; y++) {
       tiles.push([]);
       for (let x = 0; x < w; x++) {
@@ -428,11 +467,22 @@
         if (ch === 'P') start = { x: px + 2, y: py + T - 22 };
         if (ch === 'C') checkpoints.push({ x: px, y: py - T, w: T, h: 2 * T, on: false });
         if (ch === 'G') goal = { x: px, y: py - 3 * T, w: T, h: 4 * T };
+        if (ch === 'K') bossStart = { x: px - 14, y: py + T - 56 };
       }
     }
     return {
       name: tr('aw.lv' + (idx + 1)), w, h, tiles, coins, enemies, checkpoints, goal, start,
       respawn: { ...start }, totalCoins: coins.length, items: [], bumps: [],
+      boss: L.boss ? makeBoss(bossStart) : null, grains: [], chips: [],
+    };
+  }
+
+  function makeBoss(at) {
+    return {
+      x: at.x, y: at.y, w: 44, h: 56, vx: 0, vy: 0, onGround: false,
+      hp: BOSS_HP, facing: -1, walk: -1, flash: 0, arm: 0,
+      throwT: 1.6, jumpT: 4, volley: 0, jumping: false, dead: false, deadTime: 0,
+      minX: 15 * T, maxX: 28 * T - 44,
     };
   }
 
@@ -445,25 +495,35 @@
   const solidAt = (px, py) => SOLID.includes(tileAt(px, py));
   const overlap = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
 
+  // un lato dell'entità tocca un blocco? (controlli ogni 12 px, così vale anche per le cose grandi)
+  function hitsColumn(x, e) {
+    for (let sy = e.y + 1; sy < e.y + e.h - 1; sy += 12) if (solidAt(x, sy)) return true;
+    return solidAt(x, e.y + e.h - 1);
+  }
+  function hitsRow(y, e) {
+    for (let sx = e.x + 1; sx < e.x + e.w - 1; sx += 12) if (solidAt(sx, y)) return true;
+    return solidAt(e.x + e.w - 1, y);
+  }
+
   function moveAndCollide(e, dt) {
     e.x += e.vx * dt;
     if (e.vx > 0) {
-      if (solidAt(e.x + e.w, e.y + 1) || solidAt(e.x + e.w, e.y + e.h / 2) || solidAt(e.x + e.w, e.y + e.h - 1)) {
+      if (hitsColumn(e.x + e.w, e)) {
         e.x = Math.floor((e.x + e.w) / T) * T - e.w; e.vx = 0; e.hitWall = true;
       }
     } else if (e.vx < 0) {
-      if (solidAt(e.x, e.y + 1) || solidAt(e.x, e.y + e.h / 2) || solidAt(e.x, e.y + e.h - 1)) {
+      if (hitsColumn(e.x, e)) {
         e.x = Math.floor(e.x / T) * T + T; e.vx = 0; e.hitWall = true;
       }
     }
     e.y += e.vy * dt;
     e.onGround = false;
     if (e.vy > 0) {
-      if (solidAt(e.x + 1, e.y + e.h) || solidAt(e.x + e.w - 1, e.y + e.h)) {
+      if (hitsRow(e.y + e.h, e)) {
         e.y = Math.floor((e.y + e.h) / T) * T - e.h; e.vy = 0; e.onGround = true;
       }
     } else if (e.vy < 0) {
-      if (solidAt(e.x + 1, e.y) || solidAt(e.x + e.w - 1, e.y)) {
+      if (hitsRow(e.y, e)) {
         e.headHit = { x: e.x, y: e.y };
         e.y = Math.floor(e.y / T) * T + T; e.vy = 0;
       }
@@ -489,16 +549,18 @@
     x: 0, y: 0, w: 12, h: 22, vx: 0, vy: 0,
     onGround: false, facing: 1, coyote: 0, jumpBuffer: 0,
     dashTime: 0, dashCool: 0, invuln: 0, anim: 0, blink: 2, van: 0, magnet: 0,
-    airJumps: 0, jumpPressed: false,
+    airJumps: 0, jumpPressed: false, hp: PLAYER_HP, giant: false, throwCool: 0,
   };
+  const cheat = { count: 0, last: 0 };
   let lives = START_LIVES, score = 0, levelStartScore = 0;
 
   function placePlayer() {
     Object.assign(player, {
       x: world.respawn.x, y: world.respawn.y, vx: 0, vy: 0, onGround: false,
       facing: 1, coyote: 0, jumpBuffer: 0, dashTime: 0, dashCool: 0, invuln: 1.2, van: 0, magnet: 0,
-      airJumps: 0, jumpPressed: false,
+      airJumps: 0, jumpPressed: false, hp: PLAYER_HP, giant: false, throwCool: 0, w: 12, h: 22,
     });
+    cheat.count = 0;
     cam.x = clampCam(player.x - VW * 0.35);
   }
 
@@ -527,6 +589,8 @@
     world = parseLevel(idx);
     levelStartScore = score;
     particles = []; popups = [];
+    document.body.classList.toggle('boss', !!world.boss);
+    resize();
     placePlayer();
     setState('play');
   }
@@ -575,18 +639,30 @@
   document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'play') togglePause(); });
 
   // ================= Input =================
-  const input = { left: false, right: false, jumpHeld: false, padDir: 0 };
+  const input = { left: false, right: false, jumpHeld: false, throwHeld: false, padDir: 0 };
 
   function pressJump() {
     if (state === 'play') { player.jumpBuffer = JUMP_BUFFER; player.jumpPressed = true; unlockAudio(); }
     else confirm();
   }
   function pressDash() {
-    if (state === 'play') tryDash();
+    if (state !== 'play') return;
+    tryDash();
+    // trucco segreto del duello: DASH 10 volte di fila
+    if (world.boss && !player.giant && !world.boss.dead) {
+      const now = performance.now() / 1000;
+      cheat.count = now - cheat.last < CHEAT_GAP ? cheat.count + 1 : 1;
+      cheat.last = now;
+      if (cheat.count >= CHEAT_PRESSES) becomeGiant();
+    }
+  }
+  function pressThrow() {
+    if (state === 'play' && world.boss) { unlockAudio(); tryThrow(); }
   }
 
   const KEYS_LEFT = ['ArrowLeft', 'KeyA'], KEYS_RIGHT = ['ArrowRight', 'KeyD'];
   const KEYS_JUMP = ['ArrowUp', 'KeyW', 'Space', 'KeyZ'], KEYS_DASH = ['ShiftLeft', 'ShiftRight', 'KeyX', 'KeyK'];
+  const KEYS_THROW = ['KeyF', 'KeyJ', 'KeyC'];
 
   window.addEventListener('keydown', (e) => {
     const k = e.code;
@@ -596,6 +672,7 @@
     else if (KEYS_RIGHT.includes(k)) input.right = true;
     else if (KEYS_JUMP.includes(k)) { input.jumpHeld = true; pressJump(); }
     else if (KEYS_DASH.includes(k)) pressDash();
+    else if (KEYS_THROW.includes(k)) { input.throwHeld = true; pressThrow(); }
     else if (k === 'Enter') confirm();
     else if (k === 'KeyP' || k === 'Escape') togglePause();
     else if (k === 'KeyM') setSound(!soundOn);
@@ -605,8 +682,9 @@
     if (KEYS_LEFT.includes(k)) input.left = false;
     else if (KEYS_RIGHT.includes(k)) input.right = false;
     else if (KEYS_JUMP.includes(k)) input.jumpHeld = false;
+    else if (KEYS_THROW.includes(k)) input.throwHeld = false;
   });
-  window.addEventListener('blur', () => { input.left = input.right = input.jumpHeld = false; input.padDir = 0; });
+  window.addEventListener('blur', () => { input.left = input.right = input.jumpHeld = input.throwHeld = false; input.padDir = 0; });
 
   // Croce direzionale touch: si può far scivolare il dito da ← a →
   const pad = document.getElementById('pad');
@@ -645,6 +723,7 @@
   }
   bindButton(document.getElementById('btnJump'), () => { input.jumpHeld = true; pressJump(); }, () => { input.jumpHeld = false; });
   bindButton(document.getElementById('btnDash'), pressDash);
+  bindButton(document.getElementById('btnThrow'), () => { input.throwHeld = true; pressThrow(); }, () => { input.throwHeld = false; });
 
   // Tocco sullo schermo di gioco = conferma nei menu
   canvas.addEventListener('pointerdown', (e) => { if (state !== 'play') { e.preventDefault(); confirm(); } });
@@ -694,6 +773,141 @@
     burst(it.x + 8, it.y + 8, '#f0d04f', 14, 110);
   }
 
+  // ===== Duello finale con la patata gigante =====
+  function becomeGiant() {
+    const p = player;
+    p.giant = true;
+    const oldW = p.w, oldH = p.h;
+    p.w = Math.round(12 * GIANT_SCALE); p.h = Math.round(22 * GIANT_SCALE);
+    p.y -= p.h - oldH;
+    p.x = Math.max(T, Math.min((world.w - 1) * T - p.w, p.x - (p.w - oldW) / 2));
+    SFX.giant();
+    cam.shake = 0.5;
+    popup(p.x + p.w / 2, p.y - 8, tr('aw.giant'));
+    burst(p.x + p.w / 2, p.y + p.h / 2, '#f0d04f', 30, 160);
+  }
+
+  function tryThrow() {
+    const p = player;
+    if (p.throwCool > 0) return;
+    p.throwCool = THROW_COOLDOWN;
+    const big = p.giant;
+    world.grains.push({
+      x: p.x + p.w / 2 + p.facing * p.w / 2, y: p.y + p.h * 0.35,
+      vx: p.facing * 330 + p.vx * 0.3, vy: -60, r: big ? 4 : 2,
+      dmg: big ? GIANT_GRAIN_DAMAGE : GRAIN_DAMAGE, life: 1.6,
+    });
+    SFX.throw();
+  }
+
+  function throwChip(b, p, t) {
+    const ox = b.facing < 0 ? b.x + 4 : b.x + b.w - 4, oy = b.y + 14;
+    const tx = p.x + p.w / 2 + p.vx * t * 0.5, ty = p.y + p.h / 2;
+    world.chips.push({
+      x: ox, y: oy, vx: (tx - ox) / t, vy: (ty - oy - 0.5 * CHIP_GRAV * t * t) / t,
+      rot: Math.random() * 6, spin: (Math.random() < 0.5 ? -1 : 1) * (8 + Math.random() * 6), life: 3,
+    });
+  }
+
+  function hurtPlayer(dmg, dir) {
+    const p = player;
+    p.hp = Math.max(0, p.hp - dmg);
+    p.invuln = 0.9;
+    p.vx = (dir || -p.facing) * 180; p.vy = -220;
+    SFX.hurt();
+    cam.shake = 0.2;
+    popup(p.x + p.w / 2, p.y - 6, '-' + dmg);
+  }
+
+  function bossDefeated(b) {
+    b.dead = true; b.deadTime = 0; b.hp = 0;
+    world.chips = [];
+    score += 1000;
+    SFX.clear();
+    cam.shake = 0.6;
+    popup(b.x + b.w / 2, b.y - 10, tr('aw.bossWin'));
+    for (let i = 0; i < 4; i++) burst(b.x + b.w / 2, b.y + b.h / 2, ['#f2c94c', '#c9a066', '#fff6c8', '#e3343b'][i], 16, 200);
+  }
+
+  // ritorna true se il duello è finito in questo passo
+  function updateBoss(dt) {
+    const b = world.boss, p = player;
+    if (input.throwHeld) tryThrow();
+
+    // granelli lanciati da Aromat
+    for (const s of world.grains) {
+      s.vy += 120 * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt;
+      if (solidAt(s.x, s.y)) { s.life = 0; burst(s.x, s.y, '#fff6c8', 3, 40); continue; }
+      if (!b.dead && overlap({ x: s.x - s.r, y: s.y - s.r, w: s.r * 2, h: s.r * 2 }, b)) {
+        s.life = 0;
+        b.hp = Math.max(0, b.hp - s.dmg); b.flash = 0.08;
+        score += 10 * s.dmg;
+        popup(s.x, s.y - 6, '-' + s.dmg);
+        burst(s.x, s.y, '#fff6c8', s.dmg > 1 ? 14 : 4, s.dmg > 1 ? 140 : 60);
+        SFX.bossHit();
+        if (b.hp <= 0) bossDefeated(b);
+      }
+    }
+    world.grains = world.grains.filter(s => s.life > 0);
+
+    // patatine lanciate dalla patata
+    for (const c of world.chips) {
+      c.vy += CHIP_GRAV * dt; c.x += c.vx * dt; c.y += c.vy * dt; c.rot += c.spin * dt; c.life -= dt;
+      if (solidAt(c.x, c.y)) { c.life = 0; burst(c.x, c.y, '#f2c94c', 5, 70); continue; }
+      if (p.invuln <= 0 && overlap({ x: c.x - 5, y: c.y - 4, w: 10, h: 8 }, p)) {
+        c.life = 0; hurtPlayer(CHIP_DAMAGE, Math.sign(c.vx));
+      }
+    }
+    world.chips = world.chips.filter(c => c.life > 0);
+
+    if (b.dead) {
+      b.deadTime += dt;
+      if (b.deadTime > 2.6) { saveBest(); setState('win'); return true; }
+      return false;
+    }
+
+    // movimento: passeggia, salta verso Aromat, atterra con un'ondata di patatine
+    const angry = b.hp <= 50;
+    b.flash -= dt; b.arm -= dt; b.jumpT -= dt; b.throwT -= dt;
+    b.facing = p.x + p.w / 2 < b.x + b.w / 2 ? -1 : 1;
+    b.vy = Math.min(MAX_FALL, b.vy + GRAV * dt);
+    if (b.onGround) {
+      if (b.jumpT <= 0) {
+        b.vy = angry ? -480 : -420;
+        b.vx = Math.max(-150, Math.min(150, (p.x - b.x) * 0.6));
+        b.jumpT = (angry ? 2.6 : 3.6) + Math.random() * 1.5;
+        b.jumping = true;
+      } else {
+        if (b.x < b.minX) b.walk = 1;
+        if (b.x > b.maxX) b.walk = -1;
+        b.vx = b.walk * (angry ? 55 : 35);
+      }
+    }
+    const wasAir = !b.onGround;
+    moveAndCollide(b, dt);
+    if (wasAir && b.onGround && b.jumping) {
+      b.jumping = false;
+      cam.shake = 0.3;
+      SFX.stomp();
+      for (const vx of [-150, -80, 80, 150]) {
+        world.chips.push({ x: b.x + b.w / 2, y: b.y + 10, vx, vy: -280, rot: 0, spin: vx / 12, life: 3 });
+      }
+    }
+
+    // lanci: una patatina mirata, ogni 4 lanci un ventaglio da 3
+    if (b.throwT <= 0) {
+      b.volley++;
+      const times = b.volley % 4 === 0 ? [0.55, 0.85, 1.15] : [0.7 + Math.random() * 0.5];
+      for (const t of times) throwChip(b, p, t);
+      b.throwT = (angry ? 0.55 : 0.85) * (0.8 + Math.random() * 0.4);
+      b.arm = 0.2;
+    }
+
+    if (p.invuln <= 0 && overlap(p, b)) hurtPlayer(BOSS_TOUCH_DAMAGE, Math.sign(p.x - b.x) || -1);
+    if (p.hp <= 0) { lives = 1; loseLife(); return true; }
+    return false;
+  }
+
   function update(dt) {
     stateTime += dt;
     for (const p of particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 500 * dt; p.life -= dt; }
@@ -720,6 +934,7 @@
     p.invuln = Math.max(0, p.invuln - dt);
     p.van = Math.max(0, p.van - dt);
     p.magnet = Math.max(0, p.magnet - dt);
+    p.throwCool = Math.max(0, p.throwCool - dt);
     for (const b of world.bumps) b.t -= dt;
     world.bumps = world.bumps.filter(b => b.t > 0);
     p.blink -= dt; if (p.blink < -0.12) p.blink = 2 + Math.random() * 2;
@@ -829,6 +1044,9 @@
         }
       }
     }
+
+    // Duello finale
+    if (world.boss && updateBoss(dt)) return;
 
     // Checkpoint
     for (const c of world.checkpoints) {
@@ -974,9 +1192,10 @@
   }
 
   function drawHero(x, y, p, upsideDown) {
+    const w = 12, h = 22; // il disegno è sempre 12x22, il barattolo gigante viene ingrandito
     g.save();
-    if (upsideDown) { g.translate(x + p.w / 2, y + p.h / 2); g.scale(1, -1); g.translate(-(x + p.w / 2), -(y + p.h / 2)); }
-    const w = p.w, h = p.h;
+    if (p.giant) { g.translate(x, y); g.scale(GIANT_SCALE, GIANT_SCALE); x = 0; y = 0; }
+    if (upsideDown) { g.translate(x + w / 2, y + h / 2); g.scale(1, -1); g.translate(-(x + w / 2), -(y + h / 2)); }
     // tappo rosso
     g.fillStyle = C.red; g.fillRect(x, y, w, 5);
     g.fillStyle = 'rgba(255,255,255,.35)'; g.fillRect(x + 2, y + 1, 3, 2);
@@ -1116,6 +1335,62 @@
       } },
   ];
 
+  // La patata gigante (con corona, è il boss!)
+  function drawPotato(b, ox, time) {
+    const x = Math.round(b.x) + ox, y = Math.round(b.y), w = b.w, h = b.h;
+    g.save();
+    if (b.dead) {
+      g.globalAlpha = Math.max(0, 1 - b.deadTime / 1.4);
+      g.translate(x + w / 2, y + h); g.scale(1 + b.deadTime * 0.3, Math.max(0.1, 1 - b.deadTime * 0.6)); g.translate(-(x + w / 2), -(y + h));
+    }
+    const cx = x + w / 2, cy = y + h / 2 + 2;
+    g.fillStyle = b.flash > 0 ? '#ffffff' : '#c9a066';
+    g.beginPath(); g.ellipse(cx, cy, w / 2 + 2, h / 2, 0.08, 0, Math.PI * 2); g.fill();
+    g.fillStyle = 'rgba(120,80,40,.35)';
+    g.beginPath(); g.ellipse(cx + 6, cy + 8, w / 2 - 8, h / 2 - 10, 0.1, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#8a6438';
+    for (const [dx, dy, rr] of [[-14, -14, 2], [12, -18, 1.5], [-16, 10, 2], [14, 14, 2.5], [2, 20, 1.5], [-6, -22, 1.5]]) {
+      g.beginPath(); g.arc(cx + dx, cy + dy, rr, 0, Math.PI * 2); g.fill();
+    }
+    // corona
+    g.fillStyle = '#f0d04f';
+    g.fillRect(cx - 9, y - 4, 18, 5);
+    for (const dx of [-9, -3, 3]) { g.fillRect(cx + dx, y - 9, 6, 5); }
+    g.fillStyle = '#e3343b'; g.fillRect(cx - 1, y - 7, 2, 2);
+    // occhi arrabbiati
+    const lx = b.facing < 0 ? -3 : 3;
+    g.fillStyle = '#fff';
+    g.fillRect(cx - 12 + lx, y + 14, 8, 7); g.fillRect(cx + 4 + lx, y + 14, 8, 7);
+    g.fillStyle = C.ink;
+    g.fillRect(cx - 9 + lx + (b.facing < 0 ? -2 : 1), y + 16, 4, 4); g.fillRect(cx + 7 + lx + (b.facing < 0 ? -2 : 1), y + 16, 4, 4);
+    g.fillStyle = '#5c3b18';
+    for (let i = 0; i < 4; i++) { g.fillRect(cx - 13 + lx + i * 2, y + 9 + i, 3, 2); g.fillRect(cx + 11 + lx - i * 2, y + 9 + i, 3, 2); }
+    // bocca con denti
+    const open = b.arm > 0 ? 6 : 4;
+    g.fillStyle = '#3a220d'; g.fillRect(cx - 8 + lx, y + 27, 16, open);
+    g.fillStyle = '#fff'; g.fillRect(cx - 6 + lx, y + 27, 3, 2); g.fillRect(cx + 3 + lx, y + 27, 3, 2);
+    // braccio che lancia
+    if (b.arm > 0) {
+      const ax = b.facing < 0 ? x - 6 : x + w + 1;
+      g.fillStyle = '#b08850'; g.fillRect(ax, y + 8, 5, 12);
+      g.fillStyle = '#f2c94c'; g.fillRect(ax - 1, y + 4, 7, 5);
+    }
+    // piedi
+    const f = Math.floor(time * 6) % 2;
+    g.fillStyle = '#5c3b18';
+    g.fillRect(x + 6 + f, y + h - 3, 10, 4); g.fillRect(x + w - 16 - f, y + h - 3, 10, 4);
+    g.restore();
+  }
+
+  function drawChip(c, ox) {
+    g.save();
+    g.translate(Math.round(c.x) + ox, Math.round(c.y)); g.rotate(c.rot);
+    g.fillStyle = '#d9a531'; g.beginPath(); g.ellipse(0, 0, 6, 4, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#f2c94c'; g.beginPath(); g.ellipse(-0.5, -0.5, 5, 3, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#b8862a'; g.fillRect(-2, -1, 1, 1); g.fillRect(2, 0, 1, 1);
+    g.restore();
+  }
+
   function drawWorld(time) {
     drawBackground(time);
     g.save(); g.translate(0, OY); // il mondo sta in fondo alla vista
@@ -1153,6 +1428,16 @@
       HERBS[e.kind].draw(x, y, e, time);
     }
 
+    if (world.boss) {
+      drawPotato(world.boss, ox, time);
+      for (const c of world.chips) drawChip(c, ox);
+      for (const s of world.grains) {
+        const d = s.r * 2;
+        g.fillStyle = '#8a7a4a'; g.fillRect(Math.round(s.x - s.r) + ox - 1, Math.round(s.y - s.r) - 1, d + 2, d + 2);
+        g.fillStyle = '#fffbe8'; g.fillRect(Math.round(s.x - s.r) + ox, Math.round(s.y - s.r), d, d);
+      }
+    }
+
     for (const p of particles) {
       g.globalAlpha = Math.min(1, p.life * 2);
       g.fillStyle = p.color; g.fillRect(Math.round(p.x) + ox, Math.round(p.y), 2, 2);
@@ -1166,7 +1451,7 @@
       if (!(p.invuln > 0 && Math.floor(p.invuln * 16) % 2 === 0)) {
         if (p.dashTime > 0) {
           g.fillStyle = 'rgba(207,224,255,.5)';
-          g.fillRect(Math.round(p.x) + ox - p.facing * 10, Math.round(p.y) + 6, p.w, p.h - 8);
+          g.fillRect(Math.round(p.x) + ox - p.facing * 10, Math.round(p.y) + p.h * 0.27, p.w, p.h * 0.64);
         }
         drawHero(Math.round(p.x) + ox, Math.round(p.y), p, false);
         if (p.van > 0 && (p.van > 1.5 || Math.floor(time * 10) % 2 === 0)) {
@@ -1209,9 +1494,20 @@
     const blinkOn = Math.floor(time * 2) % 2 === 0;
 
     if (state !== 'title') {
-      text(lives > 5 ? `♥ x${lives}` : '♥'.repeat(Math.max(0, lives)) + '♡'.repeat(Math.max(0, START_LIVES - lives)), 10, 14, 11, '#ff5a6a', 'left');
-      text(tr('aw.coins', { s: score }), VW / 2, 14, 9, '#fff6c8');
-      text(`${levelIndex + 1}/${LEVELS.length} ${levelName.toUpperCase()}`, VW - 10, VW < 400 ? 27 : 14, 7, '#cfe0ff', 'right');
+      if (world.boss) {
+        // barre della vita: Aromat a sinistra, patata a destra
+        const bar = (x, label, v, col, align) => {
+          text(label, align === 'left' ? x : x + 150, 8, 7, col, align);
+          ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(x * S, 14 * S, 150 * S, 6 * S);
+          ctx.fillStyle = col; ctx.fillRect((align === 'left' ? x : x + 150 * (1 - v)) * S, 14 * S, 150 * v * S, 6 * S);
+        };
+        bar(10, `AROMAT ${player.hp}`, player.hp / PLAYER_HP, '#4cb85f', 'left');
+        bar(VW - 160, `${tr('aw.bossName')} ${world.boss.hp}`, world.boss.hp / BOSS_HP, '#ff5a6a', 'right');
+      } else {
+        text(lives > 5 ? `♥ x${lives}` : '♥'.repeat(Math.max(0, lives)) + '♡'.repeat(Math.max(0, START_LIVES - lives)), 10, 14, 11, '#ff5a6a', 'left');
+      }
+      text(tr('aw.coins', { s: score }), VW / 2, world.boss ? 30 : 14, 9, '#fff6c8');
+      if (!world.boss) text(`${levelIndex + 1}/${LEVELS.length} ${levelName.toUpperCase()}`, VW - 10, VW < 400 ? 27 : 14, 7, '#cfe0ff', 'right');
       if (state === 'play' && player.dashCool > 0) {
         ctx.fillStyle = 'rgba(207,224,255,.6)';
         ctx.fillRect(10 * S, 24 * S, 30 * (1 - player.dashCool / DASH_COOLDOWN) * S, 2 * S);
@@ -1224,10 +1520,12 @@
         ctx.fillStyle = col; ctx.fillRect(52 * S, (py - 2) * S, 40 * (t / max) * S, 4 * S);
         py += 11;
       }
-      if (state === 'play' && stateTime < 2.2) {
-        ctx.globalAlpha = Math.min(1, (2.2 - stateTime) * 2);
-        text(tr('aw.level', { n: levelIndex + 1 }), VW / 2, MY + 90, 10, C.yellow);
+      const introT = world.boss ? 3.5 : 2.2;
+      if (state === 'play' && stateTime < introT) {
+        ctx.globalAlpha = Math.min(1, (introT - stateTime) * 2);
+        text(world.boss ? tr('aw.bossTitle') : tr('aw.level', { n: levelIndex + 1 }), VW / 2, MY + 90, 10, C.yellow);
         text(levelName.toUpperCase(), VW / 2, MY + 108, 16);
+        if (world.boss) text(tr(document.body.classList.contains('touch') ? 'aw.bossHintTouch' : 'aw.bossHintKeys'), VW / 2, MY + 128, 8, '#fff6c8');
         ctx.globalAlpha = 1;
       }
     }

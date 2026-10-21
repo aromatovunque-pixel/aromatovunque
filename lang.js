@@ -45,7 +45,7 @@
       'aw.gameover': 'GAME OVER',
       'aw.scoreRecord': 'Punteggio: {s} · Record: {b}',
       'aw.win': 'HAI VINTO!',
-      'aw.winLine': 'Aromat ovunque, anche nel Castello del Sale.',
+      'aw.winLine': 'Patata sconfitta. Aromat ovunque!',
       'aw.final': 'Punteggio finale: {s}',
       'aw.newRecord': 'NUOVO RECORD!',
       'aw.recordLine': 'Record: {b}',
@@ -59,7 +59,14 @@
       'aw.lv1': 'Prati di Aromat',
       'aw.lv2': 'Fiume di Fondue',
       'aw.lv3': 'Monti Ticinesi',
-      'aw.lv4': 'Castello del Sale'
+      'aw.lv4': 'Castello del Sale',
+      'aw.lv5': 'La Patata Gigante',
+      'aw.bossTitle': 'LIVELLO FINALE',
+      'aw.bossName': 'PATATA GIGANTE',
+      'aw.bossHintTouch': 'Tieni premuto LANCIA per tirare i granelli',
+      'aw.bossHintKeys': 'Tieni premuto F per lanciare i granelli',
+      'aw.giant': 'AROMAT GIGANTE! OGNI GRANELLO -20',
+      'aw.bossWin': 'LA PATATA È STATA SALATA!'
     },
 
     de: {
@@ -172,7 +179,7 @@
       'slot.final': 'Endstand:',
 
       // Aromat World
-      'aw.keys': '<b>← →</b> / <b>A D</b> bewegen · <b>Leertaste</b> / <b>↑</b> springen (2× Doppelsprung) · <b>Shift</b> / <b>X</b> Dash · <b>P</b> Pause · <b>M</b> Ton',
+      'aw.keys': '<b>← →</b> / <b>A D</b> bewegen · <b>Leertaste</b> / <b>↑</b> springen (2× Doppelsprung) · <b>Shift</b> / <b>X</b> Dash · <b>P</b> Pause · <b>M</b> Ton · <b>F</b> werfen',
       'aw.jumpBtn': 'SPRING',
       'aw.hintTouch': 'Tippe auf SPRING',
       'aw.hintKeys': 'Drück ENTER oder LEERTASTE',
@@ -194,7 +201,7 @@
       'aw.score': 'Punkte: {s}',
       'aw.scoreRecord': 'Punkte: {s} · Rekord: {b}',
       'aw.win': 'GEWONNEN!',
-      'aw.winLine': 'Aromat überall, sogar im Salzschloss.',
+      'aw.winLine': 'Kartoffel besiegt. Aromat überall!',
       'aw.final': 'Endpunktzahl: {s}',
       'aw.newRecord': 'NEUER REKORD!',
       'aw.recordLine': 'Rekord: {b}',
@@ -207,7 +214,15 @@
       'aw.lv1': 'Aromat-Wiesen',
       'aw.lv2': 'Fondue-Fluss',
       'aw.lv3': 'Tessiner Berge',
-      'aw.lv4': 'Salzschloss'
+      'aw.lv4': 'Salzschloss',
+      'aw.lv5': 'Die Riesenkartoffel',
+      'aw.bossTitle': 'FINALES LEVEL',
+      'aw.bossName': 'RIESENKARTOFFEL',
+      'aw.bossHintTouch': 'Halte WIRF gedrückt, um Körnchen zu werfen',
+      'aw.bossHintKeys': 'Halte F gedrückt, um Körnchen zu werfen',
+      'aw.giant': 'RIESEN-AROMAT! JEDES KÖRNCHEN -20',
+      'aw.bossWin': 'DIE KARTOFFEL IST GESALZEN!',
+      'aw.throwBtn': 'WIRF'
     },
 
     fr: {
@@ -320,7 +335,7 @@
       'slot.final': 'Score final :',
 
       // Aromat World
-      'aw.keys': '<b>← →</b> / <b>A D</b> bouger · <b>Espace</b> / <b>↑</b> sauter (2× double saut) · <b>Shift</b> / <b>X</b> dash · <b>P</b> pause · <b>M</b> son',
+      'aw.keys': '<b>← →</b> / <b>A D</b> bouger · <b>Espace</b> / <b>↑</b> sauter (2× double saut) · <b>Shift</b> / <b>X</b> dash · <b>P</b> pause · <b>M</b> son · <b>F</b> lancer',
       'aw.jumpBtn': 'SAUTE',
       'aw.hintTouch': 'Touche SAUTE',
       'aw.hintKeys': 'Appuie sur ENTRÉE ou ESPACE',
@@ -342,7 +357,7 @@
       'aw.score': 'Score : {s}',
       'aw.scoreRecord': 'Score : {s} · Record : {b}',
       'aw.win': 'TU AS GAGNÉ !',
-      'aw.winLine': 'Aromat partout, même au Château du Sel.',
+      'aw.winLine': 'Patate vaincue. Aromat partout !',
       'aw.final': 'Score final : {s}',
       'aw.newRecord': 'NOUVEAU RECORD !',
       'aw.recordLine': 'Record : {b}',
@@ -355,7 +370,15 @@
       'aw.lv1': 'Prés d’Aromat',
       'aw.lv2': 'Rivière de Fondue',
       'aw.lv3': 'Montagnes tessinoises',
-      'aw.lv4': 'Château du Sel'
+      'aw.lv4': 'Château du Sel',
+      'aw.lv5': 'La Patate Géante',
+      'aw.bossTitle': 'NIVEAU FINAL',
+      'aw.bossName': 'PATATE GÉANTE',
+      'aw.bossHintTouch': 'Maintiens LANCE pour jeter les grains',
+      'aw.bossHintKeys': 'Maintiens F pour lancer les grains',
+      'aw.giant': 'AROMAT GÉANT ! CHAQUE GRAIN -20',
+      'aw.bossWin': 'LA PATATE EST SALÉE !',
+      'aw.throwBtn': 'LANCE'
     },
     rm: {
       // Parti comuni (striscia, adesivo, piè di pagina)
@@ -467,7 +490,7 @@
       'slot.final': 'Puncts finals:',
 
       // Aromat World
-      'aw.keys': '<b>← →</b> / <b>A D</b> mover · <b>Spazi</b> / <b>↑</b> sigliir (2× sigl dubel) · <b>Shift</b> / <b>X</b> dash · <b>P</b> pausa · <b>M</b> tun',
+      'aw.keys': '<b>← →</b> / <b>A D</b> mover · <b>Spazi</b> / <b>↑</b> sigliir (2× sigl dubel) · <b>Shift</b> / <b>X</b> dash · <b>P</b> pausa · <b>M</b> tun · <b>F</b> bittar',
       'aw.jumpBtn': 'SIGLIA',
       'aw.hintTouch': 'Tutga SIGLIA',
       'aw.hintKeys': 'Smatga ENTER u SPAZI',
@@ -489,7 +512,7 @@
       'aw.score': 'Puncts: {s}',
       'aw.scoreRecord': 'Puncts: {s} · Record: {b}',
       'aw.win': 'TI HAS GUDAGNÀ!',
-      'aw.winLine': 'Aromat dapertut, schizunt en il Chastè da Sal.',
+      'aw.winLine': 'Truffla battida. Aromat dapertut!',
       'aw.final': 'Puncts finals: {s}',
       'aw.newRecord': 'NOV RECORD!',
       'aw.recordLine': 'Record: {b}',
@@ -502,7 +525,15 @@
       'aw.lv1': 'Prads d’Aromat',
       'aw.lv2': 'Flum da Fondue',
       'aw.lv3': 'Muntognas tessinaisas',
-      'aw.lv4': 'Chastè da Sal'
+      'aw.lv4': 'Chastè da Sal',
+      'aw.lv5': 'La Truffla Gigantica',
+      'aw.bossTitle': 'NIVEL FINAL',
+      'aw.bossName': 'TRUFFLA GIGANTICA',
+      'aw.bossHintTouch': 'Tegna smatgà BITTA per bittar grauns',
+      'aw.bossHintKeys': 'Tegna smatgà F per bittar grauns',
+      'aw.giant': 'AROMAT GIGANTIC! MINTGA GRAUN -20',
+      'aw.bossWin': 'LA TRUFFLA È SALADA!',
+      'aw.throwBtn': 'BITTA'
     }
   };
 
