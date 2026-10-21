@@ -88,6 +88,20 @@
       justify-content: center;
       touch-action: none;
     }
+    .again {
+      position: absolute; left: 50%; top: 60%;
+      transform: translateX(-50%);
+      padding: 14px 26px;
+      border: 3px solid #1b1f2a; border-radius: 999px;
+      background: #f0d04f; color: #1b1f2a;
+      font: 900 16px ui-monospace, Menlo, Consolas, monospace; letter-spacing: 1px;
+      box-shadow: 0 6px 0 #b5932a, 0 14px 30px rgba(0,0,0,.45);
+      cursor: pointer;
+      animation: againIn .5s ease both;
+    }
+    .again:active { transform: translateX(-50%) translateY(3px); box-shadow: 0 3px 0 #b5932a; }
+    .again[hidden] { display: none; }
+    @keyframes againIn { from { opacity: 0; transform: translateX(-50%) translateY(12px); } }
     canvas {
       display: block;
       border-radius: 8px;
@@ -177,7 +191,7 @@
 </head>
 <body>
   <div class="top">
-    <a href="shop.html">← Shop</a>
+    <a href="giochi.html">← <span data-i18n="nav.games">Giochi</span></a>
     <span class="title">AROMAT WORLD</span>
     <div class="right">
       <div data-lang-switch></div>
@@ -188,6 +202,7 @@
 
   <div class="stage" id="stage">
     <canvas id="c"></canvas>
+    <button class="again" id="btnAgain" type="button" hidden data-i18n="aw.again">GIOCA ANCORA</button>
   </div>
 
   <div class="controls">
@@ -405,7 +420,7 @@
       if (AC) actx = new AC();
     }
     if (actx && actx.state === 'suspended') actx.resume();
-    if (soundOn && music.paused && state !== 'pause') music.play().catch(() => {});
+    if (soundOn && music.paused && state !== 'pause' && state !== 'ending') music.play().catch(() => {});
   }
 
   function sfx(freq, dur, type = 'square', slide = 0, vol = 0.08) {
@@ -437,12 +452,70 @@
     clear: () => [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => sfx(f, 0.14), i * 110)),
   };
 
+  // Sigla malinconica del finale: melodia originale in La minore, suonata a 80 bpm
+  const ENDING_SONG = {
+    bpm: 80,
+    lead: [ // [nota, battiti]
+      ['E5', 1], ['A4', .5], ['B4', .5], ['C5', 1], ['B4', .5], ['A4', .5],
+      ['C5', 1.5], ['D5', .5], ['C5', 1], ['A4', 1],
+      ['G4', 1], ['C5', .5], ['D5', .5], ['E5', 1.5], ['D5', .5],
+      ['D5', 2], ['B4', 1], ['G4', 1],
+      ['E5', 1], ['A5', 1], ['G5', .5], ['E5', .5], ['D5', 1],
+      ['C5', 1.5], ['D5', .5], ['E5', 1], ['F5', 1],
+      ['E5', 1], ['D5', .5], ['C5', .5], ['B4', 1], ['G#4', 1],
+      ['A4', 4],
+    ],
+    chords: [ // una battuta ciascuno: basso + arpeggio
+      ['A2', ['A3', 'C4', 'E4', 'C4']], ['F2', ['F3', 'A3', 'C4', 'A3']],
+      ['C3', ['C4', 'E4', 'G4', 'E4']], ['G2', ['G3', 'B3', 'D4', 'B3']],
+      ['A2', ['A3', 'C4', 'E4', 'C4']], ['F2', ['F3', 'A3', 'C4', 'A3']],
+      ['E2', ['E3', 'G#3', 'B3', 'G#3']], ['A2', ['A3', 'C4', 'E4', 'A4']],
+    ],
+  };
+  const noteFreq = (n) => {
+    const m = /^([A-G])(#?)(\d)$/.exec(n);
+    const semi = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }[m[1]] + (m[2] ? 1 : 0) + 12 * (+m[3] + 1);
+    return 440 * Math.pow(2, (semi - 69) / 12);
+  };
+  let endingNodes = [], endingTimer = null;
+  function tone(freq, t, dur, type, vol) {
+    const o = actx.createOscillator(), v = actx.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    v.gain.setValueAtTime(0.0001, t);
+    v.gain.exponentialRampToValueAtTime(vol, t + 0.03);
+    v.gain.setValueAtTime(vol, t + Math.max(0.03, dur - 0.08));
+    v.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(v); v.connect(actx.destination);
+    o.start(t); o.stop(t + dur + 0.02);
+    endingNodes.push(o);
+  }
+  function playEnding() {
+    stopEnding();
+    if (!soundOn || !actx) return;
+    music.pause();
+    const beat = 60 / ENDING_SONG.bpm, t0 = actx.currentTime + 0.15;
+    let t = t0;
+    for (const [n, b] of ENDING_SONG.lead) { tone(noteFreq(n), t, b * beat * 0.95, 'square', 0.045); t += b * beat; }
+    ENDING_SONG.chords.forEach(([bass, arp], i) => {
+      const bt = t0 + i * 4 * beat;
+      tone(noteFreq(bass), bt, 4 * beat * 0.98, 'triangle', 0.09);
+      for (let k = 0; k < 8; k++) tone(noteFreq(arp[k % 4]), bt + k * beat / 2, beat / 2 * 0.9, 'triangle', 0.035);
+    });
+    endingTimer = setTimeout(playEnding, (t - actx.currentTime) * 1000);
+  }
+  function stopEnding() {
+    clearTimeout(endingTimer); endingTimer = null;
+    for (const o of endingNodes) { try { o.stop(); } catch (e) {} }
+    endingNodes = [];
+  }
+
   const btnSound = document.getElementById('btnSound');
   function setSound(on) {
     soundOn = on;
     store.set('aromatWorld.sound', on);
     btnSound.textContent = on ? '🔊' : '🔇';
-    if (!on) music.pause();
+    if (!on) { music.pause(); stopEnding(); }
+    else if (state === 'ending') { unlockAudio(); music.pause(); playEnding(); }
     else if (state !== 'title' && state !== 'pause') unlockAudio();
   }
   btnSound.addEventListener('click', () => setSound(!soundOn));
@@ -596,9 +669,26 @@
   }
 
   function newGame() {
+    stopEnding();
+    btnAgain.hidden = true;
     lives = START_LIVES; score = 0;
     startLevel(0);
+    if (soundOn && actx) music.play().catch(() => {});
   }
+
+  // Finale: cannoni che sparano barattoli di Aromat, sigla e GIOCA ANCORA
+  let ending = null;
+  function startEnding() {
+    saveBest();
+    world.chips = []; world.grains = [];
+    const p = player;
+    Object.assign(p, { x: (world.w * T - p.w) / 2, y: 15 * T - p.h, vx: 0, vy: 0, invuln: 0, dashTime: 0, van: 0 });
+    ending = { fireT: 0.8, side: 0, shells: [], hopT: 0.6, recoil: [0, 0] };
+    setState('ending');
+    playEnding();
+  }
+  const btnAgain = document.getElementById('btnAgain');
+  btnAgain.addEventListener('click', () => { unlockAudio(); newGame(); });
 
   function loseLife() {
     if (state !== 'play') return;
@@ -616,10 +706,10 @@
   // Azione "conferma": SALTA, Invio o tocco sullo schermo
   function confirm() {
     unlockAudio();
-    if (state === 'title' || state === 'win') newGame();
+    if (state === 'title' || state === 'win' || (state === 'ending' && stateTime > 2)) newGame();
     else if (state === 'clear' && stateTime > 0.5) {
       if (levelIndex + 1 < LEVELS.length) startLevel(levelIndex + 1);
-      else { saveBest(); setState('win'); }
+      else startEnding();
     } else if (state === 'gameover' && stateTime > 0.5) {
       lives = START_LIVES; score = levelStartScore;
       startLevel(levelIndex);
@@ -862,7 +952,7 @@
 
     if (b.dead) {
       b.deadTime += dt;
-      if (b.deadTime > 2.6) { saveBest(); setState('win'); return true; }
+      if (b.deadTime > 2.6) { startEnding(); return true; }
       return false;
     }
 
@@ -908,9 +998,51 @@
     return false;
   }
 
+  function fireworks(x, y) {
+    const cols = ['#f0d04f', '#4cb85f', '#e3343b', '#ffffff', '#fff6c8'];
+    const n = 34;
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 + Math.random() * 0.2, sp = 60 + Math.random() * 90;
+      particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1.1 + Math.random() * 0.8, color: cols[i % cols.length], g: 90 });
+    }
+  }
+
+  function updateEnding(dt) {
+    const e = ending, p = player;
+    btnAgain.hidden = stateTime < 1.5;
+    if (!btnAgain.hidden) {
+      // sotto le scritte del finale, sopra Aromat che festeggia
+      const k = canvas.clientHeight / VH;
+      btnAgain.style.top = Math.round(canvas.offsetTop + (MY + 150) * k) + 'px';
+    }
+    // Aromat saltella felice al centro
+    p.vy = Math.min(MAX_FALL, p.vy + GRAV * dt);
+    moveAndCollide(p, dt);
+    p.blink -= dt; if (p.blink < -0.12) p.blink = 2 + Math.random() * 2;
+    e.hopT -= dt;
+    if (p.onGround && e.hopT <= 0) { p.vy = -300; p.facing = -p.facing; e.hopT = 1.2; }
+    // i cannoni sparano a turno
+    e.recoil = e.recoil.map(v => Math.max(0, v - dt * 3));
+    e.fireT -= dt;
+    if (e.fireT <= 0) {
+      const side = e.side; e.side = 1 - side;
+      const cx = side === 0 ? 4 * T : (world.w - 4) * T, dir = side === 0 ? 1 : -1;
+      e.shells.push({ x: cx + dir * 14, y: 15 * T - 22, vx: dir * (50 + Math.random() * 60), vy: -(270 + Math.random() * 70), rot: 0 });
+      e.recoil[side] = 1;
+      burst(cx + dir * 14, 15 * T - 22, '#9aa3b8', 6, 50);
+      sfx(90, 0.25, 'sawtooth', -40, 0.07);
+      e.fireT = 0.75 + Math.random() * 0.4;
+    }
+    for (const sh of e.shells) {
+      sh.vy += 200 * dt; sh.x += sh.vx * dt; sh.y += sh.vy * dt; sh.rot += sh.vx * 0.02 * dt;
+      if (sh.vy > -20) { sh.done = true; fireworks(sh.x, sh.y); sfx(700 + Math.random() * 400, 0.18, 'square', -600, 0.03); }
+    }
+    e.shells = e.shells.filter(sh => !sh.done);
+  }
+
   function update(dt) {
     stateTime += dt;
-    for (const p of particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 500 * dt; p.life -= dt; }
+    for (const p of particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += (p.g || 500) * dt; p.life -= dt; }
     particles = particles.filter(p => p.life > 0);
     for (const p of popups) { p.y -= 30 * dt; p.life -= dt; }
     popups = popups.filter(p => p.life > 0);
@@ -924,6 +1056,7 @@
       }
       return;
     }
+    if (state === 'ending') { updateEnding(dt); return; }
     if (state !== 'play') return;
 
     const p = player;
@@ -1391,6 +1524,38 @@
     g.restore();
   }
 
+  function drawCannon(cx, dir, recoil) {
+    const by = 15 * T;
+    g.save();
+    g.translate(cx, by - 10);
+    g.rotate(dir > 0 ? -1.05 : -2.09);
+    g.translate(-recoil * 4, 0);
+    g.fillStyle = '#2b2f3a'; g.fillRect(-4, -5, 26, 10);
+    g.fillStyle = '#4b5263'; g.fillRect(-4, -5, 26, 3);
+    g.fillStyle = '#6b7280'; g.fillRect(20, -6, 4, 12);
+    g.restore();
+    g.fillStyle = '#6b4428';
+    g.beginPath(); g.arc(cx - 6, by - 5, 5, 0, Math.PI * 2); g.arc(cx + 6, by - 5, 5, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#3a2615'; g.fillRect(cx - 7, by - 6, 2, 2); g.fillRect(cx + 5, by - 6, 2, 2);
+  }
+
+  function drawShell(sh, ox) {
+    // mini barattolo di Aromat in volo
+    g.save();
+    g.translate(Math.round(sh.x) + ox, Math.round(sh.y)); g.rotate(sh.rot);
+    g.fillStyle = C.red; g.fillRect(-3, -6, 6, 3);
+    g.fillStyle = C.yellow; g.fillRect(-3, -3, 6, 8);
+    g.fillStyle = C.green; g.fillRect(-3, -1, 6, 3);
+    g.restore();
+    g.fillStyle = 'rgba(255,240,180,.6)'; g.fillRect(Math.round(sh.x - sh.vx * 0.03) + ox, Math.round(sh.y + 7), 2, 2);
+  }
+
+  function drawEnding(ox, time) {
+    drawCannon(4 * T + ox, 1, ending.recoil[0]);
+    drawCannon((world.w - 4) * T + ox, -1, ending.recoil[1]);
+    for (const sh of ending.shells) drawShell(sh, ox);
+  }
+
   function drawWorld(time) {
     drawBackground(time);
     g.save(); g.translate(0, OY); // il mondo sta in fondo alla vista
@@ -1428,7 +1593,7 @@
       HERBS[e.kind].draw(x, y, e, time);
     }
 
-    if (world.boss) {
+    if (world.boss && state !== 'ending') {
       drawPotato(world.boss, ox, time);
       for (const c of world.chips) drawChip(c, ox);
       for (const s of world.grains) {
@@ -1437,6 +1602,8 @@
         g.fillStyle = '#fffbe8'; g.fillRect(Math.round(s.x - s.r) + ox, Math.round(s.y - s.r), d, d);
       }
     }
+
+    if (state === 'ending' && ending) drawEnding(ox, time);
 
     for (const p of particles) {
       g.globalAlpha = Math.min(1, p.life * 2);
@@ -1493,7 +1660,7 @@
     const levelName = tr('aw.lv' + (levelIndex + 1));
     const blinkOn = Math.floor(time * 2) % 2 === 0;
 
-    if (state !== 'title') {
+    if (state !== 'title' && state !== 'ending') {
       if (world.boss) {
         // barre della vita: Aromat a sinistra, patata a destra
         const bar = (x, label, v, col, align) => {
@@ -1556,6 +1723,15 @@
       text(tr('aw.gameover'), VW / 2, MY + 104, 18, '#ff5a6a');
       text(tr('aw.scoreRecord', { s: score, b: best }), VW / 2, MY + 132, 8);
       if (stateTime > 0.5 && blinkOn) text(tr('aw.retry', { hint }), VW / 2, MY + 160, 8, '#fff6c8');
+    } else if (state === 'ending') {
+      const a = Math.min(1, stateTime / 1.2);
+      ctx.globalAlpha = a;
+      text(tr('aw.end'), VW / 2, MY + 54, 30, C.yellow);
+      text(tr('aw.thanks'), VW / 2, MY + 84, 10);
+      text(tr('aw.final', { s: score }), VW / 2, MY + 104, 9, '#fff6c8');
+      text(score >= best ? tr('aw.newRecord') : tr('aw.recordLine', { b: best }), VW / 2, MY + 119, 8, '#9bc2ff');
+      text(tr('aw.credits'), VW / 2, MY + 136, 7, '#cfe0ff');
+      ctx.globalAlpha = 1;
     } else if (state === 'win') {
       panel(140);
       text(tr('aw.win'), VW / 2, MY + 94, 20, C.yellow);

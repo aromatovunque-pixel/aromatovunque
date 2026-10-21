@@ -171,6 +171,13 @@
       background: linear-gradient(90deg, var(--yellow), var(--green), var(--red));
     }
     .cta:active{transform: translateY(0) scale(.99)}
+    .cta-row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center}
+    .cta-games{
+      background:rgba(0,0,0,.35); color:#fff;
+      border:2px solid var(--yellow);
+      animation-delay:.3s;
+    }
+    .cta-games:hover{color:#000}
 
     /* Disclaimer */
     .disclaimer{
@@ -236,7 +243,10 @@
       <div class="stack">
         <h1 data-i18n="idx.title">Aromat Ovunque*</h1>
         <p class="subtitle">Stay strong. Stay Aromat.</p>
-        <a class="cta" href="shop.html" data-i18n="idx.cta">Entra</a>
+        <div class="cta-row">
+          <a class="cta" href="shop.html" data-i18n="idx.cta">Entra</a>
+          <a class="cta cta-games" href="giochi.html">🎮 <span data-i18n="nav.games">Giochi</span></a>
+        </div>
       </div>
 
       <p class="disclaimer" data-i18n-html="idx.disclaimer">

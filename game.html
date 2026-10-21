@@ -11,7 +11,7 @@
   <link rel="manifest" href="site.webmanifest" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Aromat Ovunque*" />
-  <meta property="og:title" content="Aromat Game – Aromat Ovunque*" />
+  <meta property="og:title" content="Tiro alla Pizza – Aromat Ovunque*" />
   <meta property="og:description" content="Spara l’Aromat sulla pizza: il minigioco di Aromat Ovunque*, fan site satirico e non ufficiale." />
   <meta property="og:url" content="https://aromatovunque.info/game.html" />
   <meta property="og:image" content="https://aromatovunque.info/og-image.jpg" />
@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" />
   <link rel="stylesheet" href="site.css" />
-<title>Aromat Game</title>
+<title data-i18n="slot.doctitle">Tiro alla Pizza – Aromat Ovunque*</title>
 
 <style>
 /* ===== iOS anti-zoom / anti-blue-highlight / anti-select ===== */
@@ -86,8 +86,19 @@ canvas{
 
 .langrow{
   display:flex;
-  justify-content:center;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
   margin-bottom:8px;
+}
+.back{
+  color:#c7d2fe;
+  text-decoration:none;
+  font-size:13px;
+  padding:6px 10px;
+  border:1px solid #2a3350;
+  border-radius:999px;
+  background:#111a33;
 }
 .title{
   text-align:center;
@@ -204,10 +215,13 @@ canvas{
 <body>
 <div class="wrap">
 
-  <div class="langrow"><div data-lang-switch></div></div>
+  <div class="langrow">
+    <a class="back" href="giochi.html">← <span data-i18n="nav.games">Giochi</span></a>
+    <div data-lang-switch></div>
+  </div>
 
   <div class="title">
-    <div>AROMAT GAME!</div>
+    <div data-i18n="slot.title">TIRO ALLA PIZZA!</div>
     <div class="subtitle" data-i18n="slot.subtitle">Spara l’aromat sulla pizza</div>
   </div>
 
