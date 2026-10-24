@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Mungitura Aromat – Aromat Ovunque*</title>
+  <meta name="description" content="Munge la mucca svizzera con il ritmo su e giù, colorala con i colori Aromat e supera 20 livelli, dal facile all’impossibile. Fan site satirico e non ufficiale." />
+  <meta name="theme-color" content="#070b18" />
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Aromat Ovunque*" />
+  <meta property="og:title" content="Mungitura Aromat – Aromat Ovunque*" />
+  <meta property="og:description" content="Munge la mucca e coloriamola di Aromat: 20 livelli." />
+  <meta property="og:url" content="https://aromatovunque.info/mungitura.html" />
+  <meta property="og:image" content="https://aromatovunque.info/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="it_CH" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Press+Start+2P&display=swap" />
+  <link rel="stylesheet" href="site.css" />
+  <style>
+    :root{ --bg:#070b18; --ink:#eef2ff; --muted:#a5b0d0; --yellow:#ffd400; --red:#ff3d5a; --cyan:#2ec4ff; --green:#1fa34a; }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0; min-height:100vh; color:var(--ink);
+      font-family:system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(900px 520px at 10% -10%, rgba(255,212,0,.14), transparent 62%),
+        radial-gradient(900px 520px at 90% 0%, rgba(31,163,74,.12), transparent 62%),
+        var(--bg);
+    }
+    header{ position:sticky; top:0; z-index:50; background:rgba(7,11,24,.85); backdrop-filter:blur(10px); border-bottom:1px solid rgba(120,160,255,.18); }
+    .header-inner{ max-width:1100px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .brand img{ height:40px; display:block; }
+    .nav{ display:flex; align-items:center; gap:8px; }
+    .pill{
+      display:inline-flex; align-items:center; gap:7px; padding:9px 14px; border-radius:999px;
+      border:1px solid rgba(120,160,255,.18); background:#111a33; color:var(--ink); text-decoration:none;
+      font-family:var(--font-display); font-weight:800;
+    }
+    .pill.on{ background:var(--yellow); color:#000; border-color:var(--yellow); }
+    .pill img{ width:18px; height:18px; border-radius:6px; display:block; }
+
+    main{ max-width:900px; margin:0 auto; padding:20px 14px 12px; }
+    .hero-row{ display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; margin-bottom:14px; }
+    h1{ margin:0; font-family:var(--font-display); font-size:36px; letter-spacing:-1px; line-height:1; }
+
+    .cabinet{
+      background:#0b0f24; border:4px solid var(--yellow); border-radius:22px; padding:12px;
+      box-shadow:0 0 0 4px #000, 0 0 40px rgba(255,212,0,.25), 0 24px 60px rgba(0,0,0,.5);
+    }
+    .hud{ display:flex; flex-wrap:wrap; gap:8px 16px; justify-content:space-between; padding:4px 6px 10px; font-family:"Press Start 2P", monospace; font-size:9px; color:#fff6c8; }
+    .hud b{ color:var(--cyan); font-weight:400; margin-left:6px; }
+    .hud .time.low b{ color:var(--red); }
+    .screen{ position:relative; border:3px solid #000; border-radius:12px; overflow:hidden; background:#000; }
+    canvas#game{ display:block; width:100%; height:auto; touch-action:none; cursor:pointer; }
+    .scan{ position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px); mix-blend-mode:multiply; border-radius:12px; }
+    .foot{ padding:12px 6px 4px; }
+    #ticker{ margin:0; font-family:"Press Start 2P", monospace; font-size:9px; line-height:1.7; color:#fff6c8; min-height:3.4em; }
+
+    .overlay{ position:fixed; inset:0; z-index:90; display:none; align-items:center; justify-content:center; background:rgba(3,5,12,.8); padding:16px; }
+    .overlay.show{ display:flex; }
+    .overlay .box{
+      max-width:600px; width:100%; text-align:center; padding:24px 20px 22px;
+      background:#0b0f24; border:4px solid var(--yellow); border-radius:22px;
+      box-shadow:0 0 0 4px #000, 0 0 60px rgba(255,212,0,.3); max-height:92vh; overflow:auto;
+    }
+    .overlay h2{ margin:0 0 14px; font-family:"Press Start 2P", monospace; font-size:15px; line-height:1.6; color:var(--yellow); }
+    .overlay p{ margin:0 0 12px; color:#dfe6ff; line-height:1.5; font-size:15px; text-align:left; }
+    .stars{ font-size:30px; letter-spacing:6px; margin:6px 0 14px; color:var(--yellow); }
+    .levels{ display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin:6px 0 14px; }
+    .levels button{
+      font-family:"Press Start 2P", monospace; font-size:11px; padding:12px 0; border-radius:12px; cursor:pointer;
+      border:2px solid #000; background:#1d2742; color:#fff; box-shadow:0 4px 0 #0b1122;
+    }
+    .levels button.done{ background:var(--green); box-shadow:0 4px 0 #0e5a2a; }
+    .levels button:disabled{ opacity:.35; cursor:not-allowed; box-shadow:none; }
+    .levels button.tier-m{ outline:2px dashed rgba(46,196,255,.5); outline-offset:2px; }
+    .levels button.tier-d{ outline:2px dashed rgba(255,212,0,.6); outline-offset:2px; }
+    .levels button.tier-i{ outline:2px dashed rgba(255,61,90,.8); outline-offset:2px; }
+    .btns{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+    button.big{
+      font-family:"Press Start 2P", ui-monospace, monospace; font-size:11px; letter-spacing:.5px;
+      padding:13px 16px; border:3px solid #000; border-radius:14px; cursor:pointer;
+      background:var(--red); color:#fff; box-shadow:0 6px 0 #7d1427, 0 0 22px rgba(255,61,90,.4);
+    }
+    button.big.alt{ background:#1d2742; color:#fff; box-shadow:0 6px 0 #0b1122; }
+    button.big:active{ transform:translateY(4px); box-shadow:0 2px 0 #000; }
+    .blink{ animation:blink 1s steps(2,start) infinite; }
+    @keyframes blink{ to{ visibility:hidden; } }
+
+    .site-footer{ max-width:900px; margin:0 auto; padding:24px 16px 30px; font-size:13px; color:rgba(255,255,255,.6); border-top:1px solid rgba(120,160,255,.18); }
+    .site-footer b{ color:rgba(255,255,255,.9); }
+    .bottom-nav{ display:none; }
+    @media (max-width:640px){
+      .nav .pill{ display:none; }
+      .brand img{ height:34px; }
+      h1{ font-size:26px; }
+      .hud{ font-size:8px; }
+      #ticker{ font-size:8px; }
+      .levels{ grid-template-columns:repeat(4, 1fr); }
+      .bottom-nav{
+        display:flex; position:fixed; z-index:60; left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom));
+        justify-content:space-around; gap:4px; padding:6px; border-radius:22px;
+        background:rgba(15,22,41,.92); backdrop-filter:blur(14px); border:1px solid rgba(120,160,255,.18); box-shadow:0 12px 30px rgba(0,0,0,.4);
+      }
+      .bottom-nav a{
+        flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 2px; border-radius:16px;
+        text-decoration:none; color:var(--ink); font-family:var(--font-display); font-size:11px; font-weight:800; white-space:nowrap;
+      }
+      .bottom-nav .ico{ font-size:20px; line-height:1; }
+      .bottom-nav img{ width:20px; height:20px; border-radius:6px; }
+      .bottom-nav a.on{ background:rgba(255,212,0,.22); }
+      .site-footer{ padding-bottom:calc(110px + env(safe-area-inset-bottom)); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee"><div class="marquee-track">
+    <span>SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+    <span>SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+    <span>SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+    <span>SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+  </div></div>
+</div>
+
+<header>
+  <div class="header-inner">
+    <a class="brand" href="index.html"><img src="logo.webp" alt="Aromat Ovunque"></a>
+    <nav class="nav" aria-label="Menu">
+      <a class="pill" href="index.html"><span>🏠</span> Home</a>
+      <a class="pill" href="shop.html"><span>🛒</span> Shop</a>
+      <a class="pill on" href="giochi.html" aria-current="page"><span>🎮</span> Giochi</a>
+      <a class="pill" href="https://www.instagram.com/aromatovunque.info?igsh=MXBlZjN0YmI3b3IzdA==" target="_blank" rel="noopener"><img src="insta.webp" alt=""> Instagram</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero-row">
+    <h1>Mungitura Aromat</h1>
+    <span class="fan-sticker">Fan site non ufficiale ♥</span>
+  </div>
+
+  <section class="cabinet">
+    <div class="hud">
+      <span>LIVELLO<b id="lvl">1</b></span>
+      <span>LATTE<b id="milk">0/0</b></span>
+      <span class="time" id="timeBox">TEMPO<b id="time">0</b></span>
+      <span><b id="tier">FACILE</b></span>
+    </div>
+    <div class="screen">
+      <canvas id="game" width="620" height="420" aria-label="Mucca: muovi i capezzoli su e giù per mungere"></canvas>
+      <div class="scan"></div>
+    </div>
+    <div class="foot"><p id="ticker" aria-live="polite"></p></div>
+  </section>
+</main>
+
+<div class="overlay show" id="overlay" role="dialog" aria-modal="true" aria-labelledby="ovTitle">
+  <div class="box">
+    <h2 id="ovTitle">MUNGITURA AROMAT</h2>
+    <div id="ovText"></div>
+    <div id="ovLevels" class="levels"></div>
+    <div class="btns" id="ovBtns"></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p><b>Non ufficiale</b>: sito satirico fatto da fan, per amore dell’Aromat. Non affiliato a Knorr o Unilever. Le mucche sono disegnate a mano, non hanno capezzoli verificati.</p>
+</footer>
+
+<nav class="bottom-nav" aria-label="Menu">
+  <a href="index.html"><span class="ico">🏠</span><span>Home</span></a>
+  <a href="shop.html"><span class="ico">🛒</span><span>Shop</span></a>
+  <a class="on" href="giochi.html" aria-current="page"><span class="ico">🎮</span><span>Giochi</span></a>
+  <a href="https://www.instagram.com/aromatovunque.info?igsh=MXBlZjN0YmI3b3IzdA==" target="_blank" rel="noopener"><img src="insta.webp" alt=""><span>Instagram</span></a>
+</nav>
+
+<script>
+(() => {
+  'use strict';
+
+  const W = 620, H = 420;
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const $ = id => document.getElementById(id);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const COLORS = ['#ffd400', '#1fa34a', '#e3343b']; // gialli, verdi, rossi Aromat
+
+  // ===== Livelli: 20 difficoltà crescenti =====
+  function cfg(i) {
+    return {
+      target: 8 + 2 * i,                                      // litri (unità) da mungere
+      time: Math.max(25, 75 - 2.5 * i),                        // secondi
+      minStroke: 14 + 1.2 * i,                                 // corsa in giù prima della risalita
+      sway: i >= 5 ? Math.min(16, (i - 4) * 1.2) : 0,          // la mucca dondola (px)
+      bob: i >= 10 ? Math.min(9, (i - 9) * 0.8) : 0,           // le mammelle ballano su e giù (px)
+      flies: i >= 12 ? Math.min(3, Math.floor((i - 10) / 3) + 1) : 0, // mosche sui capezzoli
+      kickEvery: i >= 15 ? Math.max(4, 12 - (i - 14) * 1.2) : 0,      // ogni quanto calcia (s)
+      tier: i <= 5 ? 'FACILE' : i <= 10 ? 'MEDIO' : i <= 15 ? 'DIFFICILE' : 'IMPOSSIBILE',
+      tierClass: i <= 5 ? '' : i <= 10 ? 'tier-m' : i <= 15 ? 'tier-d' : 'tier-i',
+    };
+  }
+  const NLEV = 20;
+  function load(key, d) { try { const v = JSON.parse(localStorage.getItem(key)); return v == null ? d : v; } catch (e) { return d; } }
+  function save(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
+  let unlocked = load('mungi.unlocked', 1);
+  let stars = load('mungi.stars', []);
+
+  // ===== Audio =====
+  let audio = null;
+  function ac() {
+    if (!audio) { try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    if (audio && audio.state === 'suspended') audio.resume();
+    return audio;
+  }
+  function beep(f, d, type = 'square', slide = 0, v = 0.05) {
+    const a = ac(); if (!a) return;
+    const t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, f + slide), t + d);
+    g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(g).connect(a.destination); o.start(t); o.stop(t + d + 0.02);
+  }
+  const SFX = {
+    squirt: () => beep(780 + Math.random() * 200, .07, 'triangle', -300, .06),
+    swat: () => beep(1400, .04, 'square', -800, .04),
+    kick: () => beep(90, .3, 'sawtooth', -50, .12),
+    win: () => [523, 659, 784, 1047, 1319].forEach((f, i) => setTimeout(() => beep(f, .14, 'square', 0, .05), i * 100)),
+    lose: () => [392, 330, 262, 196].forEach((f, i) => setTimeout(() => beep(f, .22, 'triangle', 0, .06), i * 150)),
+    moo: () => beep(180, .5, 'sawtooth', 60, .05),
+  };
+
+  // ===== Stato =====
+  let lvl = 1, L, milk, timeLeft, state, t, teats, flies, kick, pointers, drops, popups, parts, shakeT, paused, lastT;
+  const TEAT_X = [-30, -11, 11, 30];
+  const CX = 290, CY = 150;   // centro della mucca
+
+  function startLevel(n) {
+    lvl = n; L = cfg(n);
+    milk = 0; timeLeft = L.time; state = 'play';
+    teats = TEAT_X.map(() => ({ blocked: false }));
+    flies = Array.from({ length: L.flies }, () => newFly());
+    kick = { next: L.kickEvery || 0, phase: 'idle', tt: 0 };
+    pointers = new Map(); drops = []; popups = []; parts = [];
+    paused = 0; shakeT = 0;
+    $('overlay').classList.remove('show');
+    update();
+    say(`Livello ${n}: muovi i capezzoli su e giù. Obiettivo ${L.target} litri!`);
+  }
+
+  function newFly() {
+    return { x: rnd(200, 420), y: rnd(90, 230), tx: 0, ty: 0, tgt: -1, nextT: rnd(1.5, 3), swat: 0 };
+  }
+
+  // ===== Mammelle =====
+  function teatPos(k) {
+    const cx = CX + Math.sin(t * 0.9) * L.sway;
+    const bob = Math.sin(t * 2.1 + k * 1.3) * L.bob;
+    return [cx + TEAT_X[k], CY + 98 + bob];
+  }
+
+  function squirt(k) {
+    if (state !== 'play' || paused > 0) return;
+    if (teats[k].blocked) { popup(...teatPos(k), 'MOSCA!', '#ff3d5a'); return; }
+    milk++;
+    SFX.squirt();
+    const [x, y] = teatPos(k);
+    for (let n = 0; n < 4; n++) drops.push({ x, y, vx: rnd(-20, 20), vy: rnd(40, 90), life: 0.7 });
+    if (milk % 4 === 0) parts.push({ x: CX, y: CY + 40, vx: 0, vy: 0, life: 0.3, moo: true });
+    if (milk >= L.target) return win();
+    update();
+  }
+
+  function win() {
+    state = 'done';
+    const left = timeLeft / L.time;
+    const s = left > 0.5 ? 3 : left > 0.2 ? 2 : 1;
+    stars[lvl - 1] = Math.max(stars[lvl - 1] || 0, s);
+    save('mungi.stars', stars);
+    if (lvl >= unlocked && lvl < NLEV) { unlocked = lvl + 1; save('mungi.unlocked', unlocked); }
+    SFX.win();
+    const last = lvl === NLEV;
+    showEnd(`LIVELLO ${lvl} COMPLETATO!`,
+      `<p>Hai munto ${milk} litri di Aromat. Ora la mucca è tutta a righe gialle, verdi e rosse.</p>` +
+      `<div class="stars">${'★'.repeat(s)}${'☆'.repeat(3 - s)}</div>`,
+      last ? [['MENU LIVELLI', menu]] : [['PROSSIMO LIVELLO', () => startLevel(lvl + 1)], ['MENU LIVELLI', menu]]);
+  }
+
+  function fail() {
+    state = 'fail'; SFX.lose();
+    showEnd('TEMPO SCADUTO', `<p>La mucca si è stancata. Riprova: più ritmo, più fiato.</p>`,
+      [['RIPROVA', () => startLevel(lvl)], ['MENU LIVELLI', menu]]);
+  }
+
+  // ===== Mosche =====
+  function swatFly(f) {
+    f.swat = 0.3; SFX.swat(); parts.push({ x: f.x, y: f.y, vx: 0, vy: 0, life: 0.2, sw: true });
+    f.nextT = rnd(1.5, 3); f.tgt = -1;
+    f.x = rnd(160, 440); f.y = rnd(90, 240);
+  }
+
+  // ===== Input =====
+  function pt(e) {
+    const r = canvas.getBoundingClientRect();
+    return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height];
+  }
+  canvas.addEventListener('pointerdown', e => {
+    ac();
+    const [x, y] = pt(e);
+    if (state === 'play') {
+      // prima le mosche (se una è vicina al tocco la scacci)
+      for (const f of flies) {
+        if (Math.hypot(f.x - x, f.y - y) < 24) { swatFly(f); return; }
+      }
+      // poi il capezzolo più vicino
+      let best = -1, bd = 34;
+      for (let k = 0; k < 4; k++) {
+        const [tx, ty] = teatPos(k), d = Math.hypot(tx - x, ty - y);
+        if (d < bd) { bd = d; best = k; }
+      }
+      if (best >= 0) {
+        canvas.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, { k: best, last: y, down: 0 });
+      }
+    }
+  });
+  canvas.addEventListener('pointermove', e => {
+    const p = pointers.get(e.pointerId);
+    if (!p || state !== 'play') return;
+    const [, y] = pt(e);
+    const dy = y - p.last; p.last = y;
+    if (dy > 0) p.down += dy;
+    else if (dy < 0) {
+      if (p.down >= L.minStroke) squirt(p.k);
+      p.down = 0;
+    }
+  });
+  const endPointer = e => pointers.delete(e.pointerId);
+  canvas.addEventListener('pointerup', endPointer);
+  canvas.addEventListener('pointercancel', endPointer);
+
+  // ===== Fisica e tempo =====
+  function update2(dt) {
+    t += dt;
+    if (state !== 'play') return;
+    timeLeft -= dt;
+    if (timeLeft <= 0) { timeLeft = 0; return fail(); }
+    // mosche: volano, a volte si posano su un capezzolo e lo bloccano
+    for (const f of flies) {
+      f.nextT -= dt; f.swat = Math.max(0, f.swat - dt);
+      if (f.nextT <= 0) {
+        f.nextT = rnd(1.8, 3.2);
+        if (Math.random() < 0.6) { f.tgt = Math.floor(Math.random() * 4); const [tx, ty] = teatPos(f.tgt); f.tx = tx; f.ty = ty - 6; }
+        else { f.tgt = -1; f.tx = rnd(180, 420); f.ty = rnd(90, 240); }
+      }
+      const sp = 150 * dt;
+      const dx = f.tx - f.x, dy = f.ty - f.y, d = Math.hypot(dx, dy);
+      if (d > 1) { f.x += dx / d * Math.min(sp, d); f.y += dy / d * Math.min(sp, d); }
+    }
+    for (let k = 0; k < 4; k++) teats[k].blocked = false;
+    for (const f of flies) {
+      for (let k = 0; k < 4; k++) {
+        const [tx, ty] = teatPos(k);
+        if (Math.hypot(f.x - tx, f.y - ty) < 14) teats[k].blocked = true;
+      }
+    }
+    // calcio della mucca: avvisa, poi blocca il latte per un attimo
+    if (L.kickEvery > 0) {
+      if (kick.phase === 'idle') {
+        kick.next -= dt;
+        if (kick.next <= 0) { kick.phase = 'warn'; kick.tt = 0.7; }
+      } else if (kick.phase === 'warn') {
+        kick.tt -= dt;
+        if (kick.tt <= 0) { kick.phase = 'kick'; kick.tt = 1.2; paused = 1.2; SFX.kick(); shakeT = 0.4; popup(CX, CY - 60, 'CALCIO!', '#ff3d5a'); }
+      } else if (kick.phase === 'kick') {
+        kick.tt -= dt; paused = Math.max(0, paused - dt);
+        if (kick.tt <= 0) { kick.phase = 'idle'; kick.next = L.kickEvery; }
+      }
+    }
+    paused = Math.max(0, paused - dt);
+    // gocce di latte verso il secchio
+    for (let k = drops.length - 1; k >= 0; k--) {
+      const d = drops[k];
+      d.x += d.vx * dt; d.y += d.vy * dt; d.vy += 200 * dt; d.life -= dt;
+      if (d.life <= 0) drops.splice(k, 1);
+    }
+    for (let k = parts.length - 1; k >= 0; k--) { parts[k].life -= dt; if (parts[k].life <= 0) parts.splice(k, 1); }
+    for (let k = popups.length - 1; k >= 0; k--) { popups[k].life -= dt; popups[k].y -= 22 * dt; if (popups[k].life <= 0) popups.splice(k, 1); }
+    shakeT = Math.max(0, shakeT - dt);
+    update();
+  }
+
+  function popup(x, y, text, color) { popups.push({ x, y, text, color, life: 1 }); }
+
+  // ===== Disegno =====
+  function drawCow(cx, cy, time) {
+    // zampe
+    ctx.fillStyle = '#2a2a2a';
+    const legs = [[-52, 0], [-20, 0], [20, 0], [48, 0]];
+    legs.forEach(([dx], i) => {
+      let lift = 0;
+      if (i === 3 && kick.phase === 'warn') lift = -30 * (1 - kick.tt / 0.7);
+      if (i === 3 && kick.phase === 'kick') lift = -30 * (kick.tt / 1.2);
+      ctx.fillRect(cx + dx - 5, cy + 50 + lift, 10, 46 - lift);
+    });
+    // corpo bianco con macchie nere
+    ctx.fillStyle = '#fbfbf4'; ctx.beginPath(); ctx.ellipse(cx, cy, 92, 52, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#1b1f2a';
+    [[-40, -18, 22, 16], [10, -24, 26, 18], [48, 6, 18, 14], [-10, 14, 18, 12]].forEach(([x, y, w, h]) => {
+      ctx.beginPath(); ctx.ellipse(cx + x, cy + y, w, h, 0.2, 0, Math.PI * 2); ctx.fill();
+    });
+    // colorazione Aromat: righe che compaiono mano a mano che munge
+    const p = clamp(milk / L.target, 0, 1);
+    if (p > 0) {
+      ctx.save();
+      ctx.beginPath(); ctx.ellipse(cx, cy, 92, 52, 0, 0, Math.PI * 2); ctx.clip();
+      const n = 12;
+      for (let i = 0; i < n; i++) {
+        if (p < (i + 1) / n) break;
+        ctx.fillStyle = COLORS[i % 3];
+        const bx = cx - 96 + ((i * 47 + 7) % 180);
+        ctx.fillRect(bx, cy - 60 + ((i * 13) % 70), 26, 120);
+      }
+      ctx.restore();
+    }
+    // testa
+    const hx = cx - 98, hy = cy - 26;
+    ctx.fillStyle = '#fbfbf4'; ctx.beginPath(); ctx.ellipse(hx, hy, 36, 30, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#1b1f2a'; ctx.beginPath(); ctx.ellipse(hx - 14, hy - 12, 12, 10, 0.3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#f4b7b7'; ctx.beginPath(); ctx.ellipse(hx - 4, hy + 16, 18, 10, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#e8e6d4'; ctx.fillRect(hx - 30, hy - 40, 8, 14); ctx.fillRect(hx + 22, hy - 40, 8, 14);
+    ctx.fillStyle = '#1b1f2a'; ctx.fillRect(hx - 18, hy - 6, 6, 6); ctx.fillRect(hx + 4, hy - 6, 6, 6);
+    ctx.fillStyle = '#fff'; ctx.fillRect(hx - 16, hy - 4, 2, 2); ctx.fillRect(hx + 6, hy - 4, 2, 2);
+    // campanaccio al collo
+    ctx.fillStyle = '#ffd400'; ctx.fillRect(hx + 4, hy + 26, 10, 10);
+    ctx.fillStyle = '#7a4a1a'; ctx.fillRect(hx + 7, hy + 36, 4, 4);
+    // mammelle e capezzoli
+    ctx.fillStyle = '#f2a7b0'; ctx.beginPath(); ctx.ellipse(cx, cy + 62, 74, 26, 0, 0, Math.PI * 2); ctx.fill();
+    for (let k = 0; k < 4; k++) {
+      const [tx, ty] = teatPos(k);
+      ctx.fillStyle = '#e9829a'; ctx.fillRect(tx - 4, cy + 80, 8, ty - cy - 80 + 4);
+      ctx.fillStyle = teats[k].blocked ? '#8a1f2c' : '#ffb3bf';
+      ctx.fillRect(tx - 5, ty - 4, 10, 8);
+    }
+  }
+
+  function drawFly(f, time) {
+    const wing = Math.floor(time * 30) % 2;
+    ctx.fillStyle = '#111'; ctx.fillRect(Math.round(f.x) - 3, Math.round(f.y) - 2, 6, 5);
+    ctx.fillStyle = 'rgba(255,255,255,.8)';
+    ctx.fillRect(Math.round(f.x) - 6, Math.round(f.y) - 5 + wing, 4, 3);
+    ctx.fillRect(Math.round(f.x) + 2, Math.round(f.y) - 5 + wing, 4, 3);
+  }
+
+  function drawBucket() {
+    const bx = 500, by = 300, bw = 90, bh = 90;
+    const p = clamp(milk / L.target, 0, 1);
+    // latte nel secchio
+    ctx.fillStyle = '#fff6c8';
+    ctx.fillRect(bx + 6, by + bh - bh * p + 4, bw - 12, bh * p - 4);
+    ctx.fillStyle = 'rgba(255,212,0,.35)';
+    ctx.fillRect(bx + 6, by + bh - 10, bw - 12, 6 * p);
+    // secchio: bordo rosso, corpo giallo
+    ctx.fillStyle = '#e3343b'; ctx.fillRect(bx - 4, by - 4, bw + 8, 8);
+    ctx.fillStyle = '#ffd400'; ctx.fillRect(bx, by + 4, bw, bh - 4);
+    ctx.fillStyle = '#1f7a49'; ctx.fillRect(bx, by + 30, bw, 6);
+    ctx.fillStyle = '#e3343b'; ctx.fillRect(bx, by + bh - 4, bw, 4);
+    // maniglia
+    ctx.fillStyle = '#1b1f2a'; ctx.fillRect(bx + 10, by - 18, bw - 20, 3);
+    ctx.fillRect(bx + 10, by - 18, 3, 16); ctx.fillRect(bx + bw - 13, by - 18, 3, 16);
+  }
+
+  function render(time) {
+    const shake = shakeT > 0 ? (Math.random() - 0.5) * 8 : 0;
+    // sfondo: prato e cielo
+    ctx.save(); ctx.translate(shake, 0);
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, '#2ec4ff'); sky.addColorStop(0.6, '#bfeeff'); sky.addColorStop(0.62, '#4cb85f'); sky.addColorStop(1, '#1f7a49');
+    ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+    // montagne svizzere
+    ctx.fillStyle = '#8fa7c9';
+    ctx.beginPath(); ctx.moveTo(0, 170); ctx.lineTo(90, 90); ctx.lineTo(180, 160); ctx.lineTo(300, 60); ctx.lineTo(420, 150); ctx.lineTo(540, 80); ctx.lineTo(620, 150); ctx.lineTo(620, 240); ctx.lineTo(0, 240); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(300, 60); ctx.lineTo(330, 92); ctx.lineTo(270, 92); ctx.closePath(); ctx.fill();
+    // prato con fiori
+    ctx.fillStyle = '#58c36b'; ctx.fillRect(0, 250, W, 170);
+    for (let i = 0; i < 26; i++) { ctx.fillStyle = i % 2 ? '#ffd400' : '#fff'; ctx.fillRect((i * 97) % W, 270 + ((i * 53) % 130), 4, 4); }
+
+    const cx = CX + Math.sin(t * 0.9) * L.sway;
+    drawCow(cx, CY, time);
+    // gocce di latte
+    ctx.fillStyle = '#fffbe8';
+    for (const d of drops) ctx.fillRect(Math.round(d.x), Math.round(d.y), 3, 3);
+    // secchio
+    drawBucket();
+    // mosche
+    for (const f of flies) drawFly(f, time);
+    // scritte
+    ctx.font = '8px "Press Start 2P", monospace'; ctx.textAlign = 'center';
+    for (const p of popups) {
+      ctx.globalAlpha = Math.min(1, p.life * 2);
+      ctx.fillStyle = '#000'; ctx.fillText(p.text, p.x + 1.5, p.y + 1.5);
+      ctx.fillStyle = p.color; ctx.fillText(p.text, p.x, p.y);
+    }
+    ctx.globalAlpha = 1;
+    if (kick.phase === 'warn') {
+      ctx.font = '14px "Press Start 2P", monospace'; ctx.fillStyle = '#ff3d5a';
+      ctx.fillText('!', CX + 70, CY - 70);
+    }
+    ctx.restore();
+  }
+
+  // ===== HUD =====
+  function update() {
+    $('lvl').textContent = lvl;
+    $('milk').textContent = `${milk}/${L.target}`;
+    $('time').textContent = Math.ceil(timeLeft);
+    $('timeBox').classList.toggle('low', timeLeft < 10);
+    $('tier').textContent = L.tier;
+  }
+  function say(t, col = '#fff6c8') { $('ticker').textContent = t; $('ticker').style.color = col; }
+
+  // ===== Schermate =====
+  function showEnd(title, html, buttons) {
+    $('ovTitle').textContent = title;
+    $('ovText').innerHTML = html;
+    $('ovLevels').innerHTML = '';
+    fillBtns(buttons);
+    $('overlay').classList.add('show');
+  }
+  function fillBtns(buttons) {
+    const box = $('ovBtns'); box.innerHTML = '';
+    buttons.forEach(([label, fn], i) => {
+      const b = document.createElement('button');
+      b.className = 'big' + (i > 0 ? ' alt' : '');
+      b.textContent = label;
+      b.addEventListener('click', () => { ac(); fn(); });
+      box.appendChild(b);
+    });
+  }
+  function menu() {
+    state = 'menu';
+    $('ovTitle').textContent = 'SCEGLI IL LIVELLO';
+    $('ovText').innerHTML = '<p>Il ritmo conta: muovi il dito su e giù sul capezzolo. Il primo livello è facile, l’ultimo è impossibile.</p>';
+    const grid = $('ovLevels'); grid.innerHTML = '';
+    for (let n = 1; n <= NLEV; n++) {
+      const b = document.createElement('button');
+      b.textContent = n;
+      const c = cfg(n);
+      b.className = (stars[n - 1] ? 'done ' : '') + c.tierClass;
+      b.disabled = n > unlocked;
+      b.title = c.tier;
+      b.addEventListener('click', () => { ac(); startLevel(n); });
+      grid.appendChild(b);
+    }
+    fillBtns([]);
+    $('overlay').classList.add('show');
+  }
+
+  function titleScreen() {
+    menu();
+    $('ovTitle').textContent = 'MUNGITURA AROMAT';
+    $('ovText').innerHTML =
+      '<p>Muovi il dito <b>giù e poi su</b> su un capezzolo: ogni ritmo completo fa uscire un litro di latte.</p>' +
+      '<p>Colora la mucca con i colori Aromat mungendo. Attento alle <b>mosche</b> (tocca per scacciarle) e ai <b>calci</b>.</p>';
+  }
+
+  // ===== Ciclo =====
+  function loop(now) {
+    const tt = now / 1000;
+    const dt = Math.min(1 / 30, lastT ? tt - lastT : 1 / 60); lastT = tt;
+    if (state === 'play' || state === 'done' || state === 'fail') update2(dt);
+    render(tt);
+    requestAnimationFrame(loop);
+  }
+
+  // stato iniziale prima del primo livello
+  L = cfg(1); milk = 0; timeLeft = L.time; state = 'menu'; t = 0;
+  teats = TEAT_X.map(() => ({ blocked: false })); flies = []; kick = { next: 0, phase: 'idle', tt: 0 };
+  pointers = new Map(); drops = []; popups = []; parts = []; paused = 0; shakeT = 0;
+  const boot = () => { titleScreen(); requestAnimationFrame(loop); };
+  if (document.fonts && document.fonts.load) document.fonts.load('8px "Press Start 2P"').then(boot, boot);
+  else boot();
+  // gancio per i test automatici
+  window.__m = { startLevel, get teats() { return teats.map((_, k) => teatPos(k)); }, get milk() { return milk; }, get state() { return state; },
+    get L() { return L; }, get flies() { return flies; }, cfg, get lvl() { return lvl; }, get time() { return timeLeft; } };
+})();
+</script>
+</body>
+</html>
