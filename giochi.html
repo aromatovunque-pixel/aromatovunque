@@ -77,6 +77,9 @@
     .lead{margin:8px 0 22px; color:var(--muted); font-weight:600; font-size:16px}
 
     .games{display:grid; grid-template-columns:1.35fr 1fr; gap:16px}
+    .game-card.wide{grid-column:1 / -1}
+    .game-card.wide .shot{aspect-ratio:auto; max-height:380px}
+    .game-card.wide .shot img{height:auto; max-height:380px}
     .game-card{
       position:relative;
       display:flex; flex-direction:column;
@@ -89,7 +92,7 @@
     .game-card:hover{transform:translateY(-4px); box-shadow:0 26px 60px rgba(0,0,0,.45); border-color:rgba(255,212,0,.5)}
     .game-card.featured{border:2px solid rgba(255,212,0,.7)}
     .shot{position:relative; aspect-ratio:16/9; background:#050712; overflow:hidden}
-    .shot img{width:100%; height:100%; object-fit:cover; display:block; image-rendering:pixelated}
+    .shot img{width:100%; height:100%; object-fit:contain; background:#050712; display:block; image-rendering:auto}
     .badge{
       position:absolute; top:12px; left:12px;
       padding:6px 11px; border-radius:999px;
@@ -197,6 +200,18 @@
         <h2>🍕 <span data-i18n="games.pizza.name">Tiro alla Pizza</span></h2>
         <p data-i18n="games.pizza.desc">Spara l’Aromat sulla pizza: partite veloci da 15 secondi a 1 minuto.</p>
         <span class="play">▶ <span data-i18n="games.play">Gioca</span></span>
+      </div>
+    </a>
+
+    <a class="game-card wide" href="conquista.html">
+      <div class="shot">
+        <img src="preview-conquista.webp" alt="" width="800" height="550" loading="lazy">
+        <span class="badge">NUOVO</span>
+      </div>
+      <div class="info">
+        <h2>🗺️ Conquista la Svizzera</h2>
+        <p>Parti da Sciaffusa e conquista i 26 cantoni prima che i brodi rivali ti fermino.</p>
+        <span class="play">▶ Gioca</span>
       </div>
     </a>
   </section>
