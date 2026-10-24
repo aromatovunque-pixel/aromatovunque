@@ -93,6 +93,7 @@
     .game-card.featured{border:2px solid rgba(255,212,0,.7)}
     .shot{position:relative; aspect-ratio:16/9; background:#050712; overflow:hidden}
     .shot img{width:100%; height:100%; object-fit:contain; background:#050712; display:block; image-rendering:auto}
+    .shot-fallback{display:flex; align-items:center; justify-content:center; height:100%; font-size:64px; background:linear-gradient(135deg,#1f7a49,#58c36b)}
     .badge{
       position:absolute; top:12px; left:12px;
       padding:6px 11px; border-radius:999px;
@@ -203,6 +204,17 @@
       </div>
     </a>
 
+
+    <a class="game-card" href="mungitura.html">
+      <div class="shot">
+        <div class="shot-fallback" aria-hidden="true">🐄🥛</div>
+      </div>
+      <div class="info">
+        <h2>🐄 Mungitura Aromat</h2>
+        <p>Munge la mucca su e giù e colorala di Aromat. 20 livelli, dal facile all’impossibile.</p>
+        <span class="play">▶ Gioca</span>
+      </div>
+    </a>
   </section>
 </main>
 
