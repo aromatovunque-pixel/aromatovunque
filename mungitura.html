@@ -214,6 +214,7 @@
       win: Math.max(0.1, 0.2 - 0.0053 * i),                           // finestra per premere (secondi)
       need: Math.min(0.9, 0.5 + 0.02 * i),                            // precisione richiesta
       doubles: n >= 10 ? (n >= 15 ? 0.4 : 0.25) : 0,                  // probabilità di due frecce insieme
+      flip: n >= 6 ? Math.min(0.5, 0.1 + 0.025 * (n - 5)) : 0,        // probabilità che la freccia cambi direzione a metà corsa
       bursts: n >= 15,                                                // raffiche veloci
       tier: n <= 5 ? 'FACILE' : n <= 10 ? 'MEDIO' : n <= 15 ? 'DIFFICILE' : 'IMPOSSIBILE',
     };
@@ -275,6 +276,9 @@
       t += L.beat;
     }
     arrows.sort((a, b) => a.at - b.at);
+    for (const ar of arrows) {
+      if (L.flip && Math.random() < L.flip) { ar.start = 1 - ar.row; ar.flipAt = ar.at - L.travel * 0.5; }
+    }
     levelEnd = arrows[arrows.length - 1].at + L.win + 0.6;
   }
 
@@ -328,6 +332,11 @@
       if (a.res === null && now > a.at + L.win) { a.res = 'miss'; missN++; SFX.miss(); shakeT = 0.25; mooT = 0.4; popup(HIT_X + 30, ROW_Y[a.row] - 18, 'MANCATO', '#ff6b6b'); }
     }
     for (let r = 0; r < 2; r++) udder[r] = Math.max(0, udder[r] - dt * 4);
+    for (const ar of arrows) {
+      if (ar.start !== undefined && !ar.fp && now >= ar.flipAt && ar.res === null) {
+        ar.fp = true; popup(HIT_X + (SPAWN_X - HIT_X) * 0.5, ROW_Y[ar.row] - 22, 'CAMBIO!', '#ff9ad5');
+      }
+    }
     for (let k = drops.length - 1; k >= 0; k--) { const d = drops[k]; d.x += d.vx * dt; d.y += d.vy * dt; d.vy += 240 * dt; d.life -= dt; if (d.life <= 0) drops.splice(k, 1); }
     for (let k = parts.length - 1; k >= 0; k--) { const p = parts[k]; p.life -= dt; if (p.life <= 0) parts.splice(k, 1); }
     for (let k = popups.length - 1; k >= 0; k--) { const p = popups[k]; p.life -= dt; p.y -= 26 * dt; if (p.life <= 0) popups.splice(k, 1); }
@@ -394,14 +403,23 @@
       ctx.fillStyle = r === 0 ? '#ffd400' : '#e3343b';
       drawArrow(HIT_X, ROW_Y[r], r === 0 ? -1 : 1, 0.6, true);
     }
-    // frecce in arrivo
+    // frecce in arrivo: quelle che cambiano direzione passano nell'altra corsia a metà corsa
     for (const a of arrows) {
       if (a.res === 'hit') continue;
       const dt = a.at - now;
       const x = HIT_X + dt / L.travel * (SPAWN_X - HIT_X);
       if (x < HIT_X - 30 || x > SPAWN_X + 30) continue;
-      const col = a.res === 'miss' ? '#555' : (a.row === 0 ? '#ffd400' : '#e3343b');
-      drawArrow(x, ROW_Y[a.row], a.row === 0 ? -1 : 1, 1, false, col);
+      let row = a.row, y = ROW_Y[a.row];
+      if (a.start !== undefined) {
+        if (now < a.flipAt) { row = a.start; y = ROW_Y[a.start]; }
+        else if (now < a.flipAt + 0.25) {
+          const k = (now - a.flipAt) / 0.25, e = k * k * (3 - 2 * k);
+          y = ROW_Y[a.start] + (ROW_Y[a.row] - ROW_Y[a.start]) * e;
+          row = k < 0.5 ? a.start : a.row;
+        }
+      }
+      const col = a.res === 'miss' ? '#555' : (row === 0 ? '#ffd400' : '#e3343b');
+      drawArrow(x, y, row === 0 ? -1 : 1, 1, false, col);
     }
   }
   function drawArrow(x, y, dir, s, ghost, col) {
@@ -417,74 +435,99 @@
     ctx.restore();
   }
 
-  // la mucca grande, con le mammelle che si muovono
+  // la mucca: stile fumetto, contorno nero spesso e forme tutte originali
   function drawCow(t) {
-    const bob = Math.sin(t * 3) * 1.5 + (shakeT > 0 ? (Math.random() - 0.5) * 6 : 0);
+    const bob = Math.sin(t * 3) * 2 + (shakeT > 0 ? (Math.random() - 0.5) * 6 : 0);
     const cx = CX, cy = CY + bob;
+    const INK = '#14101a', CREAM = '#fff4b8', PINK = '#f7a1b8', DEEP = '#e2648a', SPOT = '#c9782b';
+    const line = () => { ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; };
     // ombra
-    ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(cx, CY + 150, 150, 16, 0, 0, Math.PI * 2); ctx.fill();
-    // zampe con zoccoli
-    ctx.fillStyle = '#222';
-    for (const dx of [-90, -50, 40, 80]) ctx.fillRect(cx + dx - 10, cy + 66, 20, 60);
-    ctx.fillStyle = '#7a5a3a'; for (const dx of [-90, -50, 40, 80]) ctx.fillRect(cx + dx - 10, cy + 118, 20, 8);
-    // coda
-    ctx.strokeStyle = '#222'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(cx + 128, cy - 20); ctx.quadraticCurveTo(cx + 150, cy + 10, cx + 142, cy + 56); ctx.stroke();
-    ctx.fillStyle = '#222'; ctx.beginPath(); ctx.arc(cx + 142, cy + 60, 6, 0, Math.PI * 2); ctx.fill();
-    // corpo: bianco, con bordo nero e macchie
-    ctx.fillStyle = '#fbfbf4'; ctx.strokeStyle = '#111'; ctx.lineWidth = 4;
-    ctx.beginPath(); ctx.ellipse(cx, cy, 130, 74, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    ctx.save(); ctx.beginPath(); ctx.ellipse(cx, cy, 130, 74, 0, 0, Math.PI * 2); ctx.clip();
-    ctx.fillStyle = '#1b1f2a';
-    for (const [x, y, w, h] of [[-80, -30, 46, 34], [-10, -44, 60, 40], [60, -10, 44, 32], [-40, 16, 40, 28], [100, 20, 36, 26]]) { ctx.beginPath(); ctx.ellipse(cx + x, cy + y, w, h, 0.2, 0, Math.PI * 2); ctx.fill(); }
-    // colori Aromat che la mucca si prende mano a mano
+    ctx.fillStyle = 'rgba(0,0,0,.22)'; ctx.beginPath(); ctx.ellipse(cx, CY + 150, 150, 16, 0, 0, Math.PI * 2); ctx.fill();
+    // zampe sottili con zoccoli grigi
+    line();
+    for (const dx of [-96, -52, 44, 84]) {
+      ctx.fillStyle = CREAM; ctx.beginPath(); ctx.roundRect(cx + dx - 9, cy + 58, 18, 64, 8); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#9aa0ab'; ctx.beginPath(); ctx.roundRect(cx + dx - 12, cy + 114, 24, 14, 6); ctx.fill(); ctx.stroke();
+    }
+    // coda con ciuffo
+    ctx.strokeStyle = INK; ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.moveTo(cx + 124, cy - 14); ctx.quadraticCurveTo(cx + 158, cy + 6, cx + 150, cy + 56); ctx.stroke();
+    ctx.fillStyle = SPOT; ctx.beginPath(); ctx.ellipse(cx + 150, cy + 62, 9, 11, 0, 0, Math.PI * 2); ctx.fill(); line(); ctx.stroke();
+    // corpo
+    ctx.fillStyle = CREAM; line();
+    ctx.beginPath(); ctx.ellipse(cx, cy, 128, 74, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.save(); ctx.beginPath(); ctx.ellipse(cx, cy, 128, 74, 0, 0, Math.PI * 2); ctx.clip();
+    ctx.fillStyle = SPOT;
+    ctx.beginPath(); ctx.ellipse(cx - 40, cy - 46, 52, 28, -0.3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx + 52, cy - 50, 36, 22, 0.2, 0, Math.PI * 2); ctx.fill();
+    // colori Aromat che la mucca si prende mano a mano che munge
     for (const p of patches) {
       ctx.fillStyle = p.c; ctx.globalAlpha = 0.92;
-      ctx.beginPath(); ctx.ellipse(cx + p.x, cy + p.y, p.w, p.h, p.r * 3, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(cx + p.x, cy + p.y, p.w * 0.8, p.h * 0.8, p.r * 3, 0, Math.PI * 2); ctx.fill();
     }
-    ctx.globalAlpha = 1;
-    ctx.restore();
-    // testa
-    const hx = cx - 150, hy = cy - 44;
-    ctx.fillStyle = '#fbfbf4'; ctx.strokeStyle = '#111'; ctx.lineWidth = 4;
-    ctx.beginPath(); ctx.ellipse(hx, hy, 56, 46, -0.1, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#1b1f2a'; ctx.beginPath(); ctx.ellipse(hx - 20, hy - 16, 20, 16, 0.3, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#f4b7b7'; ctx.beginPath(); ctx.ellipse(hx - 6, hy + 26, 28, 15, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#111'; ctx.fillRect(hx - 14, hy + 22, 5, 7); ctx.fillRect(hx + 4, hy + 22, 5, 7);
-    ctx.fillStyle = '#fff'; ctx.fillRect(hx - 22, hy - 6, 9, 9); ctx.fillRect(hx + 6, hy - 6, 9, 9);
-    ctx.fillStyle = '#111'; ctx.fillRect(hx - 19, hy - 3, 4, 5); ctx.fillRect(hx + 9, hy - 3, 4, 5);
-    if (mooT > 0) { // muggito
-      ctx.fillStyle = '#111'; ctx.font = '12px "Press Start 2P", monospace'; ctx.textAlign = 'left'; ctx.fillText('MUUU', hx + 52, hy - 46);
-    }
-    // corna e orecchie
-    ctx.fillStyle = '#f4efd0'; ctx.strokeStyle = '#111';
-    ctx.beginPath(); ctx.moveTo(hx - 30, hy - 36); ctx.lineTo(hx - 42, hy - 66); ctx.lineTo(hx - 22, hy - 42); ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(hx + 26, hy - 40); ctx.lineTo(hx + 40, hy - 68); ctx.lineTo(hx + 14, hy - 44); ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#f4b7b7'; ctx.beginPath(); ctx.ellipse(hx - 56, hy - 10, 14, 8, -0.4, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    // campanaccio al collo
-    ctx.fillStyle = '#ffd400'; ctx.strokeStyle = '#111'; ctx.beginPath(); ctx.arc(hx + 6, hy + 52, 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.globalAlpha = 1; ctx.restore();
 
-    // mammelle: la parte rosa si muove e i capezzoli si allungano quando premi
-    const ux = cx, uy = cy + 80;
-    ctx.fillStyle = '#f2a7b0'; ctx.strokeStyle = '#111'; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.ellipse(ux, uy, 100, 34 + udder[0] * 2 + udder[1] * 2, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    // capezzoli: quelli di sinistra si tirano su, quelli di destra giù
-    const teatX = [-60, -22, 22, 60];
-    teatX.forEach((tx, k) => {
+    // orecchie larghe, corna piccole
+    const hx = cx - 150, hy = cy - 60;
+    ctx.fillStyle = CREAM; line();
+    ctx.beginPath(); ctx.ellipse(hx - 66, hy - 4, 34, 16, -0.35, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#f1e6b0';
+    for (const sx of [-1, 1]) {
+      ctx.beginPath(); ctx.moveTo(hx + sx * 22, hy - 48); ctx.quadraticCurveTo(hx + sx * 30, hy - 72, hx + sx * 14, hy - 78); ctx.quadraticCurveTo(hx + sx * 14, hy - 60, hx + sx * 6, hy - 46); ctx.closePath(); ctx.fill(); ctx.stroke();
+    }
+
+    // testa grande e rotonda
+    ctx.fillStyle = CREAM; line();
+    ctx.beginPath(); ctx.ellipse(hx, hy, 60, 56, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.save(); ctx.beginPath(); ctx.ellipse(hx, hy, 60, 56, 0, 0, Math.PI * 2); ctx.clip();
+    ctx.fillStyle = SPOT; ctx.beginPath(); ctx.ellipse(hx - 42, hy - 32, 26, 20, 0.4, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+
+    // occhi grandi che sbattono le ciglia
+    const blink = (t % 3.4) < 0.12;
+    for (const ex of [hx - 22, hx + 16]) {
+      ctx.fillStyle = '#fff'; line();
+      ctx.beginPath(); ctx.ellipse(ex, hy - 16, 15, 17, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      if (!blink) {
+        ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(ex + 4, hy - 14, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ex + 6, hy - 17, 2, 0, Math.PI * 2); ctx.fill();
+      } else {
+        ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(ex - 13, hy - 16); ctx.lineTo(ex + 13, hy - 16); ctx.stroke();
+      }
+    }
+    // muso rosa grande con narici
+    ctx.fillStyle = PINK; line();
+    ctx.beginPath(); ctx.ellipse(hx + 8, hy + 30, 38, 28, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = INK;
+    ctx.beginPath(); ctx.arc(hx - 2, hy + 26, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(hx + 18, hy + 26, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(hx + 8, hy + 44, 8, 0.2, Math.PI - 0.2); ctx.stroke();
+    if (mooT > 0) { ctx.fillStyle = INK; ctx.font = '12px "Press Start 2P", monospace'; ctx.textAlign = 'left'; ctx.fillText('MUUU', hx + 50, hy - 44); }
+    // campanaccio al collo
+    ctx.fillStyle = '#ffcc33'; line();
+    ctx.beginPath(); ctx.arc(hx + 14, hy + 70, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+    // mammelle rosa: si gonfiano e si muovono quando premi
+    const ux = cx, uy = cy + 76;
+    const sq = (udder[0] + udder[1]) * 4;
+    ctx.fillStyle = PINK; line();
+    ctx.beginPath(); ctx.ellipse(ux, uy, 98 + sq, 30 + sq * 0.5, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    // capezzoli: i due di sinistra quando premi SU, quelli di destra quando premi GIÙ
+    [-62, -22, 22, 62].forEach((tx, k) => {
       const row = k < 2 ? 0 : 1;
-      const stretch = udder[row] * 10;
-      const len = 26 + (k % 2) * 4 + stretch - (row === 0 ? 0 : 0);
-      const dir = row === 0 ? 1 : 1;
-      const bx = ux + tx, by = uy + 28;
-      ctx.fillStyle = '#e9829a'; ctx.strokeStyle = '#111'; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.roundRect(bx - 6, by, 12, len * dir, 5); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = row === 0 ? '#ffd400' : '#e3343b'; ctx.fillRect(bx - 4, by + len - 6, 8, 5);
+      const len = 26 + udder[row] * 10;
+      const bx = ux + tx, by = uy + 20;
+      ctx.fillStyle = DEEP; line();
+      ctx.beginPath(); ctx.roundRect(bx - 7, by, 14, len, 6); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = row === 0 ? '#ffd400' : '#e3343b';
+      ctx.beginPath(); ctx.arc(bx, by + len, 4, 0, Math.PI * 2); ctx.fill();
     });
 
     // secchio di latte accanto alla mucca
     const bx = 540, by = 300, bw = 62, bh = 70;
     const p = clamp(hitsN / L.count, 0, 1);
     ctx.fillStyle = '#fff6c8'; ctx.fillRect(bx + 4, by + bh - bh * p, bw - 8, bh * p);
-    ctx.fillStyle = '#ffd400'; ctx.strokeStyle = '#111'; ctx.lineWidth = 3;
+    ctx.fillStyle = '#ffd400'; line();
     ctx.fillRect(bx, by, bw, bh); ctx.strokeRect(bx, by, bw, bh);
     ctx.fillStyle = '#e3343b'; ctx.fillRect(bx - 3, by - 6, bw + 6, 8);
     ctx.fillStyle = '#1f7a49'; ctx.fillRect(bx, by + 26, bw, 6);
