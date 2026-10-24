@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Conquista la Svizzera – Aromat Ovunque*</title>
-  <meta name="description" content="Conquista i 26 cantoni svizzeri con l’Aromat, prima che i brodi rivali ti fermino. Fan site satirico e non ufficiale." />
+  <meta name="description" content="Conquista i 26 cantoni svizzeri con l’Aromat, prima che i brodi rivali ti fermino. Un arcade da fan, satirico e non ufficiale." />
   <meta name="theme-color" content="#070b18" />
   <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
@@ -22,93 +22,89 @@
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Press+Start+2P&display=swap" />
   <link rel="stylesheet" href="site.css" />
   <style>
-    :root{ --bg:#070b18; --card:#0f1629; --line:rgba(120,160,255,.18); --ink:#eef2ff; --muted:#a5b0d0; }
+    :root{ --bg:#070b18; --ink:#eef2ff; --muted:#a5b0d0; --yellow:#ffd400; --red:#ff3d5a; --cyan:#2ec4ff; --violet:#b44cff; }
     *{ box-sizing:border-box; }
     body{
       margin:0; min-height:100vh; color:var(--ink);
       font-family:system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
       background:
-        radial-gradient(900px 520px at 10% -10%, rgba(255,212,0,.12), transparent 62%),
-        radial-gradient(900px 520px at 90% 0%, rgba(31,163,74,.12), transparent 62%),
+        radial-gradient(900px 520px at 10% -10%, rgba(255,212,0,.14), transparent 62%),
+        radial-gradient(900px 520px at 90% 0%, rgba(46,196,255,.12), transparent 62%),
         var(--bg);
     }
-    header{ position:sticky; top:0; z-index:50; background:rgba(7,11,24,.82); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+    .px{ font-family:"Press Start 2P", ui-monospace, Menlo, Consolas, monospace; }
+    header{ position:sticky; top:0; z-index:50; background:rgba(7,11,24,.85); backdrop-filter:blur(10px); border-bottom:1px solid rgba(120,160,255,.18); }
     .header-inner{ max-width:1100px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
     .brand img{ height:40px; display:block; }
     .nav{ display:flex; align-items:center; gap:8px; }
     .pill{
       display:inline-flex; align-items:center; gap:7px; padding:9px 14px; border-radius:999px;
-      border:1px solid var(--line); background:#111a33; color:var(--ink); text-decoration:none;
+      border:1px solid rgba(120,160,255,.18); background:#111a33; color:var(--ink); text-decoration:none;
       font-family:var(--font-display); font-weight:800;
     }
-    .pill.on{ background:var(--a-yellow); color:#000; border-color:var(--a-yellow); }
+    .pill.on{ background:var(--yellow); color:#000; border-color:var(--yellow); }
     .pill img{ width:18px; height:18px; border-radius:6px; display:block; }
 
-    main{ max-width:1100px; margin:0 auto; padding:24px 16px 10px; }
-    .hero-row{ display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; }
-    h1{ margin:0; font-family:var(--font-display); font-size:44px; letter-spacing:-1px; line-height:1; }
-    .lead{ margin:8px 0 18px; color:var(--muted); font-weight:600; font-size:16px; max-width:70ch; }
+    main{ max-width:960px; margin:0 auto; padding:20px 14px 12px; }
+    .hero-row{ display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; margin-bottom:14px; }
+    h1{ margin:0; font-family:var(--font-display); font-size:38px; letter-spacing:-1px; line-height:1; }
 
-    .stats{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
-    .stat{ padding:8px 14px; border-radius:16px; background:var(--card); border:1px solid var(--line); font-weight:700; }
-    .stat b{ color:var(--a-yellow); font-size:18px; margin-left:4px; }
-
-    .board{ display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); gap:16px; align-items:start; }
-    .map-box{ background:#050712; border:1px solid var(--line); border-radius:22px; padding:10px; box-shadow:0 18px 40px rgba(0,0,0,.35); }
-    canvas#map{ display:block; width:100%; height:auto; border-radius:14px; touch-action:manipulation; cursor:pointer; }
-    .legend{ display:flex; gap:10px; flex-wrap:wrap; margin:10px 4px 2px; font-size:13px; color:var(--muted); }
-    .legend span::before{ content:""; display:inline-block; width:12px; height:12px; border-radius:4px; margin-right:6px; vertical-align:-1px; background:var(--c); }
-
-    .side{ display:flex; flex-direction:column; gap:12px; }
-    .panel{ background:var(--card); border:1px solid var(--line); border-radius:22px; padding:16px 16px 14px; }
-    .panel h2{ margin:0 0 6px; font-family:var(--font-display); font-size:22px; letter-spacing:-.4px; }
-    #info{ margin:0; color:var(--muted); line-height:1.45; min-height:72px; }
-    .actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
-    button.act{
-      flex:1 1 auto; padding:11px 14px; border-radius:999px; border:0; cursor:pointer;
-      font-family:var(--font-display); font-weight:800; font-size:15px;
-      background:var(--a-yellow); color:#000; box-shadow:0 5px 0 #b5932a;
+    /* ===== Cabinato arcade ===== */
+    .cabinet{
+      background:#0b0f24; border:4px solid var(--yellow); border-radius:22px; padding:12px;
+      box-shadow:0 0 0 4px #000, 0 0 40px rgba(255,212,0,.25), 0 24px 60px rgba(0,0,0,.5);
     }
-    button.act.alt{ background:#1d2742; color:var(--ink); box-shadow:0 5px 0 #0b1122; }
-    button.act:disabled{ opacity:.35; cursor:not-allowed; }
-    button.act:active{ transform:translateY(2px); box-shadow:none; }
-
-    #log{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; font-size:14px; color:var(--muted); }
-    #log li{ padding:7px 10px; border-radius:12px; background:rgba(255,255,255,.03); border:1px solid var(--line); line-height:1.35; }
-    #log li:first-child{ color:var(--ink); }
-
-    .overlay{
-      position:fixed; inset:0; z-index:90; display:none; align-items:center; justify-content:center;
-      background:rgba(3,5,12,.7); backdrop-filter:blur(4px); padding:16px;
+    .hud{ display:flex; flex-wrap:wrap; gap:8px 18px; justify-content:space-between; padding:4px 6px 10px; font-size:9px; color:#fff6c8; }
+    .hud b{ color:var(--cyan); font-weight:400; margin-left:6px; }
+    .hud .combo b{ color:var(--red); }
+    .screen{ position:relative; border:3px solid #000; border-radius:12px; overflow:hidden; background:#000; }
+    canvas#map{ display:block; width:100%; height:auto; cursor:pointer; touch-action:manipulation; image-rendering:pixelated; transition:transform .05s linear; }
+    .scan{ position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px); mix-blend-mode:multiply; border-radius:12px; }
+    .foot{ display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; padding:12px 6px 4px; }
+    #ticker{ flex:1 1 320px; margin:0; font-size:9px; line-height:1.7; color:#fff6c8; min-height:3.4em; }
+    button.big{
+      font-family:"Press Start 2P", ui-monospace, monospace; font-size:12px; letter-spacing:.5px;
+      padding:14px 18px; border:3px solid #000; border-radius:14px; cursor:pointer;
+      background:var(--red); color:#fff; box-shadow:0 6px 0 #7d1427, 0 0 22px rgba(255,61,90,.4);
     }
+    button.big:active{ transform:translateY(4px); box-shadow:0 2px 0 #7d1427; }
+    button.big:disabled{ opacity:.4; cursor:not-allowed; transform:none; box-shadow:0 6px 0 #3a0d16; }
+    .legend{ display:flex; gap:10px; flex-wrap:wrap; margin:12px 6px 0; font-size:12px; color:var(--muted); }
+    .legend span::before{ content:""; display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; vertical-align:-1px; background:var(--c); border:2px solid #000; }
+
+    /* ===== Schermate (titolo, fine) ===== */
+    .overlay{ position:fixed; inset:0; z-index:90; display:none; align-items:center; justify-content:center; background:rgba(3,5,12,.78); padding:16px; }
     .overlay.show{ display:flex; }
     .overlay .box{
-      max-width:460px; width:100%; text-align:center; padding:26px 22px;
-      background:var(--card); border:2px solid var(--a-yellow); border-radius:26px;
-      box-shadow:0 30px 80px rgba(0,0,0,.5);
+      max-width:520px; width:100%; text-align:center; padding:26px 22px 24px;
+      background:#0b0f24; border:4px solid var(--yellow); border-radius:22px;
+      box-shadow:0 0 0 4px #000, 0 0 60px rgba(255,212,0,.3);
     }
-    .overlay h2{ margin:0 0 10px; font-family:var(--font-display); font-size:30px; letter-spacing:-.6px; color:var(--a-yellow); }
-    .overlay p{ margin:0 0 16px; color:var(--muted); line-height:1.45; }
-    .overlay button{ font-size:17px; padding:13px 26px; }
+    .overlay h2{ margin:0 0 16px; font-family:"Press Start 2P", monospace; font-size:16px; line-height:1.6; color:var(--yellow); }
+    .overlay p{ margin:0 0 18px; color:#dfe6ff; line-height:1.55; font-size:15px; text-align:left; }
+    .overlay .score{ font-family:"Press Start 2P", monospace; font-size:11px; color:var(--cyan); line-height:1.9; margin:0 0 18px; }
+    .blink{ animation:blink 1s steps(2,start) infinite; }
+    @keyframes blink{ to{ visibility:hidden; } }
+    .jar{ display:block; margin:0 auto 14px; width:64px; height:auto; image-rendering:pixelated; }
 
-    .site-footer{ max-width:1100px; margin:0 auto; padding:26px 16px 30px; font-size:13px; color:rgba(255,255,255,.6); border-top:1px solid var(--line); }
+    .site-footer{ max-width:960px; margin:0 auto; padding:24px 16px 30px; font-size:13px; color:rgba(255,255,255,.6); border-top:1px solid rgba(120,160,255,.18); }
     .site-footer b{ color:rgba(255,255,255,.9); }
-
     .bottom-nav{ display:none; }
-    @media (max-width:860px){
-      .board{ grid-template-columns:1fr; }
-    }
-    @media (max-width:620px){
+
+    @media (max-width:640px){
       .nav .pill{ display:none; }
       .brand img{ height:34px; }
-      h1{ font-size:34px; }
+      h1{ font-size:28px; }
+      .hud{ font-size:8px; }
+      #ticker{ font-size:8px; }
+      button.big{ width:100%; }
       .bottom-nav{
         display:flex; position:fixed; z-index:60; left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom));
         justify-content:space-around; gap:4px; padding:6px; border-radius:22px;
-        background:rgba(15,22,41,.9); backdrop-filter:blur(14px); border:1px solid var(--line); box-shadow:0 12px 30px rgba(0,0,0,.4);
+        background:rgba(15,22,41,.92); backdrop-filter:blur(14px); border:1px solid rgba(120,160,255,.18); box-shadow:0 12px 30px rgba(0,0,0,.4);
       }
       .bottom-nav a{
         flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 2px; border-radius:16px;
@@ -149,53 +145,42 @@
     <h1>Conquista la Svizzera</h1>
     <span class="fan-sticker">Fan site non ufficiale ♥</span>
   </div>
-  <p class="lead">Parti da Sciaffusa, dove nacque l’Aromat. Conquista tutti i 26 cantoni prima che i tre brodi rivali ti fermino. Tocca un cantone per vederne la situazione.</p>
 
-  <div class="stats">
-    <div class="stat">Granelli <b id="gran">0</b></div>
-    <div class="stat">Cantoni Aromat <b id="owned">0</b>/26</div>
-    <div class="stat">Turno <b id="turn">1</b></div>
-  </div>
-
-  <section class="board">
-    <div>
-      <div class="map-box">
-        <canvas id="map" width="620" height="420" aria-label="Mappa della Svizzera con i cantoni"></canvas>
-      </div>
-      <div class="legend">
-        <span style="--c:#ffd400">Aromat</span>
-        <span style="--c:#c0392b">Brodo Rivale</span>
-        <span style="--c:#2e6fd1">Sale Grosso</span>
-        <span style="--c:#7d3c98">Dado Nero</span>
-        <span style="--c:#a89f8a">Neutro</span>
-      </div>
+  <section class="cabinet">
+    <div class="hud px">
+      <span>GRANELLI<b id="gran">0</b></span>
+      <span>CANTONI<b id="owned">0</b>/26</span>
+      <span>TURNO<b id="turn">1</b></span>
+      <span class="combo">COMBO<b id="combo">x0</b></span>
+      <span>RECORD<b id="best">0</b></span>
     </div>
 
-    <div class="side">
-      <div class="panel">
-        <h2 id="title">Scegli un cantone</h2>
-        <p id="info"></p>
-        <div class="actions">
-          <button class="act" id="attack" type="button" disabled>Attacca</button>
-          <button class="act alt" id="reinforce" type="button" disabled>Rinforza</button>
-        </div>
-        <div class="actions">
-          <button class="act alt" id="endturn" type="button">Fine turno</button>
-        </div>
-      </div>
-      <div class="panel">
-        <h2 style="font-size:18px">Cronaca</h2>
-        <ul id="log"></ul>
-      </div>
+    <div class="screen">
+      <canvas id="map" width="620" height="420" aria-label="Mappa della Svizzera: tocca i cantoni per attaccare"></canvas>
+      <div class="scan"></div>
+    </div>
+
+    <div class="foot">
+      <p id="ticker" class="px" aria-live="polite"></p>
+      <button class="big" id="endturn" type="button">FINE TURNO ▶</button>
+    </div>
+
+    <div class="legend">
+      <span style="--c:#ffd400">Aromat</span>
+      <span style="--c:#ff3d5a">Brodo Rivale</span>
+      <span style="--c:#2ec4ff">Sale Grosso</span>
+      <span style="--c:#b44cff">Dado Nero</span>
+      <span style="--c:#b9a77a">Neutro</span>
     </div>
   </section>
 </main>
 
-<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="ovTitle">
+<div class="overlay show" id="overlay" role="dialog" aria-modal="true" aria-labelledby="ovTitle">
   <div class="box">
-    <h2 id="ovTitle"></h2>
-    <p id="ovText"></p>
-    <button class="act" id="again" type="button">Gioca ancora</button>
+    <img class="jar" src="icon-192.png" alt="" width="64" height="64">
+    <h2 id="ovTitle">CONQUISTA LA SVIZZERA</h2>
+    <div id="ovText"></div>
+    <button class="big" id="ovBtn" type="button">GIOCA</button>
   </div>
 </div>
 
@@ -216,32 +201,19 @@
 
   // ===== Cantoni: capoluoghi approssimati (mappa stilizzata, non confini ufficiali) =====
   const CANTONS = [
-    { c:'ZH', n:'Zurigo', lon:8.54, lat:47.37 },
-    { c:'BE', n:'Berna', lon:7.45, lat:46.95 },
-    { c:'LU', n:'Lucerna', lon:8.31, lat:47.05 },
-    { c:'UR', n:'Uri', lon:8.64, lat:46.80 },
-    { c:'SZ', n:'Svitto', lon:8.66, lat:47.02 },
-    { c:'OW', n:'Obvaldo', lon:8.25, lat:46.90 },
-    { c:'NW', n:'Nidvaldo', lon:8.37, lat:46.95 },
-    { c:'GL', n:'Glarona', lon:9.07, lat:47.04 },
-    { c:'ZG', n:'Zugo', lon:8.52, lat:47.17 },
-    { c:'FR', n:'Friburgo', lon:7.16, lat:46.80 },
-    { c:'SO', n:'Soletta', lon:7.53, lat:47.21 },
-    { c:'BS', n:'Basilea Città', lon:7.59, lat:47.56 },
-    { c:'BL', n:'Basilea Campagna', lon:7.72, lat:47.47 },
-    { c:'SH', n:'Sciaffusa', lon:8.63, lat:47.70 },
-    { c:'AR', n:'Appenzello Esterno', lon:9.28, lat:47.38 },
-    { c:'AI', n:'Appenzello Interno', lon:9.41, lat:47.33 },
-    { c:'SG', n:'San Gallo', lon:9.37, lat:47.42 },
-    { c:'GR', n:'Grigioni', lon:9.53, lat:46.85 },
-    { c:'AG', n:'Argovia', lon:8.05, lat:47.39 },
-    { c:'TG', n:'Turgovia', lon:9.07, lat:47.56 },
-    { c:'TI', n:'Ticino', lon:8.95, lat:46.19 },
-    { c:'VD', n:'Vaud', lon:6.63, lat:46.57 },
-    { c:'VS', n:'Vallese', lon:7.60, lat:46.23 },
-    { c:'NE', n:'Neuchâtel', lon:6.93, lat:46.99 },
-    { c:'GE', n:'Ginevra', lon:6.14, lat:46.20 },
-    { c:'JU', n:'Giura', lon:7.35, lat:47.36 },
+    { c:'ZH', n:'Zurigo', lon:8.54, lat:47.37 }, { c:'BE', n:'Berna', lon:7.45, lat:46.95 },
+    { c:'LU', n:'Lucerna', lon:8.31, lat:47.05 }, { c:'UR', n:'Uri', lon:8.64, lat:46.80 },
+    { c:'SZ', n:'Svitto', lon:8.66, lat:47.02 }, { c:'OW', n:'Obvaldo', lon:8.25, lat:46.90 },
+    { c:'NW', n:'Nidvaldo', lon:8.37, lat:46.95 }, { c:'GL', n:'Glarona', lon:9.07, lat:47.04 },
+    { c:'ZG', n:'Zugo', lon:8.52, lat:47.17 }, { c:'FR', n:'Friburgo', lon:7.16, lat:46.80 },
+    { c:'SO', n:'Soletta', lon:7.53, lat:47.21 }, { c:'BS', n:'Basilea Città', lon:7.59, lat:47.56 },
+    { c:'BL', n:'Basilea Campagna', lon:7.72, lat:47.47 }, { c:'SH', n:'Sciaffusa', lon:8.63, lat:47.70 },
+    { c:'AR', n:'Appenzello Esterno', lon:9.28, lat:47.38 }, { c:'AI', n:'Appenzello Interno', lon:9.41, lat:47.33 },
+    { c:'SG', n:'San Gallo', lon:9.37, lat:47.42 }, { c:'GR', n:'Grigioni', lon:9.53, lat:46.85 },
+    { c:'AG', n:'Argovia', lon:8.05, lat:47.39 }, { c:'TG', n:'Turgovia', lon:9.07, lat:47.56 },
+    { c:'TI', n:'Ticino', lon:8.95, lat:46.19 }, { c:'VD', n:'Vaud', lon:6.63, lat:46.57 },
+    { c:'VS', n:'Vallese', lon:7.60, lat:46.23 }, { c:'NE', n:'Neuchâtel', lon:6.93, lat:46.99 },
+    { c:'GE', n:'Ginevra', lon:6.14, lat:46.20 }, { c:'JU', n:'Giura', lon:7.35, lat:47.36 },
   ];
   // contorno approssimativo della Svizzera (lon, lat)
   const OUTLINE = [
@@ -256,14 +228,16 @@
   const CEN = CANTONS.map(c => proj(c.lon, c.lat));
   const N = CANTONS.length;
   const OWNER_NAMES = ['Aromat', 'Brodo Rivale', 'Sale Grosso', 'Dado Nero'];
-  const PLAYER = [255, 212, 0], NEUTRAL = [168, 159, 138];
-  const RIVAL_COLORS = [[192, 57, 43], [46, 111, 209], [125, 60, 152]];
-  const SEA = [10, 16, 40];
+  const COL = {
+    player: [255, 212, 0], neutral: [185, 167, 122],
+    rival: [[255, 61, 90], [46, 196, 255], [180, 76, 255]], sea: [12, 20, 52],
+  };
   const START = 'SH';
   const SEEDS = { TI: 1, GE: 2, GR: 3 }; // partenza dei brodi rivali
 
   const canvas = document.getElementById('map');
   const ctx = canvas.getContext('2d');
+  const $ = id => document.getElementById(id);
 
   // ===== Mappa: ogni pixel appartiene al cantone del capoluogo più vicino =====
   function inside(x, y) {
@@ -277,7 +251,6 @@
   const lab = new Int8Array(W * H);   // -2 = mare, altrimenti indice del cantone
   const edge = new Uint8Array(W * H); // 1 = confine tra cantoni, 2 = costa
   const adj = Array.from({ length: N }, () => new Set());
-  const area = new Int32Array(N);
   (function buildMap() {
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const p = y * W + x;
@@ -287,7 +260,7 @@
         const dx = x - CEN[i][0], dy = y - CEN[i][1], d = dx * dx + dy * dy;
         if (d < bd) { bd = d; best = i; }
       }
-      lab[p] = best; area[best]++;
+      lab[p] = best;
     }
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const p = y * W + x, l = lab[p];
@@ -304,10 +277,50 @@
     }
   })();
 
-  // ===== Stato di gioco =====
-  let owner, def, gran, turn, sel, over, won, logs;
+  // ===== Audio: effetti 8-bit =====
+  let audio = null;
+  function ac() {
+    if (!audio) { try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    if (audio && audio.state === 'suspended') audio.resume();
+    return audio;
+  }
+  function beep(f, d, type = 'square', slide = 0, v = 0.05) {
+    const a = ac(); if (!a) return;
+    const t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, f + slide), t + d);
+    g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(g).connect(a.destination); o.start(t); o.stop(t + d + 0.02);
+  }
+  const SFX = {
+    shot: () => beep(900, .09, 'square', -500, .04),
+    boom: () => { beep(120, .35, 'sawtooth', -80, .09); beep(600, .15, 'square', -400, .04); },
+    fail: () => beep(200, .25, 'triangle', -120, .08),
+    tick: () => beep(660, .03, 'square', 0, .02),
+    rival: () => beep(330, .12, 'triangle', -60, .05),
+    coin: () => { beep(988, .06); setTimeout(() => beep(1319, .1), 50); },
+    win: () => [523, 659, 784, 1047, 1319].forEach((f, i) => setTimeout(() => beep(f, .14, 'square', 0, .05), i * 100)),
+    lose: () => [392, 330, 262, 196].forEach((f, i) => setTimeout(() => beep(f, .22, 'triangle', 0, .06), i * 160)),
+  };
+
+  // ===== Stato =====
+  let owner, def, gran, turn, state, preview, combo, conquests, best;
+  const flyers = [], popups = [], parts = [];
+  let shakeT = 0, lastT = 0;
   const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
   const idx = code => CANTONS.findIndex(c => c.c === code);
+  const count = o => { let k = 0; for (let i = 0; i < N; i++) if (owner[i] === o) k++; return k; };
+  const chance = d => Math.max(0.35, Math.min(0.9, 0.9 - 0.1 * d));
+  const pct = d => Math.round(chance(d) * 100);
+  const playerNeighbour = i => [...adj[i]].find(j => owner[j] === 0);
+  const take = (i, o) => { owner[i] = o; def[i] = o === 0 ? rnd(1, 2) : rnd(2, 3); };
+  const say = (t, col = '#fff6c8') => { $('ticker').textContent = t; $('ticker').style.color = col; };
+  const shake = (n) => { shakeT = Math.max(shakeT, n / 60); };
+
+  try { best = Number(localStorage.getItem('conquista.best')) || 0; } catch (e) { best = 0; }
+  function saveBest(score) {
+    if (score > best) { best = score; try { localStorage.setItem('conquista.best', String(best)); } catch (e) {} }
+  }
 
   function reset() {
     owner = new Int8Array(N).fill(-1);
@@ -315,178 +328,304 @@
     for (let i = 0; i < N; i++) def[i] = rnd(1, 3);
     owner[idx(START)] = 0; def[idx(START)] = 1;
     for (const code in SEEDS) { const i = idx(code); owner[i] = SEEDS[code]; def[i] = rnd(2, 3); }
-    gran = 5; turn = 1; sel = -1; over = false; won = false; logs = [];
-    addLog('Sei a Sciaffusa, dove nacque l’Aromat. Conquista il resto della Svizzera.');
-    document.getElementById('overlay').classList.remove('show');
+    gran = 5; turn = 1; state = 'play'; preview = -1; combo = 0; conquests = 0;
+    flyers.length = 0; popups.length = 0; parts.length = 0;
+    say('Parti da Sciaffusa, dove nacque l’Aromat. Tocca un cantone rosso, blu o viola vicino ai tuoi!');
+    $('overlay').classList.remove('show');
     update();
   }
 
-  const count = o => { let k = 0; for (let i = 0; i < N; i++) if (owner[i] === o) k++; return k; };
-  const hasPlayerNeighbour = i => [...adj[i]].some(j => owner[j] === 0);
-  const chance = d => Math.max(0.25, Math.min(0.9, 0.85 - 0.1 * d));
-  const take = (i, o) => { owner[i] = o; def[i] = o === 0 ? rnd(1, 2) : rnd(2, 3); };
-  const addLog = t => { logs.unshift(t); logs = logs.slice(0, 7); };
-
-  function canAttack(i) {
-    return !over && i >= 0 && owner[i] !== 0 && hasPlayerNeighbour(i) && gran >= def[i];
+  // ===== Azioni del giocatore =====
+  // tocco su un cantone tuo = rinforza; tocco su un cantone nemico vicino = anteprima, poi tocca ancora per attaccare
+  function tap(i) {
+    if (state !== 'play') return;
+    if (i < 0) { preview = -1; update(); return; }
+    if (owner[i] === 0) {
+      preview = -1;
+      if (def[i] <= 1) { say(`${CANTONS[i].n} è già fortissimo!`); SFX.tick(); }
+      else if (gran < 2) { say('Servono 2 granelli per rinforzare!', '#ff6b6b'); SFX.fail(); }
+      else { gran -= 2; def[i]--; popup(i, 'RINFORZATO!', '#2ec4ff'); beep(520, .1, 'triangle', 300, .05); say(`${CANTONS[i].n} rinforzato: difesa ${def[i]}.`, '#2ec4ff'); }
+      update(); return;
+    }
+    const src = playerNeighbour(i);
+    if (src === undefined) {
+      preview = -1; say(`${CANTONS[i].n} non confina con te: conquista prima un cantone vicino.`, '#9fb0d8'); SFX.fail(); update(); return;
+    }
+    if (preview === i) { preview = -1; attack(i, src); }
+    else {
+      preview = i; SFX.tick();
+      say(`Tocca ancora per attaccare ${CANTONS[i].n}: costa ${def[i]} granelli, riuscita ${pct(def[i])}%.`);
+      update();
+    }
   }
-  function attack(i) {
-    if (!canAttack(i)) return;
+
+  function attack(i, src) {
     const cost = def[i];
-    gran -= cost;
-    const name = CANTONS[i].n;
+    if (gran < cost) {
+      say(`Servono ${cost} granelli per ${CANTONS[i].n}! Chiudi il turno per guadagnarne.`, '#ff6b6b');
+      popup(i, `${cost} GRANELLI!`, '#ff6b6b'); SFX.fail(); shake(6); update(); return;
+    }
+    gran -= cost; state = 'busy'; update();
+    SFX.shot();
+    flyers.push({ x0: CEN[src][0], y0: CEN[src][1], x1: CEN[i][0], y1: CEN[i][1], t: 0, dur: 0.45, color: COL.player,
+      done: () => resolveAttack(i) });
+  }
+
+  function resolveAttack(i) {
     if (Math.random() < chance(def[i])) {
       const was = owner[i];
-      take(i, 0);
-      addLog(was === -1 ? `Hai preso ${name} dal nulla.` : `Hai conquistato ${name} al ${OWNER_NAMES[was]}!`);
-      maybeEvent();
+      take(i, 0); conquests++; combo++;
+      const bonus = combo >= 2 ? combo - 1 : 0;
+      gran += bonus;
+      SFX.boom(); shake(9);
+      explosion(CEN[i][0], CEN[i][1], was < 0 ? COL.neutral : COL.rival[was - 1], 26);
+      popup(i, combo >= 2 ? `COMBO x${combo}! +${bonus}` : 'CONQUISTATO!', '#ffd400');
+      say(was < 0 ? `Hai preso ${CANTONS[i].n} dal nulla!` : `Hai conquistato ${CANTONS[i].n} al ${OWNER_NAMES[was]}!`, '#ffd400');
+      if (Math.random() < 0.25) randomEvent();
     } else {
-      addLog(`Attacco su ${name} respinto: persi ${cost} granelli.`);
+      combo = 0; SFX.fail(); shake(4);
+      popup(i, 'RESPINTO!', '#ff3d5a');
+      say(`Attacco su ${CANTONS[i].n} respinto. Ti è costato il colpo.`, '#ff6b6b');
     }
-    if (count(0) === N) { over = true; won = true; showEnd(); }
-    update();
-  }
-  function reinforce(i) {
-    if (over || owner[i] !== 0 || def[i] <= 1 || gran < 2) return;
-    gran -= 2; def[i] -= 1;
-    addLog(`Rinforzato ${CANTONS[i].n}: difesa ${def[i]}.`);
-    update();
-  }
-  function maybeEvent() {
-    if (Math.random() >= 0.25) return;
-    const r = Math.random();
-    if (r < 0.4) { gran += 3; addLog('Scatola ? trovata: +3 granelli!'); }
-    else if (r < 0.75) { gran += 2; addLog('Festa della fondue: +2 granelli.'); }
-    else { gran = Math.max(0, gran - 2); addLog('Sciopero del sale: -2 granelli.'); }
+    if (count(0) === N) return win();
+    state = 'play'; update();
   }
 
+  function randomEvent() {
+    const r = Math.random();
+    if (r < 0.4) { gran += 3; say('SCATOLA ? trovata: +3 granelli!', '#ffd400'); SFX.coin(); }
+    else if (r < 0.75) { gran += 2; say('FESTA DELLA FONDUE: +2 granelli!', '#ffd400'); SFX.coin(); }
+    else { gran = Math.max(0, gran - 2); say('SCIOPERO DEL SALE: -2 granelli.', '#ff6b6b'); SFX.fail(); }
+  }
+
+  // ===== Turno dei brodi rivali (animato, uno alla volta) =====
   function endTurn() {
-    if (over) return;
+    if (state !== 'play') return;
+    state = 'busy'; preview = -1; combo = 0; update();
+    let r = 1;
+    const step = () => {
+      if (state === 'end') return;
+      if (r > 3) return finishTurn();
+      rivalAct(r++);
+      setTimeout(step, 800);
+    };
+    step();
+  }
+
+  function rivalAct(r) {
+    if (count(r) === 0 || Math.random() < 0.3) return;
+    let best = [], bd = Infinity;
+    for (let i = 0; i < N; i++) {
+      if (owner[i] !== r) continue;
+      for (const j of adj[i]) {
+        if (owner[j] === r) continue;
+        if (def[j] < bd) { bd = def[j]; best = [j]; }
+        else if (def[j] === bd && !best.includes(j)) best.push(j);
+      }
+    }
+    if (!best.length) return;
+    const j = best[Math.floor(Math.random() * best.length)];
+    const src = [...adj[j]].find(k => owner[k] === r);
+    SFX.rival();
+    flyers.push({ x0: CEN[src][0], y0: CEN[src][1], x1: CEN[j][0], y1: CEN[j][1], t: 0, dur: 0.5, color: COL.rival[r - 1],
+      done: () => {
+        const was = owner[j];
+        const ok = was === -1 ? Math.random() < 0.6 : Math.random() < chance(def[j]);
+        if (ok) {
+          take(j, r);
+          if (was === 0) {
+            SFX.boom(); shake(8); popup(j, 'PERSO!', '#ff3d5a');
+            say(`${OWNER_NAMES[r]} ti ha tolto ${CANTONS[j].n}!`, '#ff6b6b');
+            explosion(CEN[j][0], CEN[j][1], COL.rival[r - 1], 16);
+          }
+        } else if (was === 0) {
+          popup(j, 'RESISTE!', '#ffd400'); SFX.tick();
+          say(`Hai resistito all’attacco di ${OWNER_NAMES[r]} su ${CANTONS[j].n}!`, '#ffd400');
+        }
+        if (count(0) === 0) return lose();
+        update();
+      } });
+  }
+
+  function finishTurn() {
+    if (state === 'end') return;
+    turn++;
     const inc = 2 + Math.floor(count(0) / 4);
     gran += inc;
-    // i brodi rivali attaccano
-    for (let r = 1; r <= 3; r++) {
-      if (count(r) === 0 || Math.random() < 0.35) continue;
-      let best = [], bd = Infinity;
-      for (let i = 0; i < N; i++) {
-        if (owner[i] !== r) continue;
-        for (const j of adj[i]) {
-          if (owner[j] === r) continue;
-          if (def[j] < bd) { bd = def[j]; best = [j]; }
-          else if (def[j] === bd && !best.includes(j)) best.push(j);
-        }
-      }
-      if (!best.length) continue;
-      const j = best[Math.floor(Math.random() * best.length)];
-      const was = owner[j];
-      const ok = was === -1 ? Math.random() < 0.6 : Math.random() < chance(def[j]);
-      if (ok) {
-        take(j, r);
-        addLog(was === 0 ? `${OWNER_NAMES[r]} ti ha tolto ${CANTONS[j].n}!` : `${OWNER_NAMES[r]} conquista ${CANTONS[j].n}.`);
-      } else if (was === 0) {
-        addLog(`${OWNER_NAMES[r]} attacca ${CANTONS[j].n}: respinto!`);
-      }
-    }
-    turn++;
     if (turn % 2 === 0) for (let i = 0; i < N; i++) def[i] = Math.min(6, def[i] + 1);
-    addLog(`Turno ${turn}: +${inc} granelli.`);
-    if (count(0) === 0) { over = true; won = false; showEnd(); }
+    popup(null, `+${inc} GRANELLI`, '#ffd400'); SFX.coin();
+    state = 'play';
+    say(`TURNO ${turn}: +${inc} granelli. Attacca!`, '#fff6c8');
     update();
   }
 
-  function showEnd() {
-    document.getElementById('ovTitle').textContent = won ? 'Svizzera conquistata!' : 'Il brodo ha vinto';
-    document.getElementById('ovText').textContent = won
-      ? 'Da Ginevra a Sciaffusa, tutto Aromat. Il primo Aromat nacque a Thayngen, nel canton Sciaffusa, da dove sei partito. Ovunque*.'
-      : 'I brodi rivali ti hanno tolto tutti i cantoni. Il sale non perdona.';
-    document.getElementById('overlay').classList.add('show');
+  // ===== Fine partita =====
+  function score() { return conquests * 100 + count(0) * 50; }
+  function win() {
+    state = 'end'; saveBest(score() + 1000); SFX.win();
+    showOverlay('SVIZZERA CONQUISTATA!',
+      'Da Ginevra a Sciaffusa, tutto Aromat. Il primo Aromat nacque a Thayngen, nel canton Sciaffusa, da dove sei partito. OVUNQUE*!',
+      `PUNTEGGIO ${score() + 1000}`, 'GIOCA ANCORA');
+  }
+  function lose() {
+    state = 'end'; saveBest(score()); SFX.lose();
+    showOverlay('GAME OVER', 'I brodi rivali ti hanno tolto tutti i cantoni. Il sale non perdona.',
+      `PUNTEGGIO ${score()}`, 'RIPROVA');
+  }
+  function showOverlay(title, text, scoreLine, btn) {
+    $('ovTitle').textContent = title;
+    $('ovText').innerHTML = `<p>${text}</p><p class="score px">${scoreLine}</p>`;
+    $('ovBtn').textContent = btn;
+    $('overlay').classList.add('show');
+  }
+  const titleScreen = () => showOverlay('CONQUISTA LA SVIZZERA',
+    '<b>1.</b> Tocca un cantone <b>nemico vicino</b> ai tuoi: diventa l’anteprima.<br>' +
+    '<b>2.</b> Tocca di nuovo per <b>attaccare</b> (costa granelli).<br>' +
+    '<b>3.</b> Tocca un <b>tuo</b> cantone per rinforzarlo (2 granelli).<br>' +
+    '<b>4.</b> <b>FINE TURNO</b>: i brodi rivali attaccano.<br><br>' +
+    'I cantoni che puoi attaccare lampeggiano. Conquistali tutti!',
+    `RECORD ${best}`, 'GIOCA');
+
+  // ===== Effetti =====
+  function popup(i, text, color) {
+    const [x, y] = i === null ? [W / 2, 60] : CEN[i];
+    popups.push({ x, y, text, color, life: 1.1 });
+  }
+  function explosion(x, y, color, n) {
+    for (let k = 0; k < n; k++) {
+      const a = Math.random() * Math.PI * 2, sp = 40 + Math.random() * 120;
+      parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0.6 + Math.random() * 0.5,
+        color: k % 3 === 0 ? '#fff6c8' : `rgb(${color[0]},${color[1]},${color[2]})` });
+    }
   }
 
   // ===== Disegno =====
   const img = ctx.createImageData(W, H);
-  const SHADE = CANTONS.map((_, i) => 0.92 + 0.08 * ((i * 37) % 7) / 6);
+  const SHADE = CANTONS.map((_, i) => 0.92 + 0.08 * (((i * 37) % 7) / 6));
   const colorOf = l => {
     const o = owner[l];
-    return o === -1 ? NEUTRAL : o === 0 ? PLAYER : RIVAL_COLORS[o - 1];
+    return o === -1 ? COL.neutral : o === 0 ? COL.player : COL.rival[o - 1];
   };
   function drawMap(t) {
+    const attackable = new Uint8Array(N);
+    for (let i = 0; i < N; i++) attackable[i] = state === 'play' && owner[i] !== 0 && playerNeighbour(i) !== undefined ? 1 : 0;
+    const blink = 0.5 + 0.5 * Math.sin(t * 7);
     const d = img.data;
     for (let p = 0; p < W * H; p++) {
       const l = lab[p], o = p * 4;
       let r, g, b;
-      if (l === -2) { r = SEA[0]; g = SEA[1]; b = SEA[2]; }
-      else {
+      if (l === -2) {
+        const w = 0.5 + 0.5 * Math.sin(((p % W) * 0.09) + Math.floor(p / W) * 0.06 - t * 2.2);
+        r = COL.sea[0] + w * 14; g = COL.sea[1] + w * 22; b = COL.sea[2] + w * 40;
+      } else {
         const c = colorOf(l), s = SHADE[l];
         r = c[0] * s; g = c[1] * s; b = c[2] * s;
-        if (l === sel) {
-          const k = 0.25 + 0.2 * Math.sin(t * 6);
-          r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k;
-        }
+        if (((p % W) + Math.floor(p / W)) % 4 === 0) { r += 10; g += 10; b += 10; } // trama a pixel
+        if (attackable[l]) { const k = 0.12 + 0.18 * blink; r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k; }
+        if (l === preview) { const k = 0.35 + 0.3 * blink; r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k; }
         const e = edge[p];
-        if (e === 1) { r *= 0.5; g *= 0.5; b *= 0.5; }
-        else if (e === 2) { r = 190; g = 210; b = 255; }
+        if (e === 1) { r = 28; g = 14; b = 56; }
+        else if (e === 2) { r = 200; g = 225; b = 255; }
       }
       d[o] = r; d[o + 1] = g; d[o + 2] = b; d[o + 3] = 255;
     }
     ctx.putImageData(img, 0, 0);
-    ctx.font = '700 12px ui-monospace, Menlo, Consolas, monospace';
+
+    // etichette: sigla e difesa in una "medaglia" a pixel
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     for (let i = 0; i < N; i++) {
       const [x, y] = CEN[i];
-      const light = owner[i] !== 1 && owner[i] !== 2 && owner[i] !== 3;
-      ctx.fillStyle = light ? 'rgba(255,255,255,.85)' : 'rgba(255,255,255,.95)';
-      ctx.fillStyle = light ? '#1b1f2a' : '#ffffff';
-      ctx.fillText(CANTONS[i].c, x, y);
+      ctx.fillStyle = 'rgba(0,0,0,.75)';
+      ctx.fillRect(Math.round(x) - 11, Math.round(y) - 9, 22, 18);
+      ctx.strokeStyle = owner[i] === 0 ? '#ffd400' : '#fff';
+      ctx.lineWidth = 2; ctx.strokeRect(Math.round(x) - 11, Math.round(y) - 9, 22, 18);
+      ctx.font = '7px "Press Start 2P", monospace';
+      ctx.fillStyle = '#fff6c8';
+      ctx.fillText(CANTONS[i].c, x, y - 3);
+      ctx.fillStyle = def[i] >= 5 ? '#ff6b6b' : '#7dffb0';
+      ctx.fillText(String(def[i]), x, y + 5);
     }
-  }
 
-  function infoText() {
-    if (sel < 0) return 'Tocca un cantone per vedere cosa succede. Puoi attaccare solo i cantoni che confinano con i tuoi.';
-    const i = sel, c = CANTONS[i];
-    const who = owner[i] === -1 ? 'neutro' : `di ${OWNER_NAMES[owner[i]]}`;
-    let t = `${c.n} (${c.c}) è ${who}. Difesa ${def[i]}.`;
-    if (owner[i] === 0) t += ' È tuo: rinforzarlo costa 2 granelli e abbassa la difesa di 1.';
-    else if (!hasPlayerNeighbour(i)) t += ' Non confina con i tuoi cantoni.';
-    else t += ` Attaccarlo costa ${def[i]} granelli, con probabilità ${Math.round(chance(def[i]) * 100)}%.`;
-    return t;
+    // granelli in volo
+    for (let k = flyers.length - 1; k >= 0; k--) {
+      const f = flyers[k];
+      f.t += 1 / 60;
+      const p = Math.min(1, f.t / f.dur), e = p * p * (3 - 2 * p);
+      const x = f.x0 + (f.x1 - f.x0) * e, y = f.y0 + (f.y1 - f.y0) * e - Math.sin(Math.PI * p) * 46;
+      for (let s = 4; s >= 0; s--) {
+        const q = Math.max(0, p - s * 0.035), ee = q * q * (3 - 2 * q);
+        const tx = f.x0 + (f.x1 - f.x0) * ee, ty = f.y0 + (f.y1 - f.y0) * ee - Math.sin(Math.PI * q) * 46;
+        ctx.fillStyle = s === 0 ? '#fffbe8' : `rgba(255,212,0,${0.5 - s * 0.1})`;
+        ctx.fillRect(Math.round(tx) - 2, Math.round(ty) - 2, 4, 4);
+      }
+      if (p >= 1) { flyers.splice(k, 1); f.done(); }
+    }
+    // esplosioni
+    for (let k = parts.length - 1; k >= 0; k--) {
+      const q = parts[k];
+      q.x += q.vx / 60; q.y += q.vy / 60; q.vy += 90 / 60; q.life -= 1 / 60;
+      if (q.life <= 0) { parts.splice(k, 1); continue; }
+      ctx.fillStyle = q.color; ctx.globalAlpha = Math.min(1, q.life * 2);
+      ctx.fillRect(Math.round(q.x), Math.round(q.y), 3, 3);
+    }
+    ctx.globalAlpha = 1;
+    // scritte che salgono
+    ctx.font = '8px "Press Start 2P", monospace';
+    for (let k = popups.length - 1; k >= 0; k--) {
+      const q = popups[k];
+      q.life -= 1 / 60; q.y -= 0.5;
+      if (q.life <= 0) { popups.splice(k, 1); continue; }
+      ctx.globalAlpha = Math.min(1, q.life * 2);
+      ctx.fillStyle = '#000'; ctx.fillText(q.text, q.x + 1.5, q.y + 1.5);
+      ctx.fillStyle = q.color; ctx.fillText(q.text, q.x, q.y);
+    }
+    ctx.globalAlpha = 1;
   }
 
   function update() {
-    document.getElementById('gran').textContent = gran;
-    document.getElementById('owned').textContent = count(0);
-    document.getElementById('turn').textContent = turn;
-    document.getElementById('title').textContent = sel < 0 ? 'Scegli un cantone' : CANTONS[sel].n;
-    document.getElementById('info').textContent = infoText();
-    document.getElementById('attack').disabled = sel < 0 || !canAttack(sel);
-    document.getElementById('reinforce').disabled = sel < 0 || over || owner[sel] !== 0 || def[sel] <= 1 || gran < 2;
-    document.getElementById('endturn').disabled = over;
-    document.getElementById('log').innerHTML = logs.map(t => `<li>${t}</li>`).join('');
+    $('gran').textContent = gran;
+    $('owned').textContent = count(0);
+    $('turn').textContent = turn;
+    $('combo').textContent = 'x' + combo;
+    $('best').textContent = best;
+    $('endturn').disabled = state !== 'play';
   }
 
   // ===== Interazione =====
   canvas.addEventListener('pointerdown', e => {
+    ac();
     const r = canvas.getBoundingClientRect();
     const x = Math.floor((e.clientX - r.left) * W / r.width);
     const y = Math.floor((e.clientY - r.top) * H / r.height);
-    if (x < 0 || y < 0 || x >= W || y >= H) return;
-    const l = lab[y * W + x];
-    sel = l >= 0 ? l : -1;
-    update();
+    tap(x < 0 || y < 0 || x >= W || y >= H ? -1 : (lab[y * W + x] >= 0 ? lab[y * W + x] : -1));
   });
-  document.getElementById('attack').addEventListener('click', () => attack(sel));
-  document.getElementById('reinforce').addEventListener('click', () => reinforce(sel));
-  document.getElementById('endturn').addEventListener('click', endTurn);
-  document.getElementById('again').addEventListener('click', reset);
+  $('endturn').addEventListener('click', () => { ac(); endTurn(); });
+  $('ovBtn').addEventListener('click', () => { ac(); reset(); });
+  window.addEventListener('keydown', e => {
+    if (e.code === 'Space' || e.code === 'Enter') {
+      if ($('overlay').classList.contains('show')) { e.preventDefault(); $('ovBtn').click(); }
+      else if (!e.repeat) { e.preventDefault(); endTurn(); }
+    }
+  });
 
-  // ===== Ciclo di disegno =====
-  let frame = 0;
+  // ===== Ciclo =====
   function loop(now) {
-    if (frame++ % 2 === 0) drawMap(now / 1000);
+    const t = now / 1000;
+    lastT = t;
+    if (shakeT > 0) {
+      shakeT -= 1 / 60;
+      const k = shakeT * 10;
+      canvas.style.transform = `translate(${((Math.random() - 0.5) * k).toFixed(1)}px, ${((Math.random() - 0.5) * k).toFixed(1)}px)`;
+    } else canvas.style.transform = '';
+    drawMap(t);
     requestAnimationFrame(loop);
   }
 
-  reset();
-  requestAnimationFrame(loop);
+  // i caratteri a pixel vanno caricati prima di disegnarli nella mappa
+  const start = () => { reset(); titleScreen(); requestAnimationFrame(loop); };
+  if (document.fonts && document.fonts.load) {
+    document.fonts.load('8px "Press Start 2P"').then(start, start);
+  } else start();
 })();
 </script>
 </body>
