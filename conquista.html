@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Conquista la Svizzera – Aromat Ovunque*</title>
-  <meta name="description" content="Conquista i 26 cantoni svizzeri con l’Aromat, prima che i brodi rivali ti fermino. Un arcade da fan, satirico e non ufficiale." />
+  <meta name="description" content="Rimbalza la palla con il barattolo Aromat e conquista i cantoni svizzeri. Un arcade da fan, satirico e non ufficiale." />
   <meta name="theme-color" content="#070b18" />
   <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
@@ -13,7 +13,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Aromat Ovunque*" />
   <meta property="og:title" content="Conquista la Svizzera – Aromat Ovunque*" />
-  <meta property="og:description" content="Conquista i 26 cantoni svizzeri con l’Aromat." />
+  <meta property="og:description" content="Rimbalza la palla e conquista i cantoni svizzeri con l’Aromat." />
   <meta property="og:url" content="https://aromatovunque.info/conquista.html" />
   <meta property="og:image" content="https://aromatovunque.info/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
@@ -59,23 +59,16 @@
     }
     .hud{ display:flex; flex-wrap:wrap; gap:8px 18px; justify-content:space-between; padding:4px 6px 10px; font-size:9px; color:#fff6c8; }
     .hud b{ color:var(--cyan); font-weight:400; margin-left:6px; }
-    .hud .combo b{ color:var(--red); }
+    .hud .lives b{ color:var(--red); }
     .screen{ position:relative; border:3px solid #000; border-radius:12px; overflow:hidden; background:#000; }
-    canvas#map{ display:block; width:100%; height:auto; cursor:pointer; touch-action:manipulation; image-rendering:pixelated; transition:transform .05s linear; }
+    canvas#game{ display:block; width:100%; height:auto; touch-action:none; cursor:pointer; transition:transform .05s linear; }
     .scan{ position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px); mix-blend-mode:multiply; border-radius:12px; }
     .foot{ display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; padding:12px 6px 4px; }
     #ticker{ flex:1 1 320px; margin:0; font-size:9px; line-height:1.7; color:#fff6c8; min-height:3.4em; }
-    button.big{
-      font-family:"Press Start 2P", ui-monospace, monospace; font-size:12px; letter-spacing:.5px;
-      padding:14px 18px; border:3px solid #000; border-radius:14px; cursor:pointer;
-      background:var(--red); color:#fff; box-shadow:0 6px 0 #7d1427, 0 0 22px rgba(255,61,90,.4);
-    }
-    button.big:active{ transform:translateY(4px); box-shadow:0 2px 0 #7d1427; }
-    button.big:disabled{ opacity:.4; cursor:not-allowed; transform:none; box-shadow:0 6px 0 #3a0d16; }
     .legend{ display:flex; gap:10px; flex-wrap:wrap; margin:12px 6px 0; font-size:12px; color:var(--muted); }
     .legend span::before{ content:""; display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; vertical-align:-1px; background:var(--c); border:2px solid #000; }
 
-    /* ===== Schermate (titolo, fine) ===== */
+    /* ===== Schermate ===== */
     .overlay{ position:fixed; inset:0; z-index:90; display:none; align-items:center; justify-content:center; background:rgba(3,5,12,.78); padding:16px; }
     .overlay.show{ display:flex; }
     .overlay .box{
@@ -84,11 +77,17 @@
       box-shadow:0 0 0 4px #000, 0 0 60px rgba(255,212,0,.3);
     }
     .overlay h2{ margin:0 0 16px; font-family:"Press Start 2P", monospace; font-size:16px; line-height:1.6; color:var(--yellow); }
-    .overlay p{ margin:0 0 18px; color:#dfe6ff; line-height:1.55; font-size:15px; text-align:left; }
-    .overlay .score{ font-family:"Press Start 2P", monospace; font-size:11px; color:var(--cyan); line-height:1.9; margin:0 0 18px; }
+    .overlay p{ margin:0 0 14px; color:#dfe6ff; line-height:1.55; font-size:15px; text-align:left; }
+    .overlay .score{ font-family:"Press Start 2P", monospace; font-size:11px; color:var(--cyan); line-height:1.9; margin:0 0 18px; text-align:center; }
     .blink{ animation:blink 1s steps(2,start) infinite; }
     @keyframes blink{ to{ visibility:hidden; } }
-    .jar{ display:block; margin:0 auto 14px; width:64px; height:auto; image-rendering:pixelated; }
+    button.big{
+      font-family:"Press Start 2P", ui-monospace, monospace; font-size:12px; letter-spacing:.5px;
+      padding:14px 18px; border:3px solid #000; border-radius:14px; cursor:pointer;
+      background:var(--red); color:#fff; box-shadow:0 6px 0 #7d1427, 0 0 22px rgba(255,61,90,.4);
+    }
+    button.big:active{ transform:translateY(4px); box-shadow:0 2px 0 #7d1427; }
+    .overlay button.big{ width:100%; }
 
     .site-footer{ max-width:960px; margin:0 auto; padding:24px 16px 30px; font-size:13px; color:rgba(255,255,255,.6); border-top:1px solid rgba(120,160,255,.18); }
     .site-footer b{ color:rgba(255,255,255,.9); }
@@ -100,7 +99,6 @@
       h1{ font-size:28px; }
       .hud{ font-size:8px; }
       #ticker{ font-size:8px; }
-      button.big{ width:100%; }
       .bottom-nav{
         display:flex; position:fixed; z-index:60; left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom));
         justify-content:space-around; gap:4px; padding:6px; border-radius:22px;
@@ -148,25 +146,24 @@
 
   <section class="cabinet">
     <div class="hud px">
-      <span>GRANELLI<b id="gran">0</b></span>
-      <span>CANTONI<b id="owned">0</b>/26</span>
-      <span>TURNO<b id="turn">1</b></span>
-      <span class="combo">COMBO<b id="combo">x0</b></span>
+      <span class="lives">VITE<b id="lives">3</b></span>
+      <span>PUNTI<b id="score">0</b></span>
+      <span>CANTONI<b id="owned">1</b>/26</span>
+      <span>LIVELLO<b id="level">1</b></span>
       <span>RECORD<b id="best">0</b></span>
     </div>
 
     <div class="screen">
-      <canvas id="map" width="620" height="420" aria-label="Mappa della Svizzera: tocca i cantoni per attaccare"></canvas>
+      <canvas id="game" width="620" height="476" aria-label="Campo di gioco: rimbalza la palla e conquista i cantoni"></canvas>
       <div class="scan"></div>
     </div>
 
     <div class="foot">
       <p id="ticker" class="px" aria-live="polite"></p>
-      <button class="big" id="endturn" type="button">FINE TURNO ▶</button>
     </div>
 
     <div class="legend">
-      <span style="--c:#ffd400">Aromat</span>
+      <span style="--c:#ffd400">Conquistato</span>
       <span style="--c:#ff3d5a">Brodo Rivale</span>
       <span style="--c:#2ec4ff">Sale Grosso</span>
       <span style="--c:#b44cff">Dado Nero</span>
@@ -177,7 +174,6 @@
 
 <div class="overlay show" id="overlay" role="dialog" aria-modal="true" aria-labelledby="ovTitle">
   <div class="box">
-    <img class="jar" src="icon-192.png" alt="" width="64" height="64">
     <h2 id="ovTitle">CONQUISTA LA SVIZZERA</h2>
     <div id="ovText"></div>
     <button class="big" id="ovBtn" type="button">GIOCA</button>
@@ -199,85 +195,51 @@
 (() => {
   'use strict';
 
-  // ===== Cantoni: capoluoghi approssimati (mappa stilizzata, non confini ufficiali) =====
+  // ===== Dati: 26 cantoni (ordine fisso) e mappa ricavata dalla cartina della Svizzera =====
   const CANTONS = [
-    { c:'ZH', n:'Zurigo', lon:8.54, lat:47.37 }, { c:'BE', n:'Berna', lon:7.45, lat:46.95 },
-    { c:'LU', n:'Lucerna', lon:8.31, lat:47.05 }, { c:'UR', n:'Uri', lon:8.64, lat:46.80 },
-    { c:'SZ', n:'Svitto', lon:8.66, lat:47.02 }, { c:'OW', n:'Obvaldo', lon:8.25, lat:46.90 },
-    { c:'NW', n:'Nidvaldo', lon:8.37, lat:46.95 }, { c:'GL', n:'Glarona', lon:9.07, lat:47.04 },
-    { c:'ZG', n:'Zugo', lon:8.52, lat:47.17 }, { c:'FR', n:'Friburgo', lon:7.16, lat:46.80 },
-    { c:'SO', n:'Soletta', lon:7.53, lat:47.21 }, { c:'BS', n:'Basilea Città', lon:7.59, lat:47.56 },
-    { c:'BL', n:'Basilea Campagna', lon:7.72, lat:47.47 }, { c:'SH', n:'Sciaffusa', lon:8.63, lat:47.70 },
-    { c:'AR', n:'Appenzello Esterno', lon:9.28, lat:47.38 }, { c:'AI', n:'Appenzello Interno', lon:9.41, lat:47.33 },
-    { c:'SG', n:'San Gallo', lon:9.37, lat:47.42 }, { c:'GR', n:'Grigioni', lon:9.53, lat:46.85 },
-    { c:'AG', n:'Argovia', lon:8.05, lat:47.39 }, { c:'TG', n:'Turgovia', lon:9.07, lat:47.56 },
-    { c:'TI', n:'Ticino', lon:8.95, lat:46.19 }, { c:'VD', n:'Vaud', lon:6.63, lat:46.57 },
-    { c:'VS', n:'Vallese', lon:7.60, lat:46.23 }, { c:'NE', n:'Neuchâtel', lon:6.93, lat:46.99 },
-    { c:'GE', n:'Ginevra', lon:6.14, lat:46.20 }, { c:'JU', n:'Giura', lon:7.35, lat:47.36 },
+    ['ZH','Zurigo'],['BE','Berna'],['LU','Lucerna'],['UR','Uri'],['SZ','Svitto'],['OW','Obvaldo'],
+    ['NW','Nidvaldo'],['GL','Glarona'],['ZG','Zugo'],['FR','Friburgo'],['SO','Soletta'],['BS','Basilea Città'],
+    ['BL','Basilea Campagna'],['SH','Sciaffusa'],['AR','Appenzello Esterno'],['AI','Appenzello Interno'],
+    ['SG','San Gallo'],['GR','Grigioni'],['AG','Argovia'],['TG','Turgovia'],['TI','Ticino'],['VD','Vaud'],
+    ['VS','Vallese'],['NE','Neuchâtel'],['GE','Ginevra'],['JU','Giura'],
   ];
-  // contorno approssimativo della Svizzera (lon, lat)
-  const OUTLINE = [
-    [6.02,46.20],[6.12,46.52],[6.40,46.98],[6.75,47.12],[7.10,47.45],[7.60,47.60],[8.10,47.62],[8.60,47.75],
-    [9.20,47.70],[9.60,47.50],[9.90,47.15],[10.45,46.95],[10.50,46.60],[10.00,46.45],[9.60,46.02],[9.20,45.85],
-    [8.90,45.85],[8.50,46.00],[8.05,45.82],[7.50,45.92],[7.00,45.93],[6.75,46.10],[6.40,46.00],
-  ];
+  const IDX = Object.fromEntries(CANTONS.map(([c], i) => [c, i]));
+  const RIVALS = { TI: 1, GE: 2, GR: 3 };          // brodi rivali di partenza
+  const RIVAL_NAMES = ['', 'Brodo Rivale', 'Sale Grosso', 'Dado Nero'];
+  const START = 'SH';                               // Sciaffusa: da lì nacque l'Aromat
+  const RLE = '.zz.zz.zz.zz.zz.zz.zz.zz.zz.zz.zz.zz.zz.zz.zz.zz.jgN.h7N2.h5N4.bN2.gqN7.4N.2N6.gmNq.ghNq.giNr.ghNr.ghNt.2A3.jT5.fmNt.A4.kNT3.fmNtA5.jN4T.fmNi.2N4.N3A5.jN5.nT7.ewNe.4N.4NA7.hN3T4.lTa.evNc.bNA6N.fA2N2T4N.jTe.euN9.dA7N.dNA3N2T3N2.hTf.evN6.eN2A7.cNA4N2T6.fTh.fdN3A9.2A.6A7NT17.3T3.f2N2AqNT18.T6.f0AsNT1g.ezArN2T1f.ezAjNA8N2T1f.eoA4.7AhN6A4N2T1h.8T.edA5.7AhN2T3N3AN2T1j.6T4.d4S3.13A8.4NAaN2A5N2T4N4T1k.5T6.d2S5.3S6.sA9.3N2AaN2A6N2T1b.Tr.d0Sg.oAb.N4AbN3A6NT1a.4Tq.cwSj.mAc.2N3A2N2A4NA2N4A6N3T17.6T.2Tn.b3L.1qSl.nNA8N.3N2A2NpT13.bTn.ayL5.1pSmN.mN2A6.6NA2NlAN6T10.cTn.awL5.1oSoN2.lN3A4.8A2NA4N6ANA2N4ANA5N4Tz.cTo.atL6.1mSqN3.iN4A5.7AiN2AcT11.aTq.asL7.1kSw.7S2.6N2A8N.5AyT11.8Tq.atL8.1iStAN3.3S7N.AdN2.3NAzT11.6TmQ2TQTQ.ajL.6L9.1iSuA5.NS7N2AeN2.N2AzT1sQ7.ajL2.5L8.1iSvA7S7N2AfN3AzT1sQa.ahL3.2L9.1hS1aAjNA10T1wQ2T3Q.ahLf.19S4.3S19A1lT23.ahLf.7S6.uS1gA1nT23.ahL6M6LM2.4MSa.S.S2.S.S.S2.S3.S.S.2S.3S1hA1oT1qQ3Ta.ahL5MfS3M2S8M2.MS1yAuNA4N2AbN2AhT1iQ6Ta.agL4MmS7M.3M2S1vA10N4AN4A3N4A2NA2TAaT1gQ9Ta.agL3MnS5.6MS1vA17NbT4AbT1eQ9Tb.agL3MnS5.7S1uA1dN6T3AcT1dQaTQ2T8Q.ahMLMmS4.8S1sA1kT4AcT1dQTQ2TQ9T8Q.agM.2M.MkS2.aS1rA20T1hQbT7Q2.amMb.2M6.cS1qA20TzQ2ThQ9T3Q8.alMa.mS1pA20TyQ4TgQl.8jZ6.1wM8.qS1mA1zTmQ4T9Q9T2OT3Q2TQo.8gZb.1wM4.sS1eASA4SA1zTiQaT6QcOT2OQs.8eZc.1xM2.uS1dA6.A1yTkQsO3Qt.Q.8Q.2Q3.7pZ2.2Z.Zd.1zM2.uS1cA5.3A1xTkQ1r.2Qd.7jZn.2vS1cASA2.5A1wTkQT8Q1j.Q4.Qa.7hZn.2xS1aA2S.7A1vTkQT8Q1n.3Qb.7fZm.2zS19AS2.8A1vTsQoOQx.7Q9.7dZn.2zS1cA2.5A1wTkQ3TQ2T2QpOQv.9Q9.7cZn.31S1aA2.4A1yTjQwO2Qr.eQ8.7bZp.30S1aA3.2A1zTkQvO3Qp.gQ7.7aZq.30S1hA1pT2A8TiQoO2Qw.hQ7.78Zu.2yS1hA1pT3A8TgQoO3QOQO4QOQm.iQ7.77Zw.2xS1hA1qT6A3TdQsOdQi.kQ7.78Zy.2uS1iA1qTlQuOcQg.mQ7.78Zz.9Z6.2fS1hA1rTkQpO2Q5O3Qn.80Z11.6Z9.2eS1hA1yTcQpO4Q4O3Ql.82Z12.2Zd.2eS1fA20TbQmO3QO3QO2Q2.Q.Qj.82Z14.Zh.jK2.3K9.1eS1dA21TaQnOb.6OQO3Qc.81Z1o.iZKM.MK8.1hS1aA23T8QoOQO8.8O7Q3P3Q4.9QP2.7nZ1q.gZKd.1hS1bA22T8Qx.aP3O3Q2P4Q5.8Q2PQ.7lZ1r.7K4.3Z2Ke.1jS1cAk.2A1fT6Qx.aPdQ3PQP.5Q3P3.Q.7gZ1u.5ZK5.2Kh.1iS1cAj.4A1fT5Qx.aP9.3PgQ2P2.7fZ1w.3Z2Ko.1jS1bAi.6A1eT5Qw.oPfQP4.7eZ1x.Z3KoM.1iS1bAh.8A1eT3Qw.tPbQP5.7cZ29KiM.1gS1cAh.8A1eT2QeO2Qh.vP9Q3PQP2Q.4Q2.Q.72Zc.8Z1sKg.1gS1cAi.6Ah.AqTA7TQdO3Qg.wP9Qf.73Z5.gZ1tKp.14S1eAi.3Ai.3AxT2Q4O2QO2Q3O4Q7OQ7.yP8Qd.7qZ1sKq.13S1eAj.2Ah.5AwT2Q3O8QO6Q5O3Q4.10P2.3P2Qc.7sZ1sKr.10S1fA11.7AwTQ3OnQ2OQ.16PQc.7tZ1rKiMK9.yS18A2S6A11.8AvO2Q2OnQO4.16Qc.7sZ1rK9M4K6M2K5MK3.xS17A3S2AS4A11.7AwO2QOt.15P2Qa.7sZ1sKbMKM2K3M2KM2KM3K.xS13A1h.5AxO2QoO7.15Qb.7rZ1uKcM3KM2KM7.yS13A1i.2AzO2QrO4Q.14Qa.7rZ1uKfM4KM7.wS16A8SA4S3A12.A10OQrOQ3.14Qa.7rZ1vKhM6KM2K.wS17ASA2SeA20OQtO.15Q9.7pZ1aBZiKoM4KM3.kS3.6S1rA20O2QsO2.15Q8.7qZ19B3ZgK2B3KmM2KM3.jS20A22OQsO.16Q7.7qZ18B8Z9K5B4Kt.gS22A1vOA6OQeOQdO2.14Q7.7qZ19BcZ4KB2KB3KtM4.fS21A1wO2A2O3QeO3Qf.13Q7.7pZ19BlKn.2K9M3.eS21A1wO2AO4QbO2QO3Q4OQb.12Q5.7mZ1dB8ZBZ3B3K3BKn.5KaMK.cS1nA4S3A2S2A20OAO3QbO9QO4Q9.13Q5.7mZrB4ZhB7Z8Kq.aKi.3S1oA9S2At.A18O2QdOdQ8O.12Q5.7nZrB9ZaB9Z7Kp.cKiS1oA2SA9S3Ar.2A18O2QdOdQ7O.12PQ5.7nZrBuZ2B2KBK3B2Kh.fKgS1lC4I3S3I2A2S5Ar.3A17H2QxO2.10Q7.7oZqB12Kk.hK4.K9SiC4SzC5I2S3I4S5I2A4I2Ah.6A16H2QyO2.yQ8.7pZoBzKn.oK4.2SkC5SxC6I2S4I2S6I2A4I2Ah.6A15H2Q12.wQ8.7pZoBzKo.pK2.4SjC5SwC8IScI3AI3AI2Ag.4I7AzHQ17.Q2.oQ8.7pZpByKp.wSiC5SwC8I2ScIgAa.2I8.3AkI2A4H2A3H2Q1c.lPQ8.7pZpByKp.xSgC7S8C2S2CSiC8I2ScIgAb.I7.5IAf.2AI2A3H7Q1e.jQa.7pZpBxKq.ySfC7S8C6S2C5S7CSC9I2ScI3AIAIA2I5AiI2.aA9.6A3I2HQ2H2Q1h.gQb.7pXZnByKr.ySdC9S7CdS8CcIScI3Av.aA8.8I4Q1r.9Qd.7pZfB2Z5ByKv.wS6C3S3CtS9CcIScI3Aw.aIA5.aQkH2Q1b.4Qe.7oXZfB14Kx.xSC14S8CcI2SaI5Av.cI3.eH3.3HdQoO3Q12.7nZhB12K11.uC17S6CeISaI6AcI6Ab.dI2.gH.5HcQoO3QqP2Qa.7mZiB10K14.uC5S2C4SC7S3CfS2CnISaIbA5If.2A.eI.oHbQkO7QO2QmPaQ3.7lZgXZB11K14.uScC5SqCjI2SaIt.hI3.oH4Q2HQH2QkOaP4QiPaQ3.7jZhX2B12K15.uSbC5SoClI2SaIs.hI5.fH.5H2E3H2QpHO8P5Q9PQ2PQ6P7QPQ2.7jZhX3B12K16.uSaC6SCS2CSCSfCmI2SaIr.hE4I3.dH2.5HE3H2Q4H2QeH4QdP6Q6P4Q9P3Q5.7iZgX3B15K15.tCSCSC2S5C1fISaIr.eEe.8EcHQ3HcQHQ3H2Q4H3Q3HOQ4P3QPQ3P2QP2QP2QP3Q5P3Q5.7hZgX3B17K16.rC1qI2S9Is.dEf.7EcHQ2HgQ2H3Q2HaQ3P2Q4P7QP2QP4Qb.7gZhX2B1bK14.tC1pIS9Is.eEI3Eb.6H2EH4E5H2Q2HfQ3H8QH2QH2Q2P2QPdQP5Qb.7fZcXZ4X2B1eK12.tC1pI2S8It.cIcE5.4H8E6H5QfHQH7QH2QH2Q2HP2QPcQP5Qb.7fZ9X5Z3X2B1eK12.uCiS3CSC2SCyI3S7Iu.aIdE6.2EH8E7H5QdHcQH2Q4HPeQP5Qb.7fZ9X2B2X2ZX2B1gK8B5Kp.sS2CiS5C11IS8Ib.2I4.3Ib.8EI5EI2EI3EtH2QdH3Q2H6QH2Q5HP3QP4QP2QP2QP3Q4PQ7.7gZ7X2B4X3BlZB2ZBaKBhK7B6Kq.rKSChS5Ca.2CrIS8I9.4I.6Ib.6IE15H4Q1cP3Q2P3QPQP2Q2.7eX2Z5X2BtZ5B2Z3K5BvKnBK2.oK3CjS2Cb.4CrS8I8.dIb.4I2E15H4Q1cPdQ2.7dB2X2Z3X2BuXZ8KiBdKfB5K8Ba.2BiKCu.cClS8I8.eIb.2I3E13H8Q1aPdQ3.7eBX5BvX2Z6KjBK4B.K4BKeB8K6BuK2Cu.eCkS7I8.fIgE12HaQ1o.7eXBX3BwX3Z4KkBK4.3KhBbK3BvK2Cv.eCkS6I8.gIfE11HeQHQ.Q.H2Q1c.7gXB17KB3K4B9KB2K4.4KfB1aK2Cw.dClIS4I8.iIdE11Hg.5H2Q1c.7hB1aK5Bd.7KeB1bK2Cv.cCnIS3I7.kIcE11Hf.7H4Q19.7hB17.2BK5Bd.7KeB1bK2Cx.9CpIS2I8.lIaE10Hf.9H6QhH3P2Q2PQaP2Q6.7gB15K.4K4Bf.5KfB1cK2Cw.9CqI9.nI7E12Hf.8HtPgQ6.7fBfX4Bm.5K3BeK3.3KfB1dK2Cx.8CsI8.nI4E14Hg.6HvPfQ5.7fBeX7Bj.9K3BKBaK4.KfB1eK2Cw.8CtICI4.I.oI2E15Hh.4HrQHQ2H2PeQ5.7eXBbXaBi.9K8B8KiB19K3B3K2Cy.6CuIC.6I.oIE15Hi.2HrQq.6yX2.X.bX2BaXbBfXB.8BK9B8KgB14KBKB4K3BK3C10.4Cx.7I.nIE14HuQ2H6Q4H2Qv.6wX8.3X6B4XhBfX2.9B8KBaKeB15KeC11.2Cx.wExH4E4HvQ18.6vXa.X7B3XiB2X3B9X2.9BkKeB15KeC1y.xEyH5E3HwQmHQH3Qg.6uXjB2XpB8X.9BmKdB15KBKcC1y.wE10H4E2HxQlH8P5Q8.6uXkBXrB4X3B.9BoKB4K6B8K2B5KB11K2C1x.wE12H3E2HxQkHaP4Q8.6sX1eB4X.bBuK6B6KoBmK2C1y.sE16H3E2HxQlH2QHQH5QP2Q7.6tX1gB2.bBzKB7KpBlK2C1y.sEn.EiH3E2HxQ14.6uX1g.dB17KB3K7BKdBlK2C1y.rEn.2EhH4E3HwQ13.6vX1f.dB2iK2C1y.7E.iEo.3EgH3E3HxQ13.6wX1d.eB2iK2C1x.8E.E.bE.2Eo.6EgHE4HxQiH2QiR.6wX1c.eB1nK2B8KB4KBgK2C1x.8E9.2Et.8EkHwQjHcR5Q3R2.6wX1a.eB1sKcBhKC1l.2C.C9.8E15.5EkHvQlHbR6Q4R2.4R.hR4.64X1a.eXB1wK8BhKC1k.7C7.aE13.4EkHvQmHbRQR3Q5R2.2R4.6R5.R9.62X1a.eXB23KBiK2C1i.9C5.bE14.2ElHtQ8H2Q2HQ9H2Q6HQeRw.5yX1a.eB2oKFC1h.bC3.eE1kHzQ7HkQhRz.5sX1dB.9XB2rKFC1g.uE1jH10Q3HnQhR10.5pX1eB2.8X3B2qF2C1g.vE1hH1qQjR14.5jX1eB3X2.5X4B2rF2C1e.xE1d.4H1iQqR16.5hX1eB4X.B.2X3BXB2sFC1e.yE1b.6H1hQrR17.3R2.59X1fB36F2C1d.yE1a.8H1bQHQHQaH2Q3R5Q9R1c.57X1gBk.4B2jF5C18.yE1b.8H19QgHR1u.56Xn.2X5.X3.X8.3X.X.X3Bk.4B2kF7C15.yE1c.7H1aQfRkQR1b.53Xo.4X2.3X.4X.2X2.cXBh.7B2pF2C5F7CF2C5F2Cj.xE1d.4HE2H19QqR9Q2R1b.1tR5.33Xo.jX.cXBf.bBe.2B2.6B1zF2C5FiCe.2C2.zE1cH2.HE3H18QrRQaR1b.1rR7.2zXr.xXBd.cB8.2B2.dB1zFC5FiCd.15E1iH18Q12R1b.1rR7.2xXt.yB9.gB7.4B.eB2.B1uF2C5FC7F3Ck.16E1hH18Q13R19.1rR9.2uXw.xB5.jB7.nB1uF2CdF3Ci.19E8.E17H18Q13R18.1sR9.2rXy.1lB8.pB1sF2CeF2Ci.1aE4DE2.2E17H17Q11R1a.1rRb.2lX15.1iBa.oB1sF2Cv.1bE5DE.5E17H16QzR1c.1rRc.2hX18.1jBa.2B2.kB1qF2Cu.1cE5D2E.6E17H15QzR1b.1sRe.2dX1b.3X.1eBf.3B.fB1qFCtF2.1bG3E2D4.7E17H14QyR1c.1rRj.29X1e.1eBq.aB1eFB8F3CsF.vG2.fG4ED6.5E17H14QzR1d.1pRl.27X1g.1cBr.aB1eFB8F2CaF2Ch.oF.F.4G6.G3.G.2G2.G4E2D6E.3E18H13QHQxR1e.1oRm.26X1h.1cJ2Bp.aB1eFB8F2CaF3Cg.nGF2GF.2GmED6E3.E1aH13QxR1g.1nRm.25X1h.1eJBp.aB1mF2C3F2C4FCF4C4FCa.mF3GsD6E4D2E17H15QvR1h.1mRn.25X1h.1fBp.aB1mFC3FlC7.mF3GrD6E5D9EhDEiH15QvR1j.1jRo.26X1d.1gBr.9B1jF5C4FkC6.nF4GqD6E5D9E8D3E5D2EhH17QtR1l.1bR4.2Ro.28XuV4Xd.1iBq.9B1iF5C5F3C2F6C2F7C5.pGFGrD6E6D8E7D5ED4EhH18Q7RQRQ6.Q4RQ7R1m.1aRu.28XrV7Xc.kJ.zBq.7B1iF2ChFCf.rGrD8E5D9E5DbEgH18Q7R4QR3Q.2R3QR4Q3R1p.17Ru.29XpV8Xc.kJ3.xJ5Bn.5B1iF2Cx.tGoDbE4DaE3DdEeH19Q7R9.3R7Q3R1q.16Ru.29XoV9Xb.kJ6.eJ.bJ.3J7Bo.2B1jF2Cx.uGkDgE3DbEDfEaH1cQ6R7.7R5Q3R1z.xRu.29XoV9Xa.kJ6.gJ2.4J6.2J8B29F2CrF.2C.wGjD1bE9H3D2H15R2H3R3Q3R5.6Q9R21.wRs.2bXnVaX9.kJ6.gJ3.2JhB2aFCqF.zGjD1eE5H3D5H13R4HRe.3RQ9R22.wRr.2bXmVcX6.mJ7.fJnB29F2Cp.10GjD1eE3DaH13Rj.2RQ9R24.vRr.2aXlVeX6.mJ8.eJoB28FCp.12GiD1eE2DbH12Rl.R2Q8R25.tRs.2aXgVjX5.oJ3.XJ3.cJqB6J2B1yF2Cp.11GjD1eEDdH10RsQ5R25.sRt.2aXeVlX3.rJ.3XJ2.cJzB1xFCp.12GjD1sHyRwQ2R27.qRu.2bXcVnX2.wJ2.aJ11B1wF2CFCn.12GjD1rHtR3c.oRv.2aXbVqX.xXJ.aJ10B1wF2CFCF2C3FC5FCa.12GjD1qHhR4H8R3e.mRx.29XaVr.yJ3.9J10B1wF2CFfC8.13G3FG.3GaD1qHhR6H7R3f.hR11.29X2V5X2Vr.zJ4.7JwB2J3B1xFCFgC7.13G3F.6G8D1qHhR6H6R3k.cR12.2aVy.10J5.5JyB2J2B1xFiC7.13G2F.9G4.2D1qHhR7H3R3n.aR14.27Vy.12J6.3JyB22F2C3F3Ch.13G2.kD1kHjR3y.8R14.28Vx.14J6.J10B21F2C3F2Ch.14G3.kD1hHkR5b.27Vx.15J18B20F2Cm.14G3.lD1fHlR5a.28Vv.16J19B20F2Cl.15G3.mD1dHlR5a.28Vv.18J19B20F2Ck.14G4.mD1dHlRmHR4n.29Vt.19J19B21F3Ci.14G5.lD1dHkR5a.2bVq.1aJ1aB22F4Ch.13G5.kD1eHkR5a.2aVq.1aJ1fB20F4Cg.12G5.jD1jHgR59.2bVo.1bJ1aBJ6B21F3Cf.13G5.hD1fR2DRD2H8D2H3R5a.2cVo.1aJ1bB2J5B22F3Ce.13G6.fD1fR6D2H6D3RkHR4s.2cVm.17V2.2J1cB2bF2Cd.14G6.eD1dR9D2HD6R5e.2cVn.16V3J1cB2dFC3FC9F.14G6.cD1dRaD5R5i.2bVp.14V3J1dB2dF2CaF4.14G6.bD1cRdDR5l.2aVn.15JV2J1eB2eF2C5F9.14FG6.9D1bR60.29Vo.wV.8V2J1eB2fF2C4F3Ba.11F3G4.aD1aR60.28Vq.uV2.6JV3J1eB2gF9Ba.zB3F4D.aD1aR60.27Vr.nXV3.V2.JV2.V6J1eB2jFgB2.xB6FD2.9D1bR60.25Vu.lV7.3JV7J1fB2jFfB3F.uBbD.8D1aR61.25Vw.7V2.9V7.5V7J1fB2jFfB5.9B2.gBf.5D1cR60.25Vx.V.4V3.V.6V7.7JV4J1hBgJB27F4Bo.bBi.3D1dR11HR4x.25V1d.V7.9JV3J1hBhJB23.3F4BtF.2BlD1gR5y.26V1k.aJV5J1fBhJB21.6F4B1fD1hR5y.25V1n.7V7J1fB2i.8F3B1fD1gR5z.24V1o.6JV6J1gB1a.B16.9F2B1gD1fR60.23V1r.3J2V5J1hB19.3B14.aFB1hD17R3D4R61.22V1uJ2V6J1hB18.5BqFBF7B2F.aFB2FB2FB1cD17R68.22V20J1kB16.7BpFBF9.9F9B1cD17R67.1zV24J1nB14.7BnFc.9F3BF4B1eD16R66.1zV24J1qB13.7BrF3BF4.5B1pD16ReDRD5RDRD4R5d.1yV25J1sB13.9BoF2BF6.2FByF2BqD15ReDhR5b.1xV26J1sB13.bBoF8B4F2B2FB9FBgF3BqD13RgDhR5a.1vV28J1uB14.aBmF8B5FoB8F2BFB3FBkD11RjDRD2RD6RDRDR5b.1uV2aJ1uB13.bBjF9B6F19BfDyR6c.1tV2aJ1vB14.bBiF7B8FBFB3F2BFcBFnBaD13R6d.1rV29J1xB13.dBhF6BhFcB5F6BF3BFBF7B9D14R6d.1qV2aJ1xB14.dB6FB3F3BqFcBxD15R6d.1pV2bJ1xB15.bB7F2B2F3BtF3BF2B10D14R6f.1nV2cJ1xB16.9B8F7BFB5FB3FB1nD14R6g.1lV2eJ1wB1c.2B9FqB1gD3.2DzR6h.1jV27J3V5J1vB1pFBFnB1gD2.5DxR6i.1hV27J5V3J1wB1rFnB1h.7DvR5s.3Rt.1bV27J25B1rF4BFBF3BFBF3BF4BFB1g.9DtRvD5RD5RD5R4g.5Rt.19V27J2aBJBJB3m.9DsRwDhR4c.aRt.17V28J2fB3k.9DtRwD5RDbR45.iRt.15V29J2fB3j.9DvRvDbRDRDR45.lRt.13V2aJ1zB7J5B2bF3B19.8DwRvDbR48.mRt.12V2bJ1zB7J3B24F3BF2B2F5B4F4Bz.9DzRsDbR48.mRt.11V2cJ1yB2fFlBz.8D10RsD2UD7R48.mRu.10V2dJ1zB2eFlBz.8D10RsD2U7D7R42.kRw.zV2eJ20B2eF2BF3BFBFBF5B2FB10.8D10RsD2U8D7R40.mRv.yV2fJ20B26FB1p.8D11RsD2UdD2R40.pRr.yV2hJ1yB26F3B1o.8D11RtD2UdD2R3y.rRq.xV2iJ1yB1uWBWB2W2BFBF5B1o.8D11RtD2UeD2R3x.sRp.wV2iJ1yB1vWaFfB1e.8D11RtD2UfD2R3v.uRo.wV2iJ2V4J1sB18W3BkWbFeB1e.9D15RmD3UgD2R3u.wRm.xV2iJV7J1qB14WB3W3BkW3BWBWBWBcF2B1f.aD1aRfD3UiD2R3t.zR7.3Ra.yV2qJ1mB16WfBwFB1i.aDfU7DhU2D6RcD3UkD2R3t.1aR9.yV2uJ1gB18WfB15F2B17.bDeUcD7UdD6RD8UlDR3t.1dR7.zV2uJ1eB19WBWdBxF2BFcB11.cDeUdD6UeDcUmD2R3s.1gR5.10V2sJ1dB1jW2B12FfBFB3F3B4.B9.2BcD.cD6.D6.DU9DU4D2UjD3UsDR3s.1kR2.10V2rJ1eBeJ3B25W2FiBF6.3F4.8F4B3D5.aD6.2D5.3D5UD6U1hD2R3s.2nV2pJ1dB7J2B7J3B29F8W7F7.5F2.9F3DB2D7.8DWD4.5D2.5DbU1jR3s.2nV2oJ1dB8JlB1yW2F9W8F4.jFD4W7.4W.D2W2D2.6D.7DaU1jR3s.2mV2pJ1eB6JmB1xW5F7W9F4.iD4WjD.7D.5UfDU4DU19R3s.2mV2iJ4V3J16VJ5VJ2B5J5BJeW2B1xW7F4WbF4.3F2.cDWnD.5D3.3DUaD2UDaU17R3s.2mV2iJ9V2J11V3J3V2J2B2pWmF4.F4.9FWqD.3D5.D2U9DeU16RU2R7URU2R3f.2lY2V1t.VsJVJV4J2V2JV2J2VJV3J4VJfV5J2V3J2B2pWw.8WsD.UjDdU19.3UfR38.2kVY3V19.2V7.3V6.3V18JV8JfVaJ2B2pWx.5WuD2U24.5UeR38.2jV2Y4V17.nV1hJdVbJ2B2oW1wD2U24.6U6RU3RURj.8Rb.2Rj.2R1m.2hV3Y5V15.pV12J3VJ2VJV7JaVdJ3BwWB2WB2W2B1jW1vD2U24.8U4Rp.9Ra.3Ri.4R1l.2gV4Y6V12.vVzJoVdJ3BJBJ3BJ4BkWgBWB17W1yD2U25.6U5RnU.bR8.5Rg.6R1k.2fV1d.wV3.2VuJlVeJfBkWjB15W1zD2U15D2U2DUw.4U6Rn.eR5.7Re.8R1j.2eV1c.15VtJkVeJdW2BjW2BWhB15W1vD5U16D3Uz.2R3U4Rm.fR4.9Rf.4R1l.2dV1d.15VtJbV4J4VeJ2B2J2B13W2BeW2BsW1wD5U1aDU13RU3Rp.sRg.2R1m.2dV1c.18V5.3VkJ9V5JVhJB3JB14W2B8WhBW2BbW10FWhD2WhD3U2lRo.sR23.2eV1a.1cV2.5VjJ8VoJ2B6W3B18WkB8W1lD3WgD2U2mRn.tR22.2fV17.1nViJ7VbJ3V2JV2J2V4JB6W4B18WcBW7B7W1fF6W2DWhD2U2mRn.tR22.2eVy.1yViJ5VbJ4V2J6V3JBJ3WB2W3B6WB1iW3B6W1gF5D9WcD2U2nRl.uR22.2fVw.1zViJ4VbJfVJ3W2BWcB1qW1hF5D9WcD2U3.3U2hRk.vR22.2gV6Y3Vl.20ViJ3VdJ3V2J9V2WhBcW2B1cW1oD2WD4WcD2U2.5U2gRk.uR24.2eVYV5Y3Vk.21ViJ3VfJV3JV2J3V3WiB9W2BW2BW2B17W29D.9U2fRj.vR24.2eY4VYaVYVd.23VfJ3VsW2B2W4BW4BW5B9W2BW6BkW2BiW2a.cU2eRj.vR24.2dV2YhVa.27VdJ2VrW3BrW8BjW5BgW1zD4.W4.gU2dRj.vR25.2cVY4V2YcV9.2bV11W4BtW3B2WBWBiW7BcW21D3.mU2cRk.vR26.2aVdY2Vd.2dV10WB1lW9B9W23D3.mU2dRk.uR27.3R4.22Vr.2fVzWB1lWaB7W24D.oU2eRk.tR2i.20Vp.2gVyW2B1jW2n.oU2eRl.sR2k.1zVo.2hVyW2B1dW3BW2n.pU2eRl.sR2l.20V8Y4Va.2hVyW2B18W2w.pU2dRm.sR1v.Rp.21V7Y7.2oVyW2B17W2x.qU2cRm.sR1u.3Ro.22V6Y6.2oVzW2B16W2y.rU2bRm.sR1t.5Rl.25YV4Y5.2oV10WB16W30.rU2aRhU2R4.rR1s.7Rj.27YV7.2oV11WB17W30.pU2bR8URUR5U4R3.sR1j.3R.2R.8Ri.29V7Y.2hV2.V13W2BxW2BaW2z.nU2dR6U5RURURU3RUR.sR1h.gRi.2aV9.2hV15W2BvW5B7W31.mU2eR6Ug.tR1f.fRk.2aV3YV5.2iV14W2BrW3g.nU2eR6UgR.tR1d.gRj.2bV2Y.4V.2kV14WBpW3h.oU2eRn.vR18.lRh.2cV.2qVtW4V2WVW2VW2B2WB8W2BaW3g.qU2dRo.vUR15.nRg.54VqW2VWiB4W5B8W3h.qU2dRo.wURt.5R2.sRf.54VqWlB3W7B5W3i.sU2bRp.xRt.10Re.2cY.2rVqW2V2W7V2W2VW5B2W8B3W3i.tU2cRp.yRq.12Re.2bY3.2rVxW3V5W2B5W3t.tU2bRr.xRp.13Re.2bY4.2rVxWV6W2B5W3t.tU2aRs.xRp.12Rg.29Y6.2rV13W2B4W3t.uU29Rt.yRo.12Rg.28Y7.2sV12W2B3W3s.vU2bRs.yRo.11Rh.28Y7.2tV11.4W3r.xU2bRs.zRn.11Rj.25Y7.2uViW2VbW5.6W3q.xU2bRr.11Rm.12Ri.26Y5.2vVhW3VbW4.8W3n.zU2bRr.13Rk.12Rj.28Y.2wVgW4VbW3.aW3l.zU2cRq.16Rd.2R2.14Rj.54VgW4Vd.bW3l.zU2cRq.18R7.1cRj.54VfWVh.aW3h.13U2cRr.2rRj.55Vv.aW3g.15U2bRr.2uRi.54VkW3V9.8W3f.16U2cRr.2wRh.54VfW8VWVWV2W3.6W3f.18U2bRr.2xRg.55VdWj.4W3f.19U2bRq.30Rf.56VcWk.W3f.1bU29RpUR.31Re.56VrW3k.1dU2aRURm.33Rc.57VrW3j.1eU2bRn.33Rc.58VpW3j.1fU2bRn.33Rb.59VoW3j.1gU2bRm.33Rc.59V4W3VgW3k.1gU2cRl.33Rb.5aV4W8V9W3n.1eU2dRk.33Rc.5bV2W8V9W3p.1eU2cRk.34R3.5iV5W2VW3V9W3q.1fU2aRj.8pVjW3t.1fU29Rj.84W2.2W.W.2W2.W.2W.4V2WVWVeW3v.1fU28Ri.85WjV3W3VeW3v.1jU24Rh.86WpVWVbW3y.1iU24Rf.87W51.1iU23Rf.87W52.1iU25Rb.87W53.1jU25Ra.87W53.1jU26R9.88VWVWV9W4r.1iU26R7.8aVeW4p.1iUy.2U17R6.88VdWVW4q.1jUw.3U18R5.88W5V4W4V2W4q.1kUt.7U16R3.8aW5V3W4x.1kUt.8U15.8cW6V2W4y.1lUr.9U14.8cWgV4W4n.1mUq.aU12.8cWgV4W4o.1nUq.9U11.8dWgV4W4o.1oUl.U3.aUy.8fWhV3W4n.1qUj.3U2.9Uy.8gWhV2W4n.1sUg.6U.8Uy.8hWhVW4n.1uUe.8U2.5Uy.8jW53.1wUc.aU.3Uz.8oW4y.21U7.bU12.8vV3W38.2W1e.23U6.aU13.8wV2W37.4W1c.25U4.aU14.8xVW36.6W17.2bU2.9U16.8xW36.6W13.2qU16.8xW37.4W13.2zUy.8wW39.2W13.31Ux.8vW4e.33Uw.8vW4e.34Uv.8uW4e.36Uu.8uW4e.37Ur.8wW4e.37Up.8yW4d.38Un.90W7.W45.38Um.91W6.3W45.36Um.92W.9W44.36Ul.9eW43.35Ul.9gW41.35Um.9hW40.34Un.9hW40.33Uk.U4.9hW3y.33Uh.5U.U3.9hW3x.32Ug.aU2.9iW3w.32Uf.9wW3u.33Uf.9xW3s.33Ug.9yW3q.34Uh.9yW30.Wd.3fUi.9xW2n.2W.W.3W.W.4Wb.3gUj.9wW23.Wh.oW2.3lUh.9wW21.4Wc.W.qW.3pU.4U7.9yW1z.7W3.4vU6.9yW1y.57U5.9xW1z.58U3.9zW1t.W.5bU2.a0W1q.5gU.a2W1o.5hU2.a2W1m.5iU2.a3W10.2Wb.W2.W3.5jU2.a3Wz.3W5.bW.5kU2.a3Wy.5W3.5xU.a3Wy.7W.g2Wx.gbWx.gbWw.geWt.gfWs.ghWq.gjWk.goWj.gqWh.grW7.3W6.gtW5.5W5.gtW4.7W3.gvW.zz.zz.zz.zz.zz.zz.3q';
 
-  const W = 620, H = 420;
-  const proj = (lon, lat) => [(lon - 5.95) * 136, (47.9 - lat) * 200];
-  const OUT = OUTLINE.map(([lo, la]) => proj(lo, la));
-  const CEN = CANTONS.map(c => proj(c.lon, c.lat));
-  const N = CANTONS.length;
-  const OWNER_NAMES = ['Aromat', 'Brodo Rivale', 'Sale Grosso', 'Dado Nero'];
-  const COL = {
-    player: [255, 212, 0], neutral: [185, 167, 122],
-    rival: [[255, 61, 90], [46, 196, 255], [180, 76, 255]], sea: [12, 20, 52],
-  };
-  const START = 'SH';
-  const SEEDS = { TI: 1, GE: 2, GR: 3 }; // partenza dei brodi rivali
+  const W = 620, H = 420, HUD = 56, CH = H + HUD;   // mappa in alto, striscia del barattolo in basso
 
-  const canvas = document.getElementById('map');
+  // decodifica: lettera = cantone (A=0), '.' = mare; seguito opzionale dalla lunghezza in base 36
+  const lab = new Int8Array(W * H);
+  (function decode() {
+    let p = 0;
+    for (const m of RLE.matchAll(/([A-Z.])([0-9a-z]*)/g)) {
+      const v = m[1] === '.' ? -1 : m[1].charCodeAt(0) - 65;
+      const run = m[2] ? parseInt(m[2], 36) : 1;
+      for (let k = 0; k < run; k++) lab[p++] = v;
+    }
+  })();
+  const CEN = CANTONS.map(() => [0, 0, 0]);
+  for (let p = 0; p < W * H; p++) {
+    const l = lab[p]; if (l < 0) continue;
+    CEN[l][0] += p % W; CEN[l][1] += Math.floor(p / W); CEN[l][2]++;
+  }
+  const CENTER = CEN.map(([x, y, n]) => [x / n, y / n]);
+  // bordi tra cantoni, per disegnarli
+  const edge = new Uint8Array(W * H);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const p = y * W + x, l = lab[p];
+    if (x + 1 < W && lab[p + 1] !== l) edge[p] = 1;
+    if (y + 1 < H && lab[p + W] !== l) edge[p] = 1;
+  }
+
+  const canvas = document.getElementById('game');
   const ctx = canvas.getContext('2d');
   const $ = id => document.getElementById(id);
 
-  // ===== Mappa: ogni pixel appartiene al cantone del capoluogo più vicino =====
-  function inside(x, y) {
-    let ins = false;
-    for (let i = 0, j = OUT.length - 1; i < OUT.length; j = i++) {
-      const [xi, yi] = OUT[i], [xj, yj] = OUT[j];
-      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) ins = !ins;
-    }
-    return ins;
-  }
-  const lab = new Int8Array(W * H);   // -2 = mare, altrimenti indice del cantone
-  const edge = new Uint8Array(W * H); // 1 = confine tra cantoni, 2 = costa
-  const adj = Array.from({ length: N }, () => new Set());
-  (function buildMap() {
-    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-      const p = y * W + x;
-      if (!inside(x + 0.5, y + 0.5)) { lab[p] = -2; continue; }
-      let best = 0, bd = Infinity;
-      for (let i = 0; i < N; i++) {
-        const dx = x - CEN[i][0], dy = y - CEN[i][1], d = dx * dx + dy * dy;
-        if (d < bd) { bd = d; best = i; }
-      }
-      lab[p] = best;
-    }
-    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-      const p = y * W + x, l = lab[p];
-      if (l < 0) continue;
-      const nb = [];
-      if (x + 1 < W) nb.push(p + 1);
-      if (y + 1 < H) nb.push(p + W);
-      for (const q of nb) {
-        const m = lab[q];
-        if (m === l) continue;
-        if (m === -2) edge[p] = 2;
-        else { edge[p] = Math.max(edge[p], 1); adj[l].add(m); adj[m].add(l); }
-      }
-    }
-  })();
-
-  // ===== Audio: effetti 8-bit =====
+  // ===== Audio 8-bit =====
   let audio = null;
   function ac() {
     if (!audio) { try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
@@ -293,274 +255,263 @@
     o.connect(g).connect(a.destination); o.start(t); o.stop(t + d + 0.02);
   }
   const SFX = {
-    shot: () => beep(900, .09, 'square', -500, .04),
-    boom: () => { beep(120, .35, 'sawtooth', -80, .09); beep(600, .15, 'square', -400, .04); },
-    fail: () => beep(200, .25, 'triangle', -120, .08),
-    tick: () => beep(660, .03, 'square', 0, .02),
-    rival: () => beep(330, .12, 'triangle', -60, .05),
-    coin: () => { beep(988, .06); setTimeout(() => beep(1319, .1), 50); },
+    hit: () => beep(440 + Math.random() * 200, .05, 'square', 200, .04),
+    conquer: () => { beep(523, .08); setTimeout(() => beep(784, .12), 70); },
+    bounce: () => beep(220, .03, 'triangle', 0, .03),
+    item: () => [659, 784, 988, 1319].forEach((f, i) => setTimeout(() => beep(f, .08, 'square', 0, .05), i * 60)),
+    lose: () => [392, 330, 262, 196].forEach((f, i) => setTimeout(() => beep(f, .2, 'triangle', 0, .06), i * 150)),
     win: () => [523, 659, 784, 1047, 1319].forEach((f, i) => setTimeout(() => beep(f, .14, 'square', 0, .05), i * 100)),
-    lose: () => [392, 330, 262, 196].forEach((f, i) => setTimeout(() => beep(f, .22, 'triangle', 0, .06), i * 160)),
+    launch: () => beep(330, .12, 'square', 300, .04),
   };
 
   // ===== Stato =====
-  let owner, def, gran, turn, state, preview, combo, conquests, best;
-  const flyers = [], popups = [], parts = [];
-  let shakeT = 0, lastT = 0;
-  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
-  const idx = code => CANTONS.findIndex(c => c.c === code);
-  const count = o => { let k = 0; for (let i = 0; i < N; i++) if (owner[i] === o) k++; return k; };
-  const chance = d => Math.max(0.35, Math.min(0.9, 0.9 - 0.1 * d));
-  const pct = d => Math.round(chance(d) * 100);
-  const playerNeighbour = i => [...adj[i]].find(j => owner[j] === 0);
-  const take = (i, o) => { owner[i] = o; def[i] = o === 0 ? rnd(1, 2) : rnd(2, 3); };
+  let owner, hp, maxhp, balls, paddleX, paddleTarget, pw, lives, score, level, conquered, state, items, popups, parts, widT, speed, shakeT, best, flyBlink;
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const PY = H + 16;           // quota del barattolo (striscia in basso)
+  const PH = 10, PR = 4;        // altezza barra e raggio della palla
   const say = (t, col = '#fff6c8') => { $('ticker').textContent = t; $('ticker').style.color = col; };
-  const shake = (n) => { shakeT = Math.max(shakeT, n / 60); };
+  const solidAt = (x, y) => {
+    if (y < 0 || y >= H || x < 0 || x >= W) return -1;
+    const l = lab[Math.floor(y) * W + Math.floor(x)];
+    return l >= 0 && hp[l] > 0 ? l : -1;
+  };
 
   try { best = Number(localStorage.getItem('conquista.best')) || 0; } catch (e) { best = 0; }
-  function saveBest(score) {
+  function saveBest() {
     if (score > best) { best = score; try { localStorage.setItem('conquista.best', String(best)); } catch (e) {} }
   }
 
+  // i cantoni di un livello: rivali (più duri), neutri e Sciaffusa già tua
+  function buildLevel() {
+    owner = new Int8Array(26).fill(-1);
+    hp = new Int8Array(26); maxhp = new Int8Array(26);
+    for (let i = 0; i < 26; i++) { hp[i] = 1 + (level - 1); maxhp[i] = hp[i]; }
+    for (const code in RIVALS) {
+      const i = IDX[code]; owner[i] = RIVALS[code];
+      hp[i] = 2 + (RIVALS[code] === 1 ? 1 : 0) + (level - 1); maxhp[i] = hp[i];
+    }
+    const s = IDX[START]; owner[s] = 0; hp[s] = 0; maxhp[s] = 1;
+    conquered = 1;
+    speed = 230 + 25 * (level - 1);
+  }
+
   function reset() {
-    owner = new Int8Array(N).fill(-1);
-    def = new Int8Array(N);
-    for (let i = 0; i < N; i++) def[i] = rnd(1, 3);
-    owner[idx(START)] = 0; def[idx(START)] = 1;
-    for (const code in SEEDS) { const i = idx(code); owner[i] = SEEDS[code]; def[i] = rnd(2, 3); }
-    gran = 5; turn = 1; state = 'play'; preview = -1; combo = 0; conquests = 0;
-    flyers.length = 0; popups.length = 0; parts.length = 0;
-    say('Parti da Sciaffusa, dove nacque l’Aromat. Tocca un cantone rosso, blu o viola vicino ai tuoi!');
+    level = 1; lives = 3; score = 0;
+    buildLevel();
+    items = []; popups = []; parts = [];
+    pw = 96; widT = 0; paddleX = W / 2; paddleTarget = W / 2;
+    balls = [];
+    launchReady();
     $('overlay').classList.remove('show');
     update();
+    say('Muovi il barattolo con il dito o con le frecce. Tocca per lanciare la palla!');
   }
 
-  // ===== Azioni del giocatore =====
-  // tocco su un cantone tuo = rinforza; tocco su un cantone nemico vicino = anteprima, poi tocca ancora per attaccare
-  function tap(i) {
-    if (state !== 'play') return;
-    if (i < 0) { preview = -1; update(); return; }
-    if (owner[i] === 0) {
-      preview = -1;
-      if (def[i] <= 1) { say(`${CANTONS[i].n} è già fortissimo!`); SFX.tick(); }
-      else if (gran < 2) { say('Servono 2 granelli per rinforzare!', '#ff6b6b'); SFX.fail(); }
-      else { gran -= 2; def[i]--; popup(i, 'RINFORZATO!', '#2ec4ff'); beep(520, .1, 'triangle', 300, .05); say(`${CANTONS[i].n} rinforzato: difesa ${def[i]}.`, '#2ec4ff'); }
-      update(); return;
-    }
-    const src = playerNeighbour(i);
-    if (src === undefined) {
-      preview = -1; say(`${CANTONS[i].n} non confina con te: conquista prima un cantone vicino.`, '#9fb0d8'); SFX.fail(); update(); return;
-    }
-    if (preview === i) { preview = -1; attack(i, src); }
+  function launchReady() {
+    balls = [{ x: paddleX, y: PY - PH - PR - 1, vx: 0, vy: 0, stuck: true }];
+    state = 'ready';
+  }
+
+  function launch() {
+    if (state !== 'ready') return;
+    const b = balls[0];
+    const a = rnd(-0.5, 0.5);
+    b.vx = Math.sin(a) * speed; b.vy = -Math.cos(a) * speed; b.stuck = false;
+    state = 'play'; SFX.launch();
+  }
+
+  // ===== Cantoni =====
+  function hitCanton(l) {
+    hp[l]--;
+    score += 10; SFX.hit();
+    if (hp[l] === 0) conquer(l);
     else {
-      preview = i; SFX.tick();
-      say(`Tocca ancora per attaccare ${CANTONS[i].n}: costa ${def[i]} granelli, riuscita ${pct(def[i])}%.`);
-      update();
+      popup(CENTER[l][0], CENTER[l][1], '-1', '#fff6c8');
     }
   }
-
-  function attack(i, src) {
-    const cost = def[i];
-    if (gran < cost) {
-      say(`Servono ${cost} granelli per ${CANTONS[i].n}! Chiudi il turno per guadagnarne.`, '#ff6b6b');
-      popup(i, `${cost} GRANELLI!`, '#ff6b6b'); SFX.fail(); shake(6); update(); return;
+  function conquer(l) {
+    owner[l] = 0; conquered++;
+    score += 100; SFX.conquer(); shakeT = 0.2;
+    const [x, y] = CENTER[l];
+    popup(x, y, 'CONQUISTATO!', '#ffd400');
+    explosion(x, y, [255, 212, 0], 22);
+    say(`Hai conquistato ${CANTONS[l][1]}!`, '#ffd400');
+    if (Math.random() < 0.4) {
+      const r = Math.random();
+      items.push({ x, y, t: r < 0.2 ? 'L' : r < 0.6 ? 'V' : 'F', vy: 80 });
     }
-    gran -= cost; state = 'busy'; update();
-    SFX.shot();
-    flyers.push({ x0: CEN[src][0], y0: CEN[src][1], x1: CEN[i][0], y1: CEN[i][1], t: 0, dur: 0.45, color: COL.player,
-      done: () => resolveAttack(i) });
-  }
-
-  function resolveAttack(i) {
-    if (Math.random() < chance(def[i])) {
-      const was = owner[i];
-      take(i, 0); conquests++; combo++;
-      const bonus = combo >= 2 ? combo - 1 : 0;
-      gran += bonus;
-      SFX.boom(); shake(9);
-      explosion(CEN[i][0], CEN[i][1], was < 0 ? COL.neutral : COL.rival[was - 1], 26);
-      popup(i, combo >= 2 ? `COMBO x${combo}! +${bonus}` : 'CONQUISTATO!', '#ffd400');
-      say(was < 0 ? `Hai preso ${CANTONS[i].n} dal nulla!` : `Hai conquistato ${CANTONS[i].n} al ${OWNER_NAMES[was]}!`, '#ffd400');
-      if (Math.random() < 0.25) randomEvent();
-    } else {
-      combo = 0; SFX.fail(); shake(4);
-      popup(i, 'RESPINTO!', '#ff3d5a');
-      say(`Attacco su ${CANTONS[i].n} respinto. Ti è costato il colpo.`, '#ff6b6b');
-    }
-    if (count(0) === N) return win();
-    state = 'play'; update();
-  }
-
-  function randomEvent() {
-    const r = Math.random();
-    if (r < 0.4) { gran += 3; say('SCATOLA ? trovata: +3 granelli!', '#ffd400'); SFX.coin(); }
-    else if (r < 0.75) { gran += 2; say('FESTA DELLA FONDUE: +2 granelli!', '#ffd400'); SFX.coin(); }
-    else { gran = Math.max(0, gran - 2); say('SCIOPERO DEL SALE: -2 granelli.', '#ff6b6b'); SFX.fail(); }
-  }
-
-  // ===== Turno dei brodi rivali (animato, uno alla volta) =====
-  function endTurn() {
-    if (state !== 'play') return;
-    state = 'busy'; preview = -1; combo = 0; update();
-    let r = 1;
-    const step = () => {
-      if (state === 'end') return;
-      if (r > 3) return finishTurn();
-      rivalAct(r++);
-      setTimeout(step, 800);
-    };
-    step();
-  }
-
-  function rivalAct(r) {
-    if (count(r) === 0 || Math.random() < 0.3) return;
-    let best = [], bd = Infinity;
-    for (let i = 0; i < N; i++) {
-      if (owner[i] !== r) continue;
-      for (const j of adj[i]) {
-        if (owner[j] === r) continue;
-        if (def[j] < bd) { bd = def[j]; best = [j]; }
-        else if (def[j] === bd && !best.includes(j)) best.push(j);
-      }
-    }
-    if (!best.length) return;
-    const j = best[Math.floor(Math.random() * best.length)];
-    const src = [...adj[j]].find(k => owner[k] === r);
-    SFX.rival();
-    flyers.push({ x0: CEN[src][0], y0: CEN[src][1], x1: CEN[j][0], y1: CEN[j][1], t: 0, dur: 0.5, color: COL.rival[r - 1],
-      done: () => {
-        const was = owner[j];
-        const ok = was === -1 ? Math.random() < 0.6 : Math.random() < chance(def[j]);
-        if (ok) {
-          take(j, r);
-          if (was === 0) {
-            SFX.boom(); shake(8); popup(j, 'PERSO!', '#ff3d5a');
-            say(`${OWNER_NAMES[r]} ti ha tolto ${CANTONS[j].n}!`, '#ff6b6b');
-            explosion(CEN[j][0], CEN[j][1], COL.rival[r - 1], 16);
-          }
-        } else if (was === 0) {
-          popup(j, 'RESISTE!', '#ffd400'); SFX.tick();
-          say(`Hai resistito all’attacco di ${OWNER_NAMES[r]} su ${CANTONS[j].n}!`, '#ffd400');
-        }
-        if (count(0) === 0) return lose();
-        update();
-      } });
-  }
-
-  function finishTurn() {
-    if (state === 'end') return;
-    turn++;
-    const inc = 2 + Math.floor(count(0) / 4);
-    gran += inc;
-    if (turn % 2 === 0) for (let i = 0; i < N; i++) def[i] = Math.min(6, def[i] + 1);
-    popup(null, `+${inc} GRANELLI`, '#ffd400'); SFX.coin();
-    state = 'play';
-    say(`TURNO ${turn}: +${inc} granelli. Attacca!`, '#fff6c8');
+    if (conquered === 26) return levelUp();
     update();
   }
 
-  // ===== Fine partita =====
-  function score() { return conquests * 100 + count(0) * 50; }
-  function win() {
-    state = 'end'; saveBest(score() + 1000); SFX.win();
-    showOverlay('SVIZZERA CONQUISTATA!',
-      'Da Ginevra a Sciaffusa, tutto Aromat. Il primo Aromat nacque a Thayngen, nel canton Sciaffusa, da dove sei partito. OVUNQUE*!',
-      `PUNTEGGIO ${score() + 1000}`, 'GIOCA ANCORA');
+  function levelUp() {
+    state = 'over-level';
+    shakeT = 0.6; SFX.win();
+    score += 1000; saveBest();
+    showOverlay(`LIVELLO ${level} VINTO!`, `<p>I brodi rivali tornano, più duri. Il livello ${level + 1} è più veloce.</p>`,
+      `PUNTI ${score}`, 'LIVELLO SUCCESSIVO', () => { level++; buildLevel(); items = []; launchReady(); hideAndPlay(); });
   }
-  function lose() {
-    state = 'end'; saveBest(score()); SFX.lose();
-    showOverlay('GAME OVER', 'I brodi rivali ti hanno tolto tutti i cantoni. Il sale non perdona.',
-      `PUNTEGGIO ${score()}`, 'RIPROVA');
-  }
-  function showOverlay(title, text, scoreLine, btn) {
-    $('ovTitle').textContent = title;
-    $('ovText').innerHTML = `<p>${text}</p><p class="score px">${scoreLine}</p>`;
-    $('ovBtn').textContent = btn;
-    $('overlay').classList.add('show');
-  }
-  const titleScreen = () => showOverlay('CONQUISTA LA SVIZZERA',
-    '<b>1.</b> Tocca un cantone <b>nemico vicino</b> ai tuoi: diventa l’anteprima.<br>' +
-    '<b>2.</b> Tocca di nuovo per <b>attaccare</b> (costa granelli).<br>' +
-    '<b>3.</b> Tocca un <b>tuo</b> cantone per rinforzarlo (2 granelli).<br>' +
-    '<b>4.</b> <b>FINE TURNO</b>: i brodi rivali attaccano.<br><br>' +
-    'I cantoni che puoi attaccare lampeggiano. Conquistali tutti!',
-    `RECORD ${best}`, 'GIOCA');
 
   // ===== Effetti =====
-  function popup(i, text, color) {
-    const [x, y] = i === null ? [W / 2, 60] : CEN[i];
-    popups.push({ x, y, text, color, life: 1.1 });
-  }
-  function explosion(x, y, color, n) {
+  function popup(x, y, text, color) { popups.push({ x, y, text, color, life: 0.9 }); }
+  function explosion(x, y, c, n) {
     for (let k = 0; k < n; k++) {
       const a = Math.random() * Math.PI * 2, sp = 40 + Math.random() * 120;
       parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0.6 + Math.random() * 0.5,
-        color: k % 3 === 0 ? '#fff6c8' : `rgb(${color[0]},${color[1]},${color[2]})` });
+        color: k % 3 === 0 ? '#fff6c8' : `rgb(${c[0]},${c[1]},${c[2]})` });
     }
+  }
+
+  // ===== Fisica =====
+  function moveBalls(dt) {
+    for (let k = balls.length - 1; k >= 0; k--) {
+      const b = balls[k];
+      if (b.stuck) { b.x = paddleX; continue; }
+      const sp = Math.hypot(b.vx, b.vy);
+      const steps = Math.max(1, Math.ceil(sp * dt / 1.2));
+      const h = dt / steps;
+      for (let s = 0; s < steps; s++) {
+        // orizzontale
+        let nx = b.x + b.vx * h;
+        if (nx < PR) { nx = PR; b.vx = Math.abs(b.vx); }
+        if (nx > W - PR) { nx = W - PR; b.vx = -Math.abs(b.vx); }
+        const lx = solidAt(nx, b.y);
+        if (lx >= 0) { b.vx = -b.vx; nx = b.x; hitCanton(lx); SFX.bounce(); }
+        b.x = nx;
+        // verticale
+        let ny = b.y + b.vy * h;
+        if (ny < PR) { ny = PR; b.vy = Math.abs(b.vy); }
+        const ly = solidAt(b.x, ny);
+        if (ly >= 0) { b.vy = -b.vy; ny = b.y; if (ly !== lx) hitCanton(ly); SFX.bounce(); }
+        b.y = ny;
+        // barra del barattolo
+        if (b.vy > 0 && b.y + PR >= PY && b.y + PR <= PY + PH + 6 && Math.abs(b.x - paddleX) <= pw / 2 + PR) {
+          const off = clamp((b.x - paddleX) / (pw / 2), -1, 1);
+          const vx = off * speed * 0.85;
+          b.vx = vx; b.vy = -Math.sqrt(Math.max(speed * speed - vx * vx, 150 * 150));
+          b.y = PY - PR - 0.5;
+          SFX.bounce();
+        }
+        if (b.y > PY + PH + 20) break;
+      }
+      if (b.y > PY + PH + 20) balls.splice(k, 1);
+    }
+    if (balls.length === 0 && state === 'play') loseLife();
+  }
+
+  function loseLife() {
+    lives--; SFX.lose(); shakeT = 0.35;
+    update();
+    if (lives <= 0) return gameOver();
+    say(`Palla persa! Ti restano ${lives} vite. Tocca per lanciare.`, '#ff6b6b');
+    launchReady();
+  }
+
+  function gameOver() {
+    state = 'over'; saveBest();
+    showOverlay('GAME OVER', '<p>I brodi rivali hanno vinto questa volta. Il sale non perdona.</p>',
+      `PUNTI ${score} · RECORD ${best}`, 'RIPROVA', reset);
+  }
+
+  function updateItems(dt) {
+    const pl = paddleX - pw / 2, pr = paddleX + pw / 2;
+    for (let k = items.length - 1; k >= 0; k--) {
+      const it = items[k];
+      it.y += it.vy * dt;
+      if (it.y > PY + PH) { items.splice(k, 1); continue; }
+      if (it.y > PY - 8 && it.y < PY + PH + 4 && it.x > pl - 8 && it.x < pr + 8) {
+        items.splice(k, 1); applyItem(it);
+      }
+    }
+  }
+  function applyItem(it) {
+    SFX.item();
+    if (it.t === 'L') { lives = Math.min(5, lives + 1); popup(it.x, it.y, 'PATATINE! +1 VITA', '#ffd400'); say('Patatine Aromat: una vita in più!', '#ffd400'); }
+    else if (it.t === 'V') { widT = 8; popup(it.x, it.y, 'FURGONE! BARRA GRANDE', '#2ec4ff'); say('Furgone Aromat: barra più larga per 8 secondi!', '#2ec4ff'); }
+    else {
+      const b = balls.find(q => !q.stuck) || balls[0];
+      if (b && !b.stuck) for (let n = 0; n < 2; n++) {
+        const a = rnd(-0.9, 0.9);
+        balls.push({ x: b.x, y: b.y, vx: Math.sin(a) * speed, vy: -Math.abs(Math.cos(a)) * speed, stuck: false });
+      }
+      popup(it.x, it.y, 'FONDUE! PALLE x3', '#ff6b6b'); say('Fondue: più palle in gioco!', '#ff6b6b');
+    }
+    update();
   }
 
   // ===== Disegno =====
   const img = ctx.createImageData(W, H);
-  const SHADE = CANTONS.map((_, i) => 0.92 + 0.08 * (((i * 37) % 7) / 6));
-  const colorOf = l => {
-    const o = owner[l];
-    return o === -1 ? COL.neutral : o === 0 ? COL.player : COL.rival[o - 1];
-  };
+  const BASE = [null, [255, 61, 90], [46, 196, 255], [180, 76, 255]];
+  const NEUTRAL = [185, 167, 122], PLAYER = [255, 212, 0];
   function drawMap(t) {
-    const attackable = new Uint8Array(N);
-    for (let i = 0; i < N; i++) attackable[i] = state === 'play' && owner[i] !== 0 && playerNeighbour(i) !== undefined ? 1 : 0;
-    const blink = 0.5 + 0.5 * Math.sin(t * 7);
     const d = img.data;
     for (let p = 0; p < W * H; p++) {
       const l = lab[p], o = p * 4;
       let r, g, b;
-      if (l === -2) {
-        const w = 0.5 + 0.5 * Math.sin(((p % W) * 0.09) + Math.floor(p / W) * 0.06 - t * 2.2);
-        r = COL.sea[0] + w * 14; g = COL.sea[1] + w * 22; b = COL.sea[2] + w * 40;
+      if (l < 0) {
+        const w = 0.5 + 0.5 * Math.sin((p % W) * 0.09 + Math.floor(p / W) * 0.06 - t * 2.2);
+        r = 12 + w * 14; g = 20 + w * 22; b = 52 + w * 40;
       } else {
-        const c = colorOf(l), s = SHADE[l];
-        r = c[0] * s; g = c[1] * s; b = c[2] * s;
-        if (((p % W) + Math.floor(p / W)) % 4 === 0) { r += 10; g += 10; b += 10; } // trama a pixel
-        if (attackable[l]) { const k = 0.12 + 0.18 * blink; r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k; }
-        if (l === preview) { const k = 0.35 + 0.3 * blink; r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k; }
-        const e = edge[p];
-        if (e === 1) { r = 28; g = 14; b = 56; }
-        else if (e === 2) { r = 200; g = 225; b = 255; }
+        let c;
+        if (owner[l] === 0) c = PLAYER;
+        else if (owner[l] > 0) c = BASE[owner[l]];
+        else c = NEUTRAL;
+        // i cantoni danneggiati si schiariscono di meno: più chiaro = più integro
+        const k = owner[l] === 0 ? 1 : 0.45 + 0.55 * (hp[l] / maxhp[l]);
+        r = c[0] * k; g = c[1] * k; b = c[2] * k;
+        if (((p % W) + Math.floor(p / W)) % 4 === 0) { r += 8; g += 8; b += 8; }
+        if (edge[p]) { r *= 0.45; g *= 0.45; b *= 0.45; }
       }
       d[o] = r; d[o + 1] = g; d[o + 2] = b; d[o + 3] = 255;
     }
+    ctx.fillStyle = '#0b0f24';
+    ctx.fillRect(0, 0, W, CH);
     ctx.putImageData(img, 0, 0);
 
-    // etichette: sigla e difesa in una "medaglia" a pixel
+    // codici e danni dei cantoni ancora da conquistare
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    for (let i = 0; i < N; i++) {
-      const [x, y] = CEN[i];
-      ctx.fillStyle = 'rgba(0,0,0,.75)';
-      ctx.fillRect(Math.round(x) - 11, Math.round(y) - 9, 22, 18);
-      ctx.strokeStyle = owner[i] === 0 ? '#ffd400' : '#fff';
-      ctx.lineWidth = 2; ctx.strokeRect(Math.round(x) - 11, Math.round(y) - 9, 22, 18);
-      ctx.font = '7px "Press Start 2P", monospace';
-      ctx.fillStyle = '#fff6c8';
-      ctx.fillText(CANTONS[i].c, x, y - 3);
-      ctx.fillStyle = def[i] >= 5 ? '#ff6b6b' : '#7dffb0';
-      ctx.fillText(String(def[i]), x, y + 5);
+    ctx.font = '7px "Press Start 2P", monospace';
+    for (let i = 0; i < 26; i++) {
+      if (owner[i] === 0) continue;
+      const [x, y] = CENTER[i];
+      ctx.fillStyle = 'rgba(0,0,0,.7)'; ctx.fillRect(Math.round(x) - 12, Math.round(y) - 8, 24, 16);
+      ctx.fillStyle = '#fff6c8'; ctx.fillText(CANTONS[i][0], x, y - 3);
+      ctx.fillStyle = '#7dffb0'; ctx.fillText(String(hp[i]), x, y + 5);
     }
 
-    // granelli in volo
-    for (let k = flyers.length - 1; k >= 0; k--) {
-      const f = flyers[k];
-      f.t += 1 / 60;
-      const p = Math.min(1, f.t / f.dur), e = p * p * (3 - 2 * p);
-      const x = f.x0 + (f.x1 - f.x0) * e, y = f.y0 + (f.y1 - f.y0) * e - Math.sin(Math.PI * p) * 46;
-      for (let s = 4; s >= 0; s--) {
-        const q = Math.max(0, p - s * 0.035), ee = q * q * (3 - 2 * q);
-        const tx = f.x0 + (f.x1 - f.x0) * ee, ty = f.y0 + (f.y1 - f.y0) * ee - Math.sin(Math.PI * q) * 46;
-        ctx.fillStyle = s === 0 ? '#fffbe8' : `rgba(255,212,0,${0.5 - s * 0.1})`;
-        ctx.fillRect(Math.round(tx) - 2, Math.round(ty) - 2, 4, 4);
-      }
-      if (p >= 1) { flyers.splice(k, 1); f.done(); }
+    // striscia del barattolo
+    ctx.fillStyle = '#070b18'; ctx.fillRect(0, H, W, HUD);
+    ctx.fillStyle = 'rgba(255,212,0,.08)';
+    for (let x = 0; x < W; x += 12) ctx.fillRect(x, H + 6, 6, 2);
+
+    // barra Aromat
+    const bw = pw, bx = paddleX - bw / 2;
+    ctx.fillStyle = '#000'; ctx.fillRect(bx - 2, PY - 2, bw + 4, PH + 4);
+    ctx.fillStyle = '#e3343b'; ctx.fillRect(bx, PY, bw, 3);
+    ctx.fillStyle = '#ffd400'; ctx.fillRect(bx, PY + 3, bw, PH - 3);
+    ctx.fillStyle = '#1f7a49'; ctx.fillRect(bx, PY + 5, bw, 3);
+    ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.fillRect(bx + 3, PY + 4, 6, 2);
+    ctx.font = '6px "Press Start 2P", monospace'; ctx.fillStyle = '#1b1f2a';
+    ctx.fillText('AROMAT', paddleX, PY + 7);
+
+    // oggetti che cadono
+    for (const it of items) {
+      const x = Math.round(it.x), y = Math.round(it.y);
+      if (it.t === 'L') { ctx.fillStyle = '#ffd400'; ctx.fillRect(x - 5, y - 6, 10, 12); ctx.fillStyle = '#e3343b'; ctx.fillRect(x - 5, y - 6, 10, 3); ctx.fillStyle = '#1f7a49'; ctx.fillRect(x - 5, y, 10, 3); }
+      else if (it.t === 'V') { ctx.fillStyle = '#ffd400'; ctx.fillRect(x - 7, y - 4, 14, 8); ctx.fillStyle = '#2ec4ff'; ctx.fillRect(x + 2, y - 2, 4, 3); ctx.fillStyle = '#1b1f2a'; ctx.fillRect(x - 5, y + 4, 3, 2); ctx.fillRect(x + 2, y + 4, 3, 2); }
+      else { ctx.fillStyle = '#ff6b6b'; ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#fff6c8'; ctx.fillRect(x - 2, y - 2, 4, 4); }
     }
-    // esplosioni
+
+    // palle
+    for (const b of balls) {
+      ctx.fillStyle = 'rgba(255,246,200,.35)';
+      ctx.beginPath(); ctx.arc(b.x - b.vx * 0.02, b.y - b.vy * 0.02, PR + 2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fffbe8'; ctx.beginPath(); ctx.arc(b.x, b.y, PR, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ffd400'; ctx.fillRect(Math.round(b.x) - 1, Math.round(b.y) - 1, 2, 2);
+    }
+
+    // esplosioni e scritte
     for (let k = parts.length - 1; k >= 0; k--) {
       const q = parts[k];
       q.x += q.vx / 60; q.y += q.vy / 60; q.vy += 90 / 60; q.life -= 1 / 60;
@@ -569,7 +520,6 @@
       ctx.fillRect(Math.round(q.x), Math.round(q.y), 3, 3);
     }
     ctx.globalAlpha = 1;
-    // scritte che salgono
     ctx.font = '8px "Press Start 2P", monospace';
     for (let k = popups.length - 1; k >= 0; k--) {
       const q = popups[k];
@@ -580,52 +530,99 @@
       ctx.fillStyle = q.color; ctx.fillText(q.text, q.x, q.y);
     }
     ctx.globalAlpha = 1;
+
+    if (state === 'ready') {
+      ctx.fillStyle = 'rgba(255,255,255,' + (0.5 + 0.5 * Math.sin(t * 6)) + ')';
+      ctx.font = '8px "Press Start 2P", monospace';
+      ctx.fillText('TOCCA PER LANCIARE', W / 2, H - 20);
+    }
   }
 
   function update() {
-    $('gran').textContent = gran;
-    $('owned').textContent = count(0);
-    $('turn').textContent = turn;
-    $('combo').textContent = 'x' + combo;
-    $('best').textContent = best;
-    $('endturn').disabled = state !== 'play';
+    $('lives').textContent = lives;
+    $('score').textContent = score;
+    $('owned').textContent = conquered;
+    $('level').textContent = level;
+    $('best').textContent = Math.max(best, score);
+  }
+
+  function showOverlay(title, html, scoreLine, btn, next) {
+    state = state === 'over-level' ? 'over-level' : 'over';
+    $('ovTitle').textContent = title;
+    $('ovText').innerHTML = html + `<p class="score px">${scoreLine}</p>`;
+    $('ovBtn').textContent = btn;
+    $('ovBtn').onclick = () => { ac(); $('overlay').classList.remove('show'); next(); };
+    $('overlay').classList.add('show');
+  }
+  function hideAndPlay() { $('overlay').classList.remove('show'); state = 'ready'; say('Tocca per lanciare la palla!'); update(); }
+
+  function titleScreen() {
+    showOverlay('CONQUISTA LA SVIZZERA',
+      '<p>Muovi il barattolo Aromat e rimbalza la palla per rompere i cantoni.</p>' +
+      '<p>Ogni cantone ha la sua <b>difesa</b> (il numero): colpiscilo finché non si arrende e diventa tuo.</p>' +
+      '<p>Dai cantoni conquistati <b>cadono</b> le patatine (+1 vita), il furgone (barra larga) e la fondue (più palle).</p>' +
+      '<p>Conquista tutta la Svizzera! I brodi rivali sono in rosso, blu e viola.</p>',
+      `RECORD ${best}`, 'GIOCA', reset);
+    // sullo schermo di partenza il gioco è già pronto
+    state = 'title';
   }
 
   // ===== Interazione =====
+  function pointerToX(e) {
+    const r = canvas.getBoundingClientRect();
+    return (e.clientX - r.left) * W / r.width;
+  }
+  canvas.addEventListener('pointermove', e => { paddleTarget = clamp(pointerToX(e), pw / 2, W - pw / 2); });
   canvas.addEventListener('pointerdown', e => {
     ac();
-    const r = canvas.getBoundingClientRect();
-    const x = Math.floor((e.clientX - r.left) * W / r.width);
-    const y = Math.floor((e.clientY - r.top) * H / r.height);
-    tap(x < 0 || y < 0 || x >= W || y >= H ? -1 : (lab[y * W + x] >= 0 ? lab[y * W + x] : -1));
+    paddleTarget = clamp(pointerToX(e), pw / 2, W - pw / 2);
+    if (state === 'ready') launch();
   });
-  $('endturn').addEventListener('click', () => { ac(); endTurn(); });
-  $('ovBtn').addEventListener('click', () => { ac(); reset(); });
   window.addEventListener('keydown', e => {
-    if (e.code === 'Space' || e.code === 'Enter') {
-      if ($('overlay').classList.contains('show')) { e.preventDefault(); $('ovBtn').click(); }
-      else if (!e.repeat) { e.preventDefault(); endTurn(); }
+    if ($('overlay').classList.contains('show')) {
+      if (e.code === 'Enter' || e.code === 'Space') { e.preventDefault(); $('ovBtn').click(); }
+      return;
     }
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') { keys.l = true; e.preventDefault(); }
+    if (e.code === 'ArrowRight' || e.code === 'KeyD') { keys.r = true; e.preventDefault(); }
+    if ((e.code === 'Space' || e.code === 'Enter') && state === 'ready') { e.preventDefault(); launch(); }
   });
+  window.addEventListener('keyup', e => {
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.l = false;
+    if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.r = false;
+  });
+  const keys = { l: false, r: false };
 
   // ===== Ciclo =====
+  let last = 0;
   function loop(now) {
     const t = now / 1000;
-    lastT = t;
+    const dt = Math.min(1 / 30, last ? t - last : 1 / 60); last = t;
+    if (state === 'play' || state === 'ready') {
+      if (keys.l) paddleTarget -= 420 * dt;
+      if (keys.r) paddleTarget += 420 * dt;
+      paddleTarget = clamp(paddleTarget, pw / 2, W - pw / 2);
+      paddleX += (paddleTarget - paddleX) * Math.min(1, dt * 18);
+      if (widT > 0) { widT -= dt; pw = 150; } else pw = 96;
+      if (state === 'play') { moveBalls(dt); updateItems(dt); }
+      if (state === 'ready') balls.forEach(b => { b.x = paddleX; });
+    }
     if (shakeT > 0) {
-      shakeT -= 1 / 60;
-      const k = shakeT * 10;
+      shakeT -= dt;
+      const k = Math.max(0, shakeT) * 14;
       canvas.style.transform = `translate(${((Math.random() - 0.5) * k).toFixed(1)}px, ${((Math.random() - 0.5) * k).toFixed(1)}px)`;
     } else canvas.style.transform = '';
     drawMap(t);
     requestAnimationFrame(loop);
   }
 
-  // i caratteri a pixel vanno caricati prima di disegnarli nella mappa
-  const start = () => { reset(); titleScreen(); requestAnimationFrame(loop); };
-  if (document.fonts && document.fonts.load) {
-    document.fonts.load('8px "Press Start 2P"').then(start, start);
-  } else start();
+  // i caratteri a pixel vanno caricati prima di disegnarli
+  const start = () => { best = best || 0; reset(); titleScreen(); requestAnimationFrame(loop); };
+  if (document.fonts && document.fonts.load) document.fonts.load('8px "Press Start 2P"').then(start, start);
+  else start();
+  // gancio per i test automatici
+  window.__game = { get balls() { return balls; }, get state() { return state; }, get paddleX() { return paddleX; }, set paddleX(v) { paddleX = v; paddleTarget = v; },
+    get owner() { return owner; }, get hp() { return hp; }, get score() { return score; }, get lives() { return lives; }, get level() { return level; }, get conquered() { return conquered; }, reset, launch, lab, CENTER, CANTONS };
 })();
 </script>
 </body>
