@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Conquista la Svizzera – Aromat Ovunque*</title>
+  <meta name="description" content="Conquista i 26 cantoni svizzeri con l’Aromat, prima che i brodi rivali ti fermino. Fan site satirico e non ufficiale." />
+  <meta name="theme-color" content="#070b18" />
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Aromat Ovunque*" />
+  <meta property="og:title" content="Conquista la Svizzera – Aromat Ovunque*" />
+  <meta property="og:description" content="Conquista i 26 cantoni svizzeri con l’Aromat." />
+  <meta property="og:url" content="https://aromatovunque.info/conquista.html" />
+  <meta property="og:image" content="https://aromatovunque.info/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="it_CH" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" />
+  <link rel="stylesheet" href="site.css" />
+  <style>
+    :root{ --bg:#070b18; --card:#0f1629; --line:rgba(120,160,255,.18); --ink:#eef2ff; --muted:#a5b0d0; }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0; min-height:100vh; color:var(--ink);
+      font-family:system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(900px 520px at 10% -10%, rgba(255,212,0,.12), transparent 62%),
+        radial-gradient(900px 520px at 90% 0%, rgba(31,163,74,.12), transparent 62%),
+        var(--bg);
+    }
+    header{ position:sticky; top:0; z-index:50; background:rgba(7,11,24,.82); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+    .header-inner{ max-width:1100px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .brand img{ height:40px; display:block; }
+    .nav{ display:flex; align-items:center; gap:8px; }
+    .pill{
+      display:inline-flex; align-items:center; gap:7px; padding:9px 14px; border-radius:999px;
+      border:1px solid var(--line); background:#111a33; color:var(--ink); text-decoration:none;
+      font-family:var(--font-display); font-weight:800;
+    }
+    .pill.on{ background:var(--a-yellow); color:#000; border-color:var(--a-yellow); }
+    .pill img{ width:18px; height:18px; border-radius:6px; display:block; }
+
+    main{ max-width:1100px; margin:0 auto; padding:24px 16px 10px; }
+    .hero-row{ display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; }
+    h1{ margin:0; font-family:var(--font-display); font-size:44px; letter-spacing:-1px; line-height:1; }
+    .lead{ margin:8px 0 18px; color:var(--muted); font-weight:600; font-size:16px; max-width:70ch; }
+
+    .stats{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+    .stat{ padding:8px 14px; border-radius:16px; background:var(--card); border:1px solid var(--line); font-weight:700; }
+    .stat b{ color:var(--a-yellow); font-size:18px; margin-left:4px; }
+
+    .board{ display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); gap:16px; align-items:start; }
+    .map-box{ background:#050712; border:1px solid var(--line); border-radius:22px; padding:10px; box-shadow:0 18px 40px rgba(0,0,0,.35); }
+    canvas#map{ display:block; width:100%; height:auto; border-radius:14px; touch-action:manipulation; cursor:pointer; }
+    .legend{ display:flex; gap:10px; flex-wrap:wrap; margin:10px 4px 2px; font-size:13px; color:var(--muted); }
+    .legend span::before{ content:""; display:inline-block; width:12px; height:12px; border-radius:4px; margin-right:6px; vertical-align:-1px; background:var(--c); }
+
+    .side{ display:flex; flex-direction:column; gap:12px; }
+    .panel{ background:var(--card); border:1px solid var(--line); border-radius:22px; padding:16px 16px 14px; }
+    .panel h2{ margin:0 0 6px; font-family:var(--font-display); font-size:22px; letter-spacing:-.4px; }
+    #info{ margin:0; color:var(--muted); line-height:1.45; min-height:72px; }
+    .actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+    button.act{
+      flex:1 1 auto; padding:11px 14px; border-radius:999px; border:0; cursor:pointer;
+      font-family:var(--font-display); font-weight:800; font-size:15px;
+      background:var(--a-yellow); color:#000; box-shadow:0 5px 0 #b5932a;
+    }
+    button.act.alt{ background:#1d2742; color:var(--ink); box-shadow:0 5px 0 #0b1122; }
+    button.act:disabled{ opacity:.35; cursor:not-allowed; }
+    button.act:active{ transform:translateY(2px); box-shadow:none; }
+
+    #log{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; font-size:14px; color:var(--muted); }
+    #log li{ padding:7px 10px; border-radius:12px; background:rgba(255,255,255,.03); border:1px solid var(--line); line-height:1.35; }
+    #log li:first-child{ color:var(--ink); }
+
+    .overlay{
+      position:fixed; inset:0; z-index:90; display:none; align-items:center; justify-content:center;
+      background:rgba(3,5,12,.7); backdrop-filter:blur(4px); padding:16px;
+    }
+    .overlay.show{ display:flex; }
+    .overlay .box{
+      max-width:460px; width:100%; text-align:center; padding:26px 22px;
+      background:var(--card); border:2px solid var(--a-yellow); border-radius:26px;
+      box-shadow:0 30px 80px rgba(0,0,0,.5);
+    }
+    .overlay h2{ margin:0 0 10px; font-family:var(--font-display); font-size:30px; letter-spacing:-.6px; color:var(--a-yellow); }
+    .overlay p{ margin:0 0 16px; color:var(--muted); line-height:1.45; }
+    .overlay button{ font-size:17px; padding:13px 26px; }
+
+    .site-footer{ max-width:1100px; margin:0 auto; padding:26px 16px 30px; font-size:13px; color:rgba(255,255,255,.6); border-top:1px solid var(--line); }
+    .site-footer b{ color:rgba(255,255,255,.9); }
+
+    .bottom-nav{ display:none; }
+    @media (max-width:860px){
+      .board{ grid-template-columns:1fr; }
+    }
+    @media (max-width:620px){
+      .nav .pill{ display:none; }
+      .brand img{ height:34px; }
+      h1{ font-size:34px; }
+      .bottom-nav{
+        display:flex; position:fixed; z-index:60; left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom));
+        justify-content:space-around; gap:4px; padding:6px; border-radius:22px;
+        background:rgba(15,22,41,.9); backdrop-filter:blur(14px); border:1px solid var(--line); box-shadow:0 12px 30px rgba(0,0,0,.4);
+      }
+      .bottom-nav a{
+        flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 2px; border-radius:16px;
+        text-decoration:none; color:var(--ink); font-family:var(--font-display); font-size:11px; font-weight:800; white-space:nowrap;
+      }
+      .bottom-nav .ico{ font-size:20px; line-height:1; }
+      .bottom-nav img{ width:20px; height:20px; border-radius:6px; }
+      .bottom-nav a.on{ background:rgba(255,212,0,.22); }
+      .site-footer{ padding-bottom:calc(110px + env(safe-area-inset-bottom)); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee"><div class="marquee-track">
+    <span>SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+    <span>SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+    <span>SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+    <span>SCONTI RANDOM ✦ 100% NON UFFICIALE ✦ STAY STRONG ✦ STAY AROMAT ✦&nbsp;</span>
+  </div></div>
+</div>
+
+<header>
+  <div class="header-inner">
+    <a class="brand" href="index.html"><img src="logo.webp" alt="Aromat Ovunque"></a>
+    <nav class="nav" aria-label="Menu">
+      <a class="pill" href="index.html"><span>🏠</span> Home</a>
+      <a class="pill" href="shop.html"><span>🛒</span> Shop</a>
+      <a class="pill on" href="giochi.html" aria-current="page"><span>🎮</span> Giochi</a>
+      <a class="pill" href="https://www.instagram.com/aromatovunque.info?igsh=MXBlZjN0YmI3b3IzdA==" target="_blank" rel="noopener"><img src="insta.webp" alt=""> Instagram</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero-row">
+    <h1>Conquista la Svizzera</h1>
+    <span class="fan-sticker">Fan site non ufficiale ♥</span>
+  </div>
+  <p class="lead">Parti da Sciaffusa, dove nacque l’Aromat. Conquista tutti i 26 cantoni prima che i tre brodi rivali ti fermino. Tocca un cantone per vederne la situazione.</p>
+
+  <div class="stats">
+    <div class="stat">Granelli <b id="gran">0</b></div>
+    <div class="stat">Cantoni Aromat <b id="owned">0</b>/26</div>
+    <div class="stat">Turno <b id="turn">1</b></div>
+  </div>
+
+  <section class="board">
+    <div>
+      <div class="map-box">
+        <canvas id="map" width="620" height="420" aria-label="Mappa della Svizzera con i cantoni"></canvas>
+      </div>
+      <div class="legend">
+        <span style="--c:#ffd400">Aromat</span>
+        <span style="--c:#c0392b">Brodo Rivale</span>
+        <span style="--c:#2e6fd1">Sale Grosso</span>
+        <span style="--c:#7d3c98">Dado Nero</span>
+        <span style="--c:#a89f8a">Neutro</span>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <h2 id="title">Scegli un cantone</h2>
+        <p id="info"></p>
+        <div class="actions">
+          <button class="act" id="attack" type="button" disabled>Attacca</button>
+          <button class="act alt" id="reinforce" type="button" disabled>Rinforza</button>
+        </div>
+        <div class="actions">
+          <button class="act alt" id="endturn" type="button">Fine turno</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h2 style="font-size:18px">Cronaca</h2>
+        <ul id="log"></ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="ovTitle">
+  <div class="box">
+    <h2 id="ovTitle"></h2>
+    <p id="ovText"></p>
+    <button class="act" id="again" type="button">Gioca ancora</button>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p><b>Non ufficiale</b>: sito satirico fatto da fan, per amore dell’Aromat. Non affiliato a Knorr o Unilever. I brodi rivali sono inventati.</p>
+</footer>
+
+<nav class="bottom-nav" aria-label="Menu">
+  <a href="index.html"><span class="ico">🏠</span><span>Home</span></a>
+  <a href="shop.html"><span class="ico">🛒</span><span>Shop</span></a>
+  <a class="on" href="giochi.html" aria-current="page"><span class="ico">🎮</span><span>Giochi</span></a>
+  <a href="https://www.instagram.com/aromatovunque.info?igsh=MXBlZjN0YmI3b3IzdA==" target="_blank" rel="noopener"><img src="insta.webp" alt=""><span>Instagram</span></a>
+</nav>
+
+<script>
+(() => {
+  'use strict';
+
+  // ===== Cantoni: capoluoghi approssimati (mappa stilizzata, non confini ufficiali) =====
+  const CANTONS = [
+    { c:'ZH', n:'Zurigo', lon:8.54, lat:47.37 },
+    { c:'BE', n:'Berna', lon:7.45, lat:46.95 },
+    { c:'LU', n:'Lucerna', lon:8.31, lat:47.05 },
+    { c:'UR', n:'Uri', lon:8.64, lat:46.80 },
+    { c:'SZ', n:'Svitto', lon:8.66, lat:47.02 },
+    { c:'OW', n:'Obvaldo', lon:8.25, lat:46.90 },
+    { c:'NW', n:'Nidvaldo', lon:8.37, lat:46.95 },
+    { c:'GL', n:'Glarona', lon:9.07, lat:47.04 },
+    { c:'ZG', n:'Zugo', lon:8.52, lat:47.17 },
+    { c:'FR', n:'Friburgo', lon:7.16, lat:46.80 },
+    { c:'SO', n:'Soletta', lon:7.53, lat:47.21 },
+    { c:'BS', n:'Basilea Città', lon:7.59, lat:47.56 },
+    { c:'BL', n:'Basilea Campagna', lon:7.72, lat:47.47 },
+    { c:'SH', n:'Sciaffusa', lon:8.63, lat:47.70 },
+    { c:'AR', n:'Appenzello Esterno', lon:9.28, lat:47.38 },
+    { c:'AI', n:'Appenzello Interno', lon:9.41, lat:47.33 },
+    { c:'SG', n:'San Gallo', lon:9.37, lat:47.42 },
+    { c:'GR', n:'Grigioni', lon:9.53, lat:46.85 },
+    { c:'AG', n:'Argovia', lon:8.05, lat:47.39 },
+    { c:'TG', n:'Turgovia', lon:9.07, lat:47.56 },
+    { c:'TI', n:'Ticino', lon:8.95, lat:46.19 },
+    { c:'VD', n:'Vaud', lon:6.63, lat:46.57 },
+    { c:'VS', n:'Vallese', lon:7.60, lat:46.23 },
+    { c:'NE', n:'Neuchâtel', lon:6.93, lat:46.99 },
+    { c:'GE', n:'Ginevra', lon:6.14, lat:46.20 },
+    { c:'JU', n:'Giura', lon:7.35, lat:47.36 },
+  ];
+  // contorno approssimativo della Svizzera (lon, lat)
+  const OUTLINE = [
+    [6.02,46.20],[6.12,46.52],[6.40,46.98],[6.75,47.12],[7.10,47.45],[7.60,47.60],[8.10,47.62],[8.60,47.75],
+    [9.20,47.70],[9.60,47.50],[9.90,47.15],[10.45,46.95],[10.50,46.60],[10.00,46.45],[9.60,46.02],[9.20,45.85],
+    [8.90,45.85],[8.50,46.00],[8.05,45.82],[7.50,45.92],[7.00,45.93],[6.75,46.10],[6.40,46.00],
+  ];
+
+  const W = 620, H = 420;
+  const proj = (lon, lat) => [(lon - 5.95) * 136, (47.9 - lat) * 200];
+  const OUT = OUTLINE.map(([lo, la]) => proj(lo, la));
+  const CEN = CANTONS.map(c => proj(c.lon, c.lat));
+  const N = CANTONS.length;
+  const OWNER_NAMES = ['Aromat', 'Brodo Rivale', 'Sale Grosso', 'Dado Nero'];
+  const PLAYER = [255, 212, 0], NEUTRAL = [168, 159, 138];
+  const RIVAL_COLORS = [[192, 57, 43], [46, 111, 209], [125, 60, 152]];
+  const SEA = [10, 16, 40];
+  const START = 'SH';
+  const SEEDS = { TI: 1, GE: 2, GR: 3 }; // partenza dei brodi rivali
+
+  const canvas = document.getElementById('map');
+  const ctx = canvas.getContext('2d');
+
+  // ===== Mappa: ogni pixel appartiene al cantone del capoluogo più vicino =====
+  function inside(x, y) {
+    let ins = false;
+    for (let i = 0, j = OUT.length - 1; i < OUT.length; j = i++) {
+      const [xi, yi] = OUT[i], [xj, yj] = OUT[j];
+      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) ins = !ins;
+    }
+    return ins;
+  }
+  const lab = new Int8Array(W * H);   // -2 = mare, altrimenti indice del cantone
+  const edge = new Uint8Array(W * H); // 1 = confine tra cantoni, 2 = costa
+  const adj = Array.from({ length: N }, () => new Set());
+  const area = new Int32Array(N);
+  (function buildMap() {
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const p = y * W + x;
+      if (!inside(x + 0.5, y + 0.5)) { lab[p] = -2; continue; }
+      let best = 0, bd = Infinity;
+      for (let i = 0; i < N; i++) {
+        const dx = x - CEN[i][0], dy = y - CEN[i][1], d = dx * dx + dy * dy;
+        if (d < bd) { bd = d; best = i; }
+      }
+      lab[p] = best; area[best]++;
+    }
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const p = y * W + x, l = lab[p];
+      if (l < 0) continue;
+      const nb = [];
+      if (x + 1 < W) nb.push(p + 1);
+      if (y + 1 < H) nb.push(p + W);
+      for (const q of nb) {
+        const m = lab[q];
+        if (m === l) continue;
+        if (m === -2) edge[p] = 2;
+        else { edge[p] = Math.max(edge[p], 1); adj[l].add(m); adj[m].add(l); }
+      }
+    }
+  })();
+
+  // ===== Stato di gioco =====
+  let owner, def, gran, turn, sel, over, won, logs;
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const idx = code => CANTONS.findIndex(c => c.c === code);
+
+  function reset() {
+    owner = new Int8Array(N).fill(-1);
+    def = new Int8Array(N);
+    for (let i = 0; i < N; i++) def[i] = rnd(1, 3);
+    owner[idx(START)] = 0; def[idx(START)] = 1;
+    for (const code in SEEDS) { const i = idx(code); owner[i] = SEEDS[code]; def[i] = rnd(2, 3); }
+    gran = 5; turn = 1; sel = -1; over = false; won = false; logs = [];
+    addLog('Sei a Sciaffusa, dove nacque l’Aromat. Conquista il resto della Svizzera.');
+    document.getElementById('overlay').classList.remove('show');
+    update();
+  }
+
+  const count = o => { let k = 0; for (let i = 0; i < N; i++) if (owner[i] === o) k++; return k; };
+  const hasPlayerNeighbour = i => [...adj[i]].some(j => owner[j] === 0);
+  const chance = d => Math.max(0.25, Math.min(0.9, 0.85 - 0.1 * d));
+  const take = (i, o) => { owner[i] = o; def[i] = o === 0 ? rnd(1, 2) : rnd(2, 3); };
+  const addLog = t => { logs.unshift(t); logs = logs.slice(0, 7); };
+
+  function canAttack(i) {
+    return !over && i >= 0 && owner[i] !== 0 && hasPlayerNeighbour(i) && gran >= def[i];
+  }
+  function attack(i) {
+    if (!canAttack(i)) return;
+    const cost = def[i];
+    gran -= cost;
+    const name = CANTONS[i].n;
+    if (Math.random() < chance(def[i])) {
+      const was = owner[i];
+      take(i, 0);
+      addLog(was === -1 ? `Hai preso ${name} dal nulla.` : `Hai conquistato ${name} al ${OWNER_NAMES[was]}!`);
+      maybeEvent();
+    } else {
+      addLog(`Attacco su ${name} respinto: persi ${cost} granelli.`);
+    }
+    if (count(0) === N) { over = true; won = true; showEnd(); }
+    update();
+  }
+  function reinforce(i) {
+    if (over || owner[i] !== 0 || def[i] <= 1 || gran < 2) return;
+    gran -= 2; def[i] -= 1;
+    addLog(`Rinforzato ${CANTONS[i].n}: difesa ${def[i]}.`);
+    update();
+  }
+  function maybeEvent() {
+    if (Math.random() >= 0.25) return;
+    const r = Math.random();
+    if (r < 0.4) { gran += 3; addLog('Scatola ? trovata: +3 granelli!'); }
+    else if (r < 0.75) { gran += 2; addLog('Festa della fondue: +2 granelli.'); }
+    else { gran = Math.max(0, gran - 2); addLog('Sciopero del sale: -2 granelli.'); }
+  }
+
+  function endTurn() {
+    if (over) return;
+    const inc = 2 + Math.floor(count(0) / 4);
+    gran += inc;
+    // i brodi rivali attaccano
+    for (let r = 1; r <= 3; r++) {
+      if (count(r) === 0 || Math.random() < 0.35) continue;
+      let best = [], bd = Infinity;
+      for (let i = 0; i < N; i++) {
+        if (owner[i] !== r) continue;
+        for (const j of adj[i]) {
+          if (owner[j] === r) continue;
+          if (def[j] < bd) { bd = def[j]; best = [j]; }
+          else if (def[j] === bd && !best.includes(j)) best.push(j);
+        }
+      }
+      if (!best.length) continue;
+      const j = best[Math.floor(Math.random() * best.length)];
+      const was = owner[j];
+      const ok = was === -1 ? Math.random() < 0.6 : Math.random() < chance(def[j]);
+      if (ok) {
+        take(j, r);
+        addLog(was === 0 ? `${OWNER_NAMES[r]} ti ha tolto ${CANTONS[j].n}!` : `${OWNER_NAMES[r]} conquista ${CANTONS[j].n}.`);
+      } else if (was === 0) {
+        addLog(`${OWNER_NAMES[r]} attacca ${CANTONS[j].n}: respinto!`);
+      }
+    }
+    turn++;
+    if (turn % 2 === 0) for (let i = 0; i < N; i++) def[i] = Math.min(6, def[i] + 1);
+    addLog(`Turno ${turn}: +${inc} granelli.`);
+    if (count(0) === 0) { over = true; won = false; showEnd(); }
+    update();
+  }
+
+  function showEnd() {
+    document.getElementById('ovTitle').textContent = won ? 'Svizzera conquistata!' : 'Il brodo ha vinto';
+    document.getElementById('ovText').textContent = won
+      ? 'Da Ginevra a Sciaffusa, tutto Aromat. Il primo Aromat nacque a Thayngen, nel canton Sciaffusa, da dove sei partito. Ovunque*.'
+      : 'I brodi rivali ti hanno tolto tutti i cantoni. Il sale non perdona.';
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  // ===== Disegno =====
+  const img = ctx.createImageData(W, H);
+  const SHADE = CANTONS.map((_, i) => 0.92 + 0.08 * ((i * 37) % 7) / 6);
+  const colorOf = l => {
+    const o = owner[l];
+    return o === -1 ? NEUTRAL : o === 0 ? PLAYER : RIVAL_COLORS[o - 1];
+  };
+  function drawMap(t) {
+    const d = img.data;
+    for (let p = 0; p < W * H; p++) {
+      const l = lab[p], o = p * 4;
+      let r, g, b;
+      if (l === -2) { r = SEA[0]; g = SEA[1]; b = SEA[2]; }
+      else {
+        const c = colorOf(l), s = SHADE[l];
+        r = c[0] * s; g = c[1] * s; b = c[2] * s;
+        if (l === sel) {
+          const k = 0.25 + 0.2 * Math.sin(t * 6);
+          r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k;
+        }
+        const e = edge[p];
+        if (e === 1) { r *= 0.5; g *= 0.5; b *= 0.5; }
+        else if (e === 2) { r = 190; g = 210; b = 255; }
+      }
+      d[o] = r; d[o + 1] = g; d[o + 2] = b; d[o + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    ctx.font = '700 12px ui-monospace, Menlo, Consolas, monospace';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    for (let i = 0; i < N; i++) {
+      const [x, y] = CEN[i];
+      const light = owner[i] !== 1 && owner[i] !== 2 && owner[i] !== 3;
+      ctx.fillStyle = light ? 'rgba(255,255,255,.85)' : 'rgba(255,255,255,.95)';
+      ctx.fillStyle = light ? '#1b1f2a' : '#ffffff';
+      ctx.fillText(CANTONS[i].c, x, y);
+    }
+  }
+
+  function infoText() {
+    if (sel < 0) return 'Tocca un cantone per vedere cosa succede. Puoi attaccare solo i cantoni che confinano con i tuoi.';
+    const i = sel, c = CANTONS[i];
+    const who = owner[i] === -1 ? 'neutro' : `di ${OWNER_NAMES[owner[i]]}`;
+    let t = `${c.n} (${c.c}) è ${who}. Difesa ${def[i]}.`;
+    if (owner[i] === 0) t += ' È tuo: rinforzarlo costa 2 granelli e abbassa la difesa di 1.';
+    else if (!hasPlayerNeighbour(i)) t += ' Non confina con i tuoi cantoni.';
+    else t += ` Attaccarlo costa ${def[i]} granelli, con probabilità ${Math.round(chance(def[i]) * 100)}%.`;
+    return t;
+  }
+
+  function update() {
+    document.getElementById('gran').textContent = gran;
+    document.getElementById('owned').textContent = count(0);
+    document.getElementById('turn').textContent = turn;
+    document.getElementById('title').textContent = sel < 0 ? 'Scegli un cantone' : CANTONS[sel].n;
+    document.getElementById('info').textContent = infoText();
+    document.getElementById('attack').disabled = sel < 0 || !canAttack(sel);
+    document.getElementById('reinforce').disabled = sel < 0 || over || owner[sel] !== 0 || def[sel] <= 1 || gran < 2;
+    document.getElementById('endturn').disabled = over;
+    document.getElementById('log').innerHTML = logs.map(t => `<li>${t}</li>`).join('');
+  }
+
+  // ===== Interazione =====
+  canvas.addEventListener('pointerdown', e => {
+    const r = canvas.getBoundingClientRect();
+    const x = Math.floor((e.clientX - r.left) * W / r.width);
+    const y = Math.floor((e.clientY - r.top) * H / r.height);
+    if (x < 0 || y < 0 || x >= W || y >= H) return;
+    const l = lab[y * W + x];
+    sel = l >= 0 ? l : -1;
+    update();
+  });
+  document.getElementById('attack').addEventListener('click', () => attack(sel));
+  document.getElementById('reinforce').addEventListener('click', () => reinforce(sel));
+  document.getElementById('endturn').addEventListener('click', endTurn);
+  document.getElementById('again').addEventListener('click', reset);
+
+  // ===== Ciclo di disegno =====
+  let frame = 0;
+  function loop(now) {
+    if (frame++ % 2 === 0) drawMap(now / 1000);
+    requestAnimationFrame(loop);
+  }
+
+  reset();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
