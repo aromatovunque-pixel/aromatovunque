@@ -47,6 +47,8 @@ Poi aprila normalmente.
 
 Dal menu **File** puoi anche esportare un file `.lrc` con i tempi di ogni parola.
 
+All'avvio si apre un progetto nuovo. Con File → Apri (o trascinando il file sull'icona) puoi aprire anche un **.txt** con il testo, un **.lrc** (anche con i tempi di ogni parola) o direttamente un **file audio** (mp3, m4a, wav…).
+
 I progetti si salvano come file `.karaoke`. L'app apre anche i progetti `.json` della vecchia versione web: usa File → Apri.
 
 ## Compilare da sorgente

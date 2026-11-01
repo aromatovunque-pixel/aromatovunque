@@ -55,11 +55,21 @@ struct LyricsView: View {
                     Text("Testo della canzone").font(.title3.weight(.semibold))
                     Spacer()
                     Button {
-                        if let u = chooseFile(types: [.plainText, .text], title: "Importa testo"),
-                           let s = try? String(contentsOf: u, encoding: .utf8) {
-                            draft = s
+                        if let u = chooseFile(types: [.plainText, .text, .lrc], title: "Importa testo (.txt o .lrc)"),
+                           let data = try? Data(contentsOf: u) {
+                            let imp = KaraokeProject.importText(KaraokeProject.decodeText(data))
+                            draft = imp.lyrics
+                            if imp.timedCount > 0 {
+                                // LRC con tempi: li applico subito
+                                document.update(undo, "Importa LRC") { p in
+                                    p.lyrics = imp.lyrics
+                                    p.lines = imp.lines
+                                    if p.title.isEmpty { p.title = imp.title }
+                                    if p.artist.isEmpty { p.artist = imp.artist }
+                                }
+                            }
                         }
-                    } label: { Label("Importa .txt…", systemImage: "square.and.arrow.down") }
+                    } label: { Label("Importa .txt / .lrc…", systemImage: "square.and.arrow.down") }
                 }
                 Text("Una riga = una riga del karaoke. Lascia una riga vuota tra strofe e ritornelli. Le righe tra parentesi quadre, come [Ritornello], vengono ignorate.")
                     .font(.callout).foregroundStyle(.secondary)
