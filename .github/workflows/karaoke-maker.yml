@@ -44,7 +44,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release delete karaoke-maker-latest --yes --cleanup-tag || true
-          gh release create karaoke-maker-latest karaoke-maker/dist/KaraokeMaker-mac.zip \
+          S=karaoke-maker/selftest-out
+          cp $S/frame-scorrimento-riga2-meta.png anteprima-1-scorrimento.png
+          cp $S/frame-parola-riga2-meta.png anteprima-2-parola-per-parola.png
+          cp $S/frame-alternate-riga2-meta.png anteprima-3-righe-alternate.png
+          cp $S/decoded-prores4444Alpha.png anteprima-4-trasparente.png
+          cp $S/frame-verticale-riga2-meta.png anteprima-5-verticale.png
+          cp $S/frame-scorrimento-intro.png anteprima-6-titolo.png
+          cp $S/frame-scorrimento-countdown.png anteprima-7-conto-alla-rovescia.png
+          gh release create karaoke-maker-latest karaoke-maker/dist/KaraokeMaker-mac.zip anteprima-*.png \
             --target "$GITHUB_SHA" --prerelease \
             --title "Karaoke Maker per Mac (ultima build)" \
             --notes "App per macOS 13 o successivo (Apple Silicon e Intel). Scarica KaraokeMaker-mac.zip, estrai e trascina Karaoke Maker in Applicazioni. Al primo avvio: clic destro → Apri."
