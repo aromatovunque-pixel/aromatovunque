@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key><string>Karaoke Maker</string>
+    <key>CFBundleDisplayName</key><string>Karaoke Maker</string>
+    <key>CFBundleIdentifier</key><string>ch.aromatovunque.karaokemaker</string>
+    <key>CFBundleVersion</key><string>2.0</string>
+    <key>CFBundleShortVersionString</key><string>2.0</string>
+    <key>CFBundlePackageType</key><string>APPL</string>
+    <key>CFBundleExecutable</key><string>KaraokeMaker</string>
+    <key>CFBundleIconFile</key><string>AppIcon</string>
+    <key>CFBundleDevelopmentRegion</key><string>it</string>
+    <key>CFBundleLocalizations</key><array><string>it</string></array>
+    <key>LSMinimumSystemVersion</key><string>13.0</string>
+    <key>LSApplicationCategoryType</key><string>public.app-category.music</string>
+    <key>NSHighResolutionCapable</key><true/>
+    <key>NSSupportsAutomaticTermination</key><false/>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeName</key><string>Progetto Karaoke</string>
+            <key>CFBundleTypeRole</key><string>Editor</string>
+            <key>LSHandlerRank</key><string>Owner</string>
+            <key>LSItemContentTypes</key><array><string>ch.aromatovunque.karaokemaker.project</string></array>
+        </dict>
+        <dict>
+            <key>CFBundleTypeName</key><string>Progetto JSON (versione web)</string>
+            <key>CFBundleTypeRole</key><string>Viewer</string>
+            <key>LSHandlerRank</key><string>Alternate</string>
+            <key>LSItemContentTypes</key><array><string>public.json</string></array>
+        </dict>
+    </array>
+    <key>UTExportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key><string>ch.aromatovunque.karaokemaker.project</string>
+            <key>UTTypeDescription</key><string>Progetto Karaoke Maker</string>
+            <key>UTTypeConformsTo</key><array><string>public.json</string><string>public.data</string></array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key><array><string>karaoke</string></array>
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>

@@ -1,0 +1,36 @@
+name: Karaoke Maker (macOS)
+
+on:
+  push:
+    paths:
+      - "karaoke-maker/**"
+      - ".github/workflows/karaoke-maker.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Versione Swift
+        run: swift --version
+      - name: Compila l'app
+        working-directory: karaoke-maker
+        run: ./build.sh
+      - name: Carica l'app
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaraokeMaker-mac
+          path: karaoke-maker/dist/KaraokeMaker-mac.zip
+      - name: Pubblica la release "karaoke-maker-latest"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete karaoke-maker-latest --yes --cleanup-tag || true
+          gh release create karaoke-maker-latest karaoke-maker/dist/KaraokeMaker-mac.zip \
+            --target "$GITHUB_SHA" --prerelease \
+            --title "Karaoke Maker per Mac (ultima build)" \
+            --notes "App per macOS 13 o successivo (Apple Silicon e Intel). Scarica KaraokeMaker-mac.zip, estrai e trascina Karaoke Maker in Applicazioni. Al primo avvio: clic destro → Apri."
