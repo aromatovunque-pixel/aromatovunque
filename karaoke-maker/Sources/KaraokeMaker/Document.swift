@@ -5,12 +5,15 @@ extension UTType {
     static var karaokeProject: UTType {
         UTType(exportedAs: "ch.aromatovunque.karaokemaker.project", conformingTo: .json)
     }
+    static var lrc: UTType {
+        UTType(importedAs: "ch.aromatovunque.karaokemaker.lrc", conformingTo: .plainText)
+    }
 }
 
 final class KaraokeDocument: ReferenceFileDocument {
     typealias Snapshot = KaraokeProject
 
-    static var readableContentTypes: [UTType] { [.karaokeProject, .json] }
+    static var readableContentTypes: [UTType] { [.karaokeProject, .json, .lrc, .plainText, .text, .audio] }
     static var writableContentTypes: [UTType] { [.karaokeProject] }
 
     @Published var project: KaraokeProject
@@ -23,7 +26,30 @@ final class KaraokeDocument: ReferenceFileDocument {
         guard let data = configuration.file.regularFileContents else {
             throw CocoaError(.fileReadCorruptFile)
         }
-        project = try KaraokeProject.load(from: data)
+        let type = configuration.contentType
+        let name = ((configuration.file.filename ?? "") as NSString).deletingPathExtension
+        if type.conforms(to: .audio) {
+            // file audio: nuovo progetto con questo audio (copiato in Application Support)
+            var p = KaraokeProject()
+            p.title = name
+            p.vocalAudio = AudioRef(path: try KaraokeDocument.storeAudio(data, filename: configuration.file.filename ?? "audio.m4a").path)
+            project = p
+        } else if type.conforms(to: .karaokeProject) || type.conforms(to: .json) {
+            project = try KaraokeProject.load(from: data)
+        } else {
+            // .txt o .lrc: testo della canzone (con tempi se è un LRC)
+            project = KaraokeProject.importText(KaraokeProject.decodeText(data))
+            if project.title.isEmpty { project.title = name }
+        }
+    }
+
+    static func storeAudio(_ data: Data, filename: String) throws -> URL {
+        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("Karaoke Maker/Audio", isDirectory: true)
+        try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
+        let url = base.appendingPathComponent(String(UUID().uuidString.prefix(8)) + "-" + filename)
+        try data.write(to: url)
+        return url
     }
 
     func snapshot(contentType: UTType) throws -> KaraokeProject { project }

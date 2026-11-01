@@ -300,6 +300,92 @@ struct KaraokeProject: Codable, Equatable {
         return try dec.decode(KaraokeProject.self, from: data)
     }
 
+    static func decodeText(_ data: Data) -> String {
+        if let s = String(data: data, encoding: .utf8) { return s }
+        if let s = String(data: data, encoding: .utf16) { return s }
+        return String(data: data, encoding: .isoLatin1) ?? ""
+    }
+
+    /// Testo semplice (.txt) oppure LRC, anche "enhanced" con i tempi di ogni parola (<mm:ss.xx>parola).
+    static func importText(_ text: String) -> KaraokeProject {
+        var p = KaraokeProject()
+        let tagRx = try! NSRegularExpression(pattern: #"^\[([^\]]*)\]"#)
+        let wordRx = try! NSRegularExpression(pattern: #"<(\d+):(\d+(?:[.:]\d+)?)>"#)
+        func seconds(_ s: String) -> Double? {
+            let parts = s.split(separator: ":")
+            guard parts.count >= 2, let m = Double(parts[0]) else { return nil }
+            let rest = parts[1...].joined(separator: ".")
+            guard let sec = Double(rest) else { return nil }
+            return m * 60 + sec
+        }
+        var isLRC = false
+        var cleaned: [String] = []
+        var timedLines: [Int: (lineT: Double?, words: [KWord])] = [:]
+        for raw in text.components(separatedBy: .newlines) {
+            var line = raw.trimmingCharacters(in: .whitespaces)
+            var lineT: Double?
+            var isMeta = false
+            while let m = tagRx.firstMatch(in: line, range: NSRange(line.startIndex..., in: line)),
+                  let r = Range(m.range(at: 1), in: line), let whole = Range(m.range, in: line) {
+                let tag = String(line[r])
+                if let t = seconds(tag) {
+                    if lineT == nil { lineT = t }
+                    isLRC = true
+                } else if let colon = tag.firstIndex(of: ":") {
+                    let key = tag[..<colon].lowercased()
+                    let val = tag[tag.index(after: colon)...].trimmingCharacters(in: .whitespaces)
+                    if key == "ti" { p.title = val }
+                    if key == "ar" { p.artist = val }
+                    isMeta = true
+                } else {
+                    break // es. [Ritornello]: resta e viene ignorato dal parser
+                }
+                line = String(line[whole.upperBound...]).trimmingCharacters(in: .whitespaces)
+            }
+            if isMeta && line.isEmpty { continue }
+            // parole con tempi <mm:ss.xx>
+            var words: [KWord] = []
+            var pending: Double?
+            var hasWordTimes = false
+            var pos = line.startIndex
+            let ns = NSRange(line.startIndex..., in: line)
+            var segments: [(String, Double?)] = []
+            for m in wordRx.matches(in: line, range: ns) {
+                guard let r = Range(m.range, in: line) else { continue }
+                segments.append((String(line[pos..<r.lowerBound]), pending))
+                let tag = String(line[r]).dropFirst().dropLast()
+                pending = seconds(String(tag))
+                hasWordTimes = true
+                pos = r.upperBound
+            }
+            segments.append((String(line[pos...]), pending))
+            for (seg, t) in segments {
+                let ws = seg.split(whereSeparator: { $0.isWhitespace }).map(String.init)
+                for (k, w) in ws.enumerated() { words.append(KWord(w: w, t: k == 0 ? t : nil)) }
+            }
+            let plain = words.map { $0.w }.joined(separator: " ")
+            if !hasWordTimes, let lt = lineT, !words.isEmpty { words[0].t = lt }
+            if !plain.isEmpty, lineT != nil || hasWordTimes {
+                timedLines[cleaned.count] = (lineT, words)
+            }
+            cleaned.append(plain)
+        }
+        p.lyrics = cleaned.joined(separator: "\n").trimmingCharacters(in: .newlines)
+        p.lines = LyricsParser.parse(cleaned.joined(separator: "\n"))
+        if isLRC {
+            // riassocia i tempi alle righe nell'ordine
+            let timed = cleaned.indices.compactMap { timedLines[$0] }.filter { !$0.words.isEmpty }
+            var k = 0
+            for i in p.lines.indices where k < timed.count {
+                if timed[k].words.map({ $0.w }) == p.lines[i].words.map({ $0.w }) {
+                    p.lines[i].words = timed[k].words
+                    k += 1
+                }
+            }
+        }
+        return p
+    }
+
     static func lyricsText(from lines: [KLine]) -> String {
         var out: [String] = []
         for (i, l) in lines.enumerated() {

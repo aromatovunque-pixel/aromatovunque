@@ -28,6 +28,11 @@ jobs:
       - name: Avvio dell'interfaccia con un progetto
         working-directory: karaoke-maker
         run: |
+          open -a "$PWD/dist/Karaoke Maker.app"
+          sleep 10
+          screencapture -x selftest-out/screenshot-nuovo.png || true
+          pkill -x KaraokeMaker || true
+          sleep 2
           cp TestData/progetto-web.json /tmp/progetto-web.json
           open -a "$PWD/dist/Karaoke Maker.app" /tmp/progetto-web.json
           sleep 12
@@ -65,6 +70,7 @@ jobs:
           cp $S/frame-verticale-riga2-meta.png anteprima-5-verticale.png
           cp $S/frame-scorrimento-intro.png anteprima-6-titolo.png
           cp $S/frame-scorrimento-countdown.png anteprima-7-conto-alla-rovescia.png
+          cp $S/screenshot-nuovo.png anteprima-0-avvio.png 2>/dev/null || true
           cp $S/screenshot-app.png anteprima-0-app.png 2>/dev/null || true
           cp $S/screenshot-video.png anteprima-0-app-video.png 2>/dev/null || true
           gh release create karaoke-maker-latest karaoke-maker/dist/KaraokeMaker-mac.zip anteprima-*.png \

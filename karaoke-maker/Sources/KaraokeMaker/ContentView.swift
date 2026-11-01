@@ -67,7 +67,9 @@ struct ContentView: View {
             exportLRC: exportLRC
         ))
         .onAppear {
-            if !document.project.lines.isEmpty { editor.tab = .sync }
+            let p = document.project
+            let hasAudio = p.vocalAudio != nil || p.backingAudio != nil
+            editor.tab = (!p.lines.isEmpty && hasAudio) ? .sync : .lyrics
             reloadAudio()
         }
         .onChange(of: document.project.vocalAudio) { _ in reloadAudio() }

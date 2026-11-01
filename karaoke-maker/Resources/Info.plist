@@ -30,6 +30,18 @@
             <key>LSHandlerRank</key><string>Alternate</string>
             <key>LSItemContentTypes</key><array><string>public.json</string></array>
         </dict>
+        <dict>
+            <key>CFBundleTypeName</key><string>Testo della canzone</string>
+            <key>CFBundleTypeRole</key><string>Viewer</string>
+            <key>LSHandlerRank</key><string>Alternate</string>
+            <key>LSItemContentTypes</key><array><string>public.plain-text</string><string>ch.aromatovunque.karaokemaker.lrc</string></array>
+        </dict>
+        <dict>
+            <key>CFBundleTypeName</key><string>Audio</string>
+            <key>CFBundleTypeRole</key><string>Viewer</string>
+            <key>LSHandlerRank</key><string>Alternate</string>
+            <key>LSItemContentTypes</key><array><string>public.audio</string></array>
+        </dict>
     </array>
     <key>UTExportedTypeDeclarations</key>
     <array>
@@ -40,6 +52,18 @@
             <key>UTTypeTagSpecification</key>
             <dict>
                 <key>public.filename-extension</key><array><string>karaoke</string></array>
+            </dict>
+        </dict>
+    </array>
+    <key>UTImportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key><string>ch.aromatovunque.karaokemaker.lrc</string>
+            <key>UTTypeDescription</key><string>Testo sincronizzato LRC</string>
+            <key>UTTypeConformsTo</key><array><string>public.plain-text</string></array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key><array><string>lrc</string></array>
             </dict>
         </dict>
     </array>

@@ -13,6 +13,8 @@ enum Main {
             RunLoop.main.run()
             return
         }
+        // all'avvio apri subito un progetto nuovo invece del pannello "Apri"
+        UserDefaults.standard.set(false, forKey: "NSShowAppCentricOpenPanelInsteadOfUntitledFile")
         KaraokeMakerApp.main()
     }
 }

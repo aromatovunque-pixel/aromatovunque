@@ -66,6 +66,23 @@ enum SelfTest {
         check(lrc.contains("<00:06.00>"), "LRC generato")
         try? lrc.write(to: out.appendingPathComponent("test.lrc"), atomically: true, encoding: .utf8)
 
+        // importazione di un LRC (andata e ritorno) e di un .txt
+        let back = KaraokeProject.importText(lrc)
+        var same = back.lines.count == project.lines.count && back.title == project.title
+        if same {
+            for (a, b) in zip(back.lines, project.lines) {
+                if a.words.count != b.words.count { same = false; break }
+                for (x, y) in zip(a.words, b.words) where x.w != y.w || abs((x.t ?? -9) - (y.t ?? -9)) > 0.006 { same = false }
+            }
+        }
+        check(same, "import LRC: \(back.lines.count) righe, \(back.timedCount)/\(back.wordCount) parole con tempi")
+        let txt = KaraokeProject.importText("[Ritornello]\nCiao bella luna\n\nSeconda riga qui\n")
+        check(txt.lines.count == 2 && txt.lines[1].brk && txt.timedCount == 0 && txt.lines[0].words.count == 3,
+              "import TXT: \(txt.lines.count) righe")
+        let simple = KaraokeProject.importText("[ti:Prova]\n[00:05.50]Prima riga\n[00:09.00]Seconda riga")
+        check(simple.title == "Prova" && simple.lines.count == 2 && simple.lines[1].words[0].t == 9.0,
+              "import LRC semplice")
+
         let l1 = project.lines[1]
         let midWord = (l1.words[2].t! + l1.words[3].t!) / 2
         let times: [(String, Double)] = [("intro", 1.0), ("countdown", 6 - 0.1 - 1.6), ("riga2-meta", midWord), ("fine", lastT + 0.3)]
