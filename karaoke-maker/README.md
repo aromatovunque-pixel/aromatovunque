@@ -3,9 +3,20 @@
 App nativa per macOS 13 o successivo, per Apple Silicon e Intel. Serve a creare video karaoke: carichi l'audio, incolli il testo, sincronizzi le parole a mano ed esporti il video.
 
 ## Installazione
-1. Scarica `KaraokeMaker-mac.zip` dalla release **karaoke-maker-latest** del repository. In alternativa compila l'app tu stesso (vedi sotto).
-2. Estrai lo zip e trascina **Karaoke Maker** nella cartella Applicazioni.
-3. Al primo avvio fai clic destro sull'app e scegli **Apri**. Se macOS la blocca ancora, vai in Impostazioni di Sistema → Privacy e sicurezza → **Apri comunque**.
+L'app non è firmata con un account sviluppatore Apple a pagamento, quindi macOS blocca il doppio clic sui file scaricati dal browser.
+
+**Metodo consigliato (Terminale, senza blocchi):** apri l'app Terminale e incolla questa riga:
+```
+curl -L -o /tmp/KaraokeMaker.zip https://github.com/aromatovunque-pixel/aromatovunque/releases/download/karaoke-maker-latest/KaraokeMaker-mac.zip && ditto -x -k /tmp/KaraokeMaker.zip /Applications && open "/Applications/Karaoke Maker.app"
+```
+
+**Se hai già scaricato lo zip e trascinato l'app in Applicazioni**, nel Terminale:
+```
+xattr -cr "/Applications/Karaoke Maker.app"
+```
+Poi aprila normalmente.
+
+**Senza Terminale:** prova ad aprire l'app una volta, poi vai in Impostazioni di Sistema → Privacy e sicurezza, scorri in basso e premi **Apri comunque**.
 
 ## Come si usa
 **1 · Testo e audio**

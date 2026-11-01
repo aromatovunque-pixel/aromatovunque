@@ -70,4 +70,4 @@ jobs:
           gh release create karaoke-maker-latest karaoke-maker/dist/KaraokeMaker-mac.zip anteprima-*.png \
             --target "$GITHUB_SHA" --prerelease \
             --title "Karaoke Maker per Mac (ultima build)" \
-            --notes "App per macOS 13 o successivo (Apple Silicon e Intel). Scarica KaraokeMaker-mac.zip, estrai e trascina Karaoke Maker in Applicazioni. Al primo avvio: clic destro → Apri."
+            --notes "App per macOS 13 o successivo (Apple Silicon e Intel). Installazione senza blocchi di macOS: apri Terminale e incolla: curl -L -o /tmp/KaraokeMaker.zip https://github.com/aromatovunque-pixel/aromatovunque/releases/download/karaoke-maker-latest/KaraokeMaker-mac.zip && ditto -x -k /tmp/KaraokeMaker.zip /Applications && open \"/Applications/Karaoke Maker.app\""
