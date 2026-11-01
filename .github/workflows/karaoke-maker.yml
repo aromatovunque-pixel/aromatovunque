@@ -25,6 +25,19 @@ jobs:
         run: |
           "dist/Karaoke Maker.app/Contents/MacOS/KaraokeMaker" --selftest TestData/progetto-web.json selftest-out
           ls -la selftest-out
+      - name: Avvio dell'interfaccia con un progetto
+        working-directory: karaoke-maker
+        run: |
+          cp TestData/progetto-web.json /tmp/progetto-web.json
+          open -a "$PWD/dist/Karaoke Maker.app" /tmp/progetto-web.json
+          sleep 12
+          pgrep -x KaraokeMaker
+          screencapture -x selftest-out/screenshot-app.png || true
+          osascript -e 'tell application "System Events" to keystroke "3" using command down' || true
+          sleep 4
+          screencapture -x selftest-out/screenshot-video.png || true
+          pgrep -x KaraokeMaker
+          pkill -x KaraokeMaker || true
       - name: Carica i risultati della verifica
         if: always()
         uses: actions/upload-artifact@v4
@@ -52,6 +65,8 @@ jobs:
           cp $S/frame-verticale-riga2-meta.png anteprima-5-verticale.png
           cp $S/frame-scorrimento-intro.png anteprima-6-titolo.png
           cp $S/frame-scorrimento-countdown.png anteprima-7-conto-alla-rovescia.png
+          cp $S/screenshot-app.png anteprima-0-app.png 2>/dev/null || true
+          cp $S/screenshot-video.png anteprima-0-app-video.png 2>/dev/null || true
           gh release create karaoke-maker-latest karaoke-maker/dist/KaraokeMaker-mac.zip anteprima-*.png \
             --target "$GITHUB_SHA" --prerelease \
             --title "Karaoke Maker per Mac (ultima build)" \
