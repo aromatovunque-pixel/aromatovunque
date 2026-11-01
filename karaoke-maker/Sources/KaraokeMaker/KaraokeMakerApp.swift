@@ -1,6 +1,22 @@
 import SwiftUI
 
 @main
+enum Main {
+    static func main() {
+        if let i = CommandLine.arguments.firstIndex(of: "--selftest") {
+            // Verifica automatica senza interfaccia (usata dalla build su GitHub).
+            let args = Array(CommandLine.arguments.dropFirst(i + 1))
+            Task { @MainActor in
+                let ok = await SelfTest.run(projectPath: args.first ?? "", outDir: args.count > 1 ? args[1] : "selftest-out")
+                exit(ok ? 0 : 1)
+            }
+            RunLoop.main.run()
+            return
+        }
+        KaraokeMakerApp.main()
+    }
+}
+
 struct KaraokeMakerApp: App {
     var body: some Scene {
         DocumentGroup(newDocument: { KaraokeDocument() }) { file in

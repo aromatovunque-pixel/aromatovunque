@@ -20,6 +20,20 @@ jobs:
       - name: Compila l'app
         working-directory: karaoke-maker
         run: ./build.sh
+      - name: Verifica automatica (rendering ed esportazione video)
+        working-directory: karaoke-maker
+        run: |
+          "dist/Karaoke Maker.app/Contents/MacOS/KaraokeMaker" --selftest TestData/progetto-web.json selftest-out
+          ls -la selftest-out
+      - name: Carica i risultati della verifica
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selftest
+          path: |
+            karaoke-maker/selftest-out/*.png
+            karaoke-maker/selftest-out/*.lrc
+            karaoke-maker/selftest-out/export-h264.mp4
       - name: Carica l'app
         uses: actions/upload-artifact@v4
         with:

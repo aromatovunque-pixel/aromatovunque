@@ -101,7 +101,7 @@ final class VideoExporter: ObservableObject {
     }
 
     /// Ritorna false se annullato.
-    private func run(renderer: KaraokeRenderer, settings: ExportSettings, audioURL: URL?, outURL: URL) async throws -> Bool {
+    func run(renderer: KaraokeRenderer, settings: ExportSettings, audioURL: URL?, outURL: URL) async throws -> Bool {
         try? FileManager.default.removeItem(at: outURL)
         let fileType: AVFileType = settings.format.fileExtension == "mp4" ? .mp4 : .mov
         let writer = try AVAssetWriter(outputURL: outURL, fileType: fileType)
