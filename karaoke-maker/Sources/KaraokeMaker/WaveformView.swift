@@ -94,7 +94,7 @@ struct WaveformView: View {
                             var best: WordMarker?
                             var bd: CGFloat = 8
                             for m in markers {
-                                let d = abs((m.t - st) * pps - x0)
+                                let d = abs(CGFloat(m.t - st) * pps - x0)
                                 if d < bd { bd = d; best = m }
                             }
                             if let b = best {
@@ -107,11 +107,11 @@ struct WaveformView: View {
                             }
                         }
                         if let d = dragging {
-                            let nt = max(0, d.t0 + Double(g.translation.width) / pps)
+                            let nt = max(0, d.t0 + Double(g.translation.width) / Double(pps))
                             onDragMarker(d.ref, nt)
                         } else if isScrubbing {
                             let st2 = viewStart(clock.time)
-                            onSeek(st2 + Double(g.location.x) / pps)
+                            onSeek(st2 + Double(g.location.x) / Double(pps))
                         }
                     }
                     .onEnded { _ in

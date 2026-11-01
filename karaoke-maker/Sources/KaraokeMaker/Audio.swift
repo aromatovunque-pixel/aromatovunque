@@ -139,6 +139,7 @@ enum WaveformLoader {
         while let sb = out.copyNextSampleBuffer() {
             guard let bb = CMSampleBufferGetDataBuffer(sb) else { continue }
             let length = CMBlockBufferGetDataLength(bb)
+            guard length >= 4 else { continue }
             var data = [Float](repeating: 0, count: length / 4)
             data.withUnsafeMutableBytes { raw in
                 _ = CMBlockBufferCopyDataBytes(bb, atOffset: 0, dataLength: length, destination: raw.baseAddress!)
