@@ -21,7 +21,7 @@ struct KaraokeMakerApp: App {
     var body: some Scene {
         DocumentGroup(newDocument: { KaraokeDocument() }) { file in
             ContentView(document: file.document, fileURL: file.fileURL)
-                .frame(minWidth: 1100, minHeight: 720)
+                .frame(minWidth: 940, minHeight: 620)
         }
         .commands {
             EditorCommands()

@@ -101,18 +101,16 @@ struct SyncView: View {
             Button(role: .destructive) { confirmReset = true } label: { Image(systemName: "trash") }
                 .help("Cancella tutti i tempi")
         }
-        .overlay(alignment: .bottomLeading) {
-            if audioURL == nil {
-                Text("Nessun audio: aggiungilo nella sezione 1.").font(.caption).foregroundStyle(.orange).offset(y: 16)
-            } else if let e = player.loadError {
-                Text(e).font(.caption).foregroundStyle(.red).offset(y: 16)
-            }
-        }
     }
 
     private var helpLine: some View {
         Group {
-            if editor.mode == .mark {
+            if audioURL == nil {
+                Label("Nessun audio: aggiungilo nella sezione 1 · Testo e audio.", systemImage: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+            } else if let e = player.loadError {
+                Label(e, systemImage: "xmark.octagon.fill").foregroundStyle(.red)
+            } else if editor.mode == .mark {
                 Text("**SEGNA:** premi **Spazio** quando il cantante *inizia* la parola col bordo giallo (la prima volta Spazio avvia l'audio) · **↩** segna la fine della riga · **Esc** pausa · **⌫** annulla · **← →** sposta di 0,05 s (**⇧** 0,2 s) · **↑ ↓** parola precedente/successiva · clic su una parola = riascolta da 3 s prima · trascina i marcatori sull'onda per correggere")
             } else {
                 Text("**CONTROLLA:** la parola cantata si accende · **Spazio** play/pausa · clic su una parola = riascolta da 3 s prima · **← →** correggi la parola selezionata · trascina i marcatori sull'onda")
