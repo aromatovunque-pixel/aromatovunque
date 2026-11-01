@@ -287,7 +287,10 @@ final class KaraokeRenderer {
             drawTitle(ctx, t: t, centerTop: centerTop, until: .infinity)
             return
         }
-        drawTitle(ctx, t: t, centerTop: centerTop, until: lines[0].appear)
+        // il titolo sparisce prima del conto alla rovescia iniziale
+        var titleUntil = lines[0].appear
+        if style.showCountdown { titleUntil = min(titleUntil, lines[0].first - 3.3) }
+        drawTitle(ctx, t: t, centerTop: centerTop, until: titleUntil)
 
         switch style.layout {
         case .currentAndNext: renderCurrentAndNext(ctx, t, centerTop)
@@ -439,8 +442,11 @@ final class KaraokeRenderer {
         let first = lines[i].first
         guard t < first, first - t <= 3 else { return }
         // conta alla rovescia solo dopo una pausa (inizio canzone o dopo ≥4 s di silenzio)
-        let prevEnd = i > 0 ? lines[i - 1].lastEnd : 0
-        guard first - prevEnd >= 3 else { return }
+        if i > 0 {
+            guard first - lines[i - 1].lastEnd >= 3 else { return }
+        } else {
+            guard first >= 1 else { return }
+        }
         let count = Int(ceil(first - t))
         let r = 11 * s, gap = 38 * s
         let cy = size.height - (aboveTop - 36 * s)

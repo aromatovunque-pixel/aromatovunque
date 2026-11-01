@@ -34,8 +34,8 @@ enum SelfTest {
         check(merged.count == project.lines.count + 1 && merged[0].words == project.lines[0].words && merged.last!.words.allSatisfy { $0.t == nil },
               "unione testo mantiene i tempi")
 
-        // accorcia: prime 5 righe, spostate a partire da ~2 s
-        let shift = (project.lines.first?.words.first?.t ?? 0) - 2.5
+        // accorcia: prime 5 righe, spostate a partire da 6 s
+        let shift = (project.lines.first?.words.first?.t ?? 0) - 6
         project.lines = Array(project.lines.prefix(5)).map { l in
             var l = l
             l.words = l.words.map { KWord(w: $0.w, t: $0.t.map { $0 - shift }) }
@@ -63,12 +63,12 @@ enum SelfTest {
 
         // 3. fotogrammi
         let lrc = LRCExporter.make(project)
-        check(lrc.contains("<00:02."), "LRC generato")
+        check(lrc.contains("<00:06.00>"), "LRC generato")
         try? lrc.write(to: out.appendingPathComponent("test.lrc"), atomically: true, encoding: .utf8)
 
         let l1 = project.lines[1]
         let midWord = (l1.words[2].t! + l1.words[3].t!) / 2
-        let times: [(String, Double)] = [("intro", 0.4), ("countdown", 1.2), ("riga2-meta", midWord), ("fine", lastT + 0.3)]
+        let times: [(String, Double)] = [("intro", 1.0), ("countdown", 6 - 0.1 - 1.6), ("riga2-meta", midWord), ("fine", lastT + 0.3)]
         let variants: [(String, (inout KaraokeStyle) -> Void, VideoResolution)] = [
             ("scorrimento", { _ in }, .fhd),
             ("parola", { $0.highlightMode = .word }, .fhd),
