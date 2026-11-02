@@ -268,6 +268,7 @@ struct KaraokeProject: Codable, Equatable {
     var backingAudio: AudioRef? = nil
     var style = KaraokeStyle()
     var export = ExportSettings()
+    var midi = MidiSettings()
 
     init() {}
 
@@ -282,6 +283,7 @@ struct KaraokeProject: Codable, Equatable {
         backingAudio = c.v(.backingAudio, AudioRef?.none)
         style = c.v(.style, KaraokeStyle())
         export = c.v(.export, ExportSettings())
+        midi = c.v(.midi, MidiSettings())
         if lyrics.isEmpty && !lines.isEmpty {
             lyrics = KaraokeProject.lyricsText(from: lines)
         }
@@ -323,6 +325,15 @@ struct KaraokeProject: Codable, Equatable {
         var timedLines: [Int: (lineT: Double?, words: [KWord])] = [:]
         for raw in text.components(separatedBy: .newlines) {
             var line = raw.trimmingCharacters(in: .whitespaces)
+            // comandi MIDI in formato StageTraxx
+            if let tag = MidiSyntax.parseTag(line) {
+                switch tag {
+                case .timed(let t, let cmd): p.midi.events.append(MidiEvent(t: t, command: cmd))
+                case .load(let cmd): p.midi.onLoad = cmd
+                case .other(let s): p.midi.extraTags.append(s)
+                }
+                continue
+            }
             var lineT: Double?
             var isMeta = false
             while let m = tagRx.firstMatch(in: line, range: NSRange(line.startIndex..., in: line)),

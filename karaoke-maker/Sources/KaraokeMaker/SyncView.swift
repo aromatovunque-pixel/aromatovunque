@@ -30,8 +30,16 @@ struct SyncView: View {
                                  document.updateLive { $0.lines[ref.l].words[ref.w].t = (t * 100).rounded() / 100 }
                              },
                              onDragEnded: {
-                                 if let s = dragSnapshot { document.commit(from: s, undo, "Sposta parola") }
+                                 if let s = dragSnapshot { document.commit(from: s, undo, "Sposta") }
                                  dragSnapshot = nil
+                             },
+                             midiMarkers: midiMarkers,
+                             onDragMidi: { id, t in
+                                 document.updateLive { p in
+                                     if let i = p.midi.events.firstIndex(where: { $0.id == id }) {
+                                         p.midi.events[i].t = (t * 100).rounded() / 100
+                                     }
+                                 }
                              })
                 .frame(height: 120)
                 OverviewView(data: wave, clock: player.clock, duration: player.duration, markers: markers,
@@ -111,9 +119,9 @@ struct SyncView: View {
             } else if let e = player.loadError {
                 Label(e, systemImage: "xmark.octagon.fill").foregroundStyle(.red)
             } else if editor.mode == .mark {
-                Text("**SEGNA:** premi **Spazio** quando il cantante *inizia* la parola col bordo giallo (la prima volta Spazio avvia l'audio) · **↩** segna la fine della riga · **Esc** pausa · **⌫** annulla · **← →** sposta di 0,05 s (**⇧** 0,2 s) · **↑ ↓** parola precedente/successiva · clic su una parola = riascolta da 3 s prima · trascina i marcatori sull'onda per correggere")
+                Text("**SEGNA:** premi **Spazio** quando il cantante *inizia* la parola col bordo giallo (la prima volta Spazio avvia l'audio) · **↩** segna la fine della riga · **Esc** pausa · **⌫** annulla · **← →** sposta di 0,05 s (**⇧** 0,2 s) · **↑ ↓** parola precedente/successiva · clic su una parola = riascolta da 3 s prima · trascina i marcatori sull'onda per correggere · **1–9** inserisce un comando MIDI (es. 1 Clean, 2 Crunch, 3 Distorto, 4 Solo)")
             } else {
-                Text("**CONTROLLA:** la parola cantata si accende · **Spazio** play/pausa · clic su una parola = riascolta da 3 s prima · **← →** correggi la parola selezionata · trascina i marcatori sull'onda")
+                Text("**CONTROLLA:** la parola cantata si accende · **Spazio** play/pausa · clic su una parola = riascolta da 3 s prima · **← →** correggi la parola selezionata · trascina i marcatori sull'onda · **1–9** inserisce un comando MIDI")
             }
         }
         .font(.caption)
@@ -168,6 +176,18 @@ struct SyncView: View {
                 }
             }
         }
+    }
+
+    private var midiMarkers: [MidiMarker] {
+        document.project.midi.events.map { MidiMarker(id: $0.id, t: $0.t, label: $0.label) }
+    }
+
+    private func addMidi(preset index: Int) {
+        let presets = document.project.midi.presets
+        guard index < presets.count else { return }
+        let pr = presets[index]
+        let t = round2(player.currentTime)
+        document.update(undo, "Comando MIDI") { $0.midi.events.append(MidiEvent(t: t, command: pr.command, name: pr.name)) }
     }
 
     private var markers: [WordMarker] {
@@ -296,6 +316,11 @@ struct SyncView: View {
         let mods = e.modifierFlags.intersection([.command, .control, .option])
         if !mods.isEmpty { return false }
         let shift = e.modifierFlags.contains(.shift)
+        // tasti 1…9: comando MIDI rapido al tempo attuale
+        if let ch = e.charactersIgnoringModifiers, ch.count == 1, let d = Int(ch), d >= 1, d <= 9 {
+            addMidi(preset: d - 1)
+            return true
+        }
         switch e.keyCode {
         case 49: // spazio
             guard player.hasAudio else { return true }

@@ -1,5 +1,11 @@
 import SwiftUI
 
+struct MidiMarker: Identifiable {
+    let id: UUID
+    let t: Double
+    let label: String
+}
+
 struct WordMarker: Identifiable {
     let ref: WordRef
     let t: Double
@@ -20,8 +26,11 @@ struct WaveformView: View {
     var onDragBegan: () -> Void
     var onDragMarker: (WordRef, Double) -> Void
     var onDragEnded: () -> Void
+    var midiMarkers: [MidiMarker] = []
+    var onDragMidi: (UUID, Double) -> Void = { _, _ in }
 
     @State private var dragging: (ref: WordRef, t0: Double)?
+    @State private var draggingMidi: (id: UUID, t0: Double)?
     @State private var isScrubbing = false
     @State private var frozenStart: Double?
 
@@ -78,6 +87,17 @@ struct WaveformView: View {
                     ctx.draw(Text(m.label).font(.system(size: 11, weight: isSel ? .bold : .regular)).foregroundColor(col),
                              at: CGPoint(x: x + 5, y: 2), anchor: .topLeading)
                 }
+                // comandi MIDI (bandierine arancioni in basso)
+                for m in midiMarkers where m.t >= start - 1 && m.t <= start + window {
+                    let x = (m.t - start) * pps
+                    var p = Path(); p.move(to: CGPoint(x: x, y: 20)); p.addLine(to: CGPoint(x: x, y: h))
+                    ctx.stroke(p, with: .color(.orange), style: StrokeStyle(lineWidth: 2, dash: [4, 3]))
+                    let txt = ctx.resolve(Text(m.label).font(.system(size: 11, weight: .bold)).foregroundColor(.black))
+                    let sz = txt.measure(in: CGSize(width: 300, height: 20))
+                    let r = CGRect(x: x, y: h - 20, width: sz.width + 10, height: 18)
+                    ctx.fill(Path(roundedRect: r, cornerRadius: 4), with: .color(.orange))
+                    ctx.draw(txt, at: CGPoint(x: x + 5, y: h - 11), anchor: .leading)
+                }
                 // testina
                 let px = (clock.time - start) * pps
                 var ph = Path(); ph.move(to: CGPoint(x: px, y: 0)); ph.addLine(to: CGPoint(x: px, y: h))
@@ -88,7 +108,23 @@ struct WaveformView: View {
                 DragGesture(minimumDistance: 0)
                     .onChanged { g in
                         let st = viewStart(clock.time)
-                        if dragging == nil && !isScrubbing {
+                        if dragging == nil && draggingMidi == nil && !isScrubbing,
+                           g.startLocation.y > h - 24 {
+                            // bandierina MIDI?
+                            let x0 = g.startLocation.x
+                            var best: MidiMarker?
+                            var bd: CGFloat = 80
+                            for m in midiMarkers {
+                                let d = x0 - CGFloat(m.t - st) * pps
+                                if d > -6 && d < 80 && abs(d) < bd { bd = abs(d); best = m }
+                            }
+                            if let b = best {
+                                frozenStart = st
+                                draggingMidi = (b.id, b.t)
+                                onDragBegan()
+                            }
+                        }
+                        if dragging == nil && draggingMidi == nil && !isScrubbing {
                             // cerca un marcatore vicino al punto di partenza
                             let x0 = g.startLocation.x
                             var best: WordMarker?
@@ -106,7 +142,9 @@ struct WaveformView: View {
                                 isScrubbing = true
                             }
                         }
-                        if let d = dragging {
+                        if let d = draggingMidi {
+                            onDragMidi(d.id, max(0, d.t0 + Double(g.translation.width) / Double(pps)))
+                        } else if let d = dragging {
                             let nt = max(0, d.t0 + Double(g.translation.width) / Double(pps))
                             onDragMarker(d.ref, nt)
                         } else if isScrubbing {
@@ -115,8 +153,9 @@ struct WaveformView: View {
                         }
                     }
                     .onEnded { _ in
-                        if dragging != nil { onDragEnded() }
+                        if dragging != nil || draggingMidi != nil { onDragEnded() }
                         dragging = nil
+                        draggingMidi = nil
                         isScrubbing = false
                         frozenStart = nil
                     }

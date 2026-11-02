@@ -59,6 +59,13 @@ struct LyricsView: View {
                            let data = try? Data(contentsOf: u) {
                             let imp = KaraokeProject.importText(KaraokeProject.decodeText(data))
                             draft = imp.lyrics
+                            if !imp.midi.events.isEmpty || !imp.midi.onLoad.isEmpty {
+                                document.update(undo, "Importa comandi MIDI") { p in
+                                    p.midi.events = imp.midi.events
+                                    if !imp.midi.onLoad.isEmpty { p.midi.onLoad = imp.midi.onLoad }
+                                    p.midi.extraTags = imp.midi.extraTags
+                                }
+                            }
                             if imp.timedCount > 0 {
                                 // LRC con tempi: li applico subito
                                 document.update(undo, "Importa LRC") { p in

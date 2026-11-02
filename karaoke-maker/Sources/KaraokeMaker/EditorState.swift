@@ -3,13 +3,14 @@ import AppKit
 import UniformTypeIdentifiers
 
 enum EditorTab: String, CaseIterable, Identifiable {
-    case lyrics, sync, video
+    case lyrics, sync, video, midi
     var id: String { rawValue }
     var label: String {
         switch self {
         case .lyrics: return "1 · Testo e audio"
         case .sync: return "2 · Sincronizza"
         case .video: return "3 · Video"
+        case .midi: return "4 · MIDI"
         }
     }
 }

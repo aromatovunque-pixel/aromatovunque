@@ -41,6 +41,9 @@ struct EditorCommands: Commands {
                 .disabled(actions == nil)
             Button("Esporta testo sincronizzato (.lrc)…") { actions?.exportLRC() }
                 .disabled(actions == nil)
+            Button("Esporta testo con MIDI per StageTraxx…") { actions?.exportStageTraxx() }
+                .keyboardShortcut("e", modifiers: [.command, .shift])
+                .disabled(actions == nil)
         }
         CommandMenu("Karaoke") {
             Button("Testo e audio") { actions?.setTab(.lyrics) }
@@ -49,6 +52,8 @@ struct EditorCommands: Commands {
                 .keyboardShortcut("2", modifiers: .command)
             Button("Video") { actions?.setTab(.video) }
                 .keyboardShortcut("3", modifiers: .command)
+            Button("MIDI") { actions?.setTab(.midi) }
+                .keyboardShortcut("4", modifiers: .command)
         }
     }
 }

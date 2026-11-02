@@ -6,6 +6,7 @@ struct EditorActions {
     var setTab: (EditorTab) -> Void
     var export: () -> Void
     var exportLRC: () -> Void
+    var exportStageTraxx: () -> Void
 }
 
 struct EditorActionsKey: FocusedValueKey {
@@ -38,6 +39,8 @@ struct ContentView: View {
                 SyncView(document: document, editor: editor, player: syncPlayer, audioURL: syncURL)
             case .video:
                 VideoView(document: document, editor: editor, player: previewPlayer)
+            case .midi:
+                MidiView(document: document, editor: editor, player: syncPlayer)
             }
         }
         .background(WindowAccessor { editor.window = $0 })
@@ -47,7 +50,7 @@ struct ContentView: View {
                     ForEach(EditorTab.allCases) { Text($0.label).tag($0) }
                 }
                 .pickerStyle(.segmented)
-                .frame(width: 440)
+                .frame(width: 560)
             }
             ToolbarItem(placement: .primaryAction) {
                 Button {
@@ -64,7 +67,8 @@ struct ContentView: View {
         .focusedSceneValue(\.editorActions, EditorActions(
             setTab: { editor.tab = $0 },
             export: { editor.showExport = true },
-            exportLRC: exportLRC
+            exportLRC: exportLRC,
+            exportStageTraxx: exportStageTraxx
         ))
         .onAppear {
             let p = document.project
@@ -97,6 +101,14 @@ struct ContentView: View {
     private func reloadAudio() {
         syncPlayer.load(syncURL)
         previewPlayer.load(videoAudioURL)
+    }
+
+    private func exportStageTraxx() {
+        let p = NSSavePanel()
+        p.allowedContentTypes = [.plainText]
+        p.nameFieldStringValue = (document.project.title.isEmpty ? "brano" : document.project.title) + " - StageTraxx.txt"
+        guard p.runModal() == .OK, let url = p.url else { return }
+        try? StageTraxxExporter.make(document.project).write(to: url, atomically: true, encoding: .utf8)
     }
 
     private func exportLRC() {

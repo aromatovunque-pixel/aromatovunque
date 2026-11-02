@@ -79,6 +79,29 @@ enum SelfTest {
         let txt = KaraokeProject.importText("[Ritornello]\nCiao bella luna\n\nSeconda riga qui\n")
         check(txt.lines.count == 2 && txt.lines[1].brk && txt.timedCount == 0 && txt.lines[0].words.count == 3,
               "import TXT: \(txt.lines.count) righe")
+        // MIDI / StageTraxx
+        var mp = project
+        mp.midi.onLoad = "PC0@1"
+        mp.midi.events = [MidiEvent(t: 7.25, command: "PC1@1", name: "Crunch"),
+                          MidiEvent(t: 65.5, command: "CC0.0@1, PC3@1", name: "Solo")]
+        let st = StageTraxxExporter.make(mp)
+        try? st.write(to: out.appendingPathComponent("test-stagetraxx.txt"), atomically: true, encoding: .utf8)
+        print(st.split(separator: "\n").prefix(8).joined(separator: "\n"))
+        check(st.hasPrefix("[midi: PC0@1]\n") && st.contains("[midi@00:07.25: PC1@1]\n") && st.contains("[midi@01:05.50: CC0.0@1, PC3@1]"),
+              "esportazione StageTraxx")
+        let stBack = KaraokeProject.importText(st)
+        check(stBack.midi.events.count == 2 && stBack.midi.events[1].t == 65.5 && stBack.midi.onLoad == "PC0@1"
+              && stBack.lines.count == mp.lines.count && stBack.lines.allSatisfy { !$0.text.contains("midi") },
+              "import StageTraxx: \(stBack.midi.events.count) comandi, \(stBack.lines.count) righe")
+        check(MidiSyntax.isValid("PC0@1") && MidiSyntax.isValid("CC0.2@1, PC101.4@1") && MidiSyntax.isValid("SX F0 7E 7F 09 01 F7")
+              && !MidiSyntax.isValid("PC@1") && !MidiSyntax.isValid("ciao"), "sintassi comandi MIDI")
+        var chg = mp.midi
+        chg.setChannel(3)
+        check(chg.presets[0].command == "PC0@3" && chg.events[1].command == "CC0.0@3, PC3@3", "cambio canale MIDI")
+        if let enc = try? mp.encoded(), let back = try? KaraokeProject.load(from: enc) {
+            check(back.midi == mp.midi, "MIDI salvato nel progetto")
+        }
+
         let simple = KaraokeProject.importText("[ti:Prova]\n[00:05.50]Prima riga\n[00:09.00]Seconda riga")
         check(simple.title == "Prova" && simple.lines.count == 2 && simple.lines[1].words[0].t == 9.0,
               "import LRC semplice")
