@@ -39,6 +39,13 @@ Poi aprila normalmente.
 - Puoi scegliere carattere, dimensione, colori, contorno, ombra, posizione verticale, maiuscolo, conto alla rovescia e titolo iniziale.
 - **Sfondo:** sfumato animato, tinta unita, immagine oppure trasparente.
 
+**4 · MIDI (pedaliera, StageTraxx)**
+- I comandi rapidi sono pronti per la BOSS GX-100: **1 Clean** (PC0), **2 Crunch** (PC1), **3 Distorto** (PC2), **4 Solo** (PC3), sul canale 1. StageTraxx conta i programmi da 0, quindi PC0 è la prima memoria.
+- Nella sezione *Sincronizza* premi **1–4** mentre ascolti: il cambio viene salvato al tempo esatto e appare come bandierina arancione trascinabile sulla forma d'onda.
+- Nella sezione *MIDI* puoi correggere i tempi, cambiare patch, scegliere il canale e la patch da caricare all'avvio del brano.
+- **Esporta testo per StageTraxx** (⇧⌘E) crea un testo con le parole e i comandi su righe dedicate, ad esempio `[midi@01:05.50: PC3@1]`. Incollalo nei Lyrics del brano in StageTraxx.
+- **Importa comandi da un testo** legge lo stesso formato.
+
 **Esportazione** (⌘E)
 - *MP4 H.264* o *HEVC* con sfondo, Full HD 1920×1080 come impostazione predefinita. Sono disponibili anche 720p, 4K, verticale 1080×1920 e quadrato.
 - *ProRes 422 HQ* per il montaggio.
