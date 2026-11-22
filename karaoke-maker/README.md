@@ -49,7 +49,7 @@ Poi aprila normalmente.
 **Esportazione** (⌘E)
 - *MP4 H.264* o *HEVC* con sfondo, Full HD 1920×1080 come impostazione predefinita. Sono disponibili anche 720p, 4K, verticale 1080×1920 e quadrato.
 - *ProRes 422 HQ* per il montaggio.
-- *ProRes 4444* o *HEVC* **trasparenti**, con canale alfa, da sovrapporre in Final Cut, Premiere, DaVinci o iMovie.
+- **Trasparente** (canale alfa): *HEVC trasparente* è leggero (pochi MB al minuto) e consigliato per Final Cut, iMovie e Motion. *ProRes 4444* pesa circa 10–15 MB al secondo: usalo solo per Premiere o DaVinci. Prima di esportare la finestra mostra il peso stimato.
 - L'esportazione non avviene in tempo reale: puoi continuare a usare il Mac e annullarla in qualsiasi momento.
 
 Dal menu **File** puoi anche esportare un file `.lrc` con i tempi di ogni parola.
