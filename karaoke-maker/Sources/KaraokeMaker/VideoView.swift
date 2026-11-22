@@ -216,7 +216,7 @@ struct VideoView: View {
                         Slider(value: b(\.bgDim), in: 0...0.9)
                     }
                 case .transparent:
-                    Text("Il video si esporta con canale alfa (ProRes 4444 o HEVC trasparente): solo il testo, da sovrapporre nel programma di montaggio.")
+                    Text("Il video si esporta con canale alfa (HEVC trasparente, leggero, oppure ProRes 4444, molto pesante): solo il testo, da sovrapporre nel programma di montaggio.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }
@@ -242,8 +242,18 @@ struct ExportSheet: View {
     @ObservedObject var document: KaraokeDocument
     @ObservedObject var exporter: VideoExporter
     let audioURL: URL?
+    var duration: Double = 0
     @Environment(\.undoManager) private var undo
     @Environment(\.dismiss) private var dismiss
+
+    private func estimate(_ ex: ExportSettings) -> String? {
+        let d = duration > 0 ? duration : KaraokeRenderer(project: document.project, size: ex.resolution.size).contentDuration
+        guard d > 1 else { return nil }
+        let sz = ex.resolution.size
+        let mb = ex.format.approxMBPerSecond * Double(sz.width * sz.height) / (1920 * 1080) * Double(ex.fps) / 30 * d
+        let txt = mb >= 1000 ? String(format: "%.1f GB", mb / 1000) : String(format: "%.0f MB", max(1, mb))
+        return "Peso stimato: circa \(txt) per \(formatTime(d))"
+    }
 
     private func b<T: Equatable>(_ kp: WritableKeyPath<ExportSettings, T>) -> Binding<T> {
         document.binding((\KaraokeProject.export).appending(path: kp), undo, "Impostazioni esportazione")
@@ -258,6 +268,11 @@ struct ExportSheet: View {
                     ForEach(VideoFormat.allCases) { Text($0.label).tag($0) }
                 }
                 Text(ex.format.note).font(.caption).foregroundStyle(.secondary)
+                if let est = estimate(ex) {
+                    Label(est, systemImage: "internaldrive")
+                        .font(.callout.weight(.semibold))
+                        .foregroundStyle(ex.format.approxMBPerSecond > 5 ? Color.orange : Color.secondary)
+                }
                 Picker("Risoluzione", selection: b(\.resolution)) {
                     ForEach(VideoResolution.allCases) { Text($0.label).tag($0) }
                 }
@@ -271,7 +286,7 @@ struct ExportSheet: View {
             .disabled(exporter.isRunning)
 
             if document.project.style.background == .transparent && !ex.format.hasAlpha {
-                Label("Hai scelto lo sfondo trasparente: per mantenere la trasparenza usa ProRes 4444 o HEVC trasparente. Con questo formato lo sfondo sarà nero.",
+                Label("Hai scelto lo sfondo trasparente: per mantenere la trasparenza usa HEVC trasparente (consigliato) o ProRes 4444. Con questo formato lo sfondo sarà nero.",
                       systemImage: "exclamationmark.triangle")
                     .font(.callout).foregroundStyle(.orange)
             }
@@ -321,7 +336,7 @@ struct ExportSheet: View {
         .onAppear {
             if case .running = exporter.state {} else { exporter.state = .idle }
             if document.project.style.background == .transparent && !ex.format.hasAlpha {
-                document.update(undo, "Formato") { $0.export.format = .prores4444Alpha }
+                document.update(undo, "Formato") { $0.export.format = .hevcAlpha }
             }
         }
     }

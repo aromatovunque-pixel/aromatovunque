@@ -148,7 +148,7 @@ struct KaraokeStyle: Codable, Equatable {
 // MARK: - Export settings
 
 enum VideoFormat: String, Codable, CaseIterable, Identifiable {
-    case h264, hevc, prores422, prores4444Alpha, hevcAlpha
+    case h264, hevc, prores422, hevcAlpha, prores4444Alpha
     var id: String { rawValue }
 
     var label: String {
@@ -156,8 +156,19 @@ enum VideoFormat: String, Codable, CaseIterable, Identifiable {
         case .h264: return "MP4 · H.264 (con sfondo)"
         case .hevc: return "MP4 · HEVC/H.265 (con sfondo)"
         case .prores422: return "MOV · ProRes 422 HQ (con sfondo)"
-        case .prores4444Alpha: return "MOV · ProRes 4444 TRASPARENTE"
-        case .hevcAlpha: return "MOV · HEVC TRASPARENTE"
+        case .prores4444Alpha: return "MOV · ProRes 4444 TRASPARENTE (molto pesante)"
+        case .hevcAlpha: return "MOV · HEVC TRASPARENTE (leggero, consigliato)"
+        }
+    }
+
+    /// Peso indicativo in MB al secondo a 1920×1080, 30 fps (misurato con un video karaoke tipico).
+    var approxMBPerSecond: Double {
+        switch self {
+        case .h264: return 2.0
+        case .hevc: return 1.25
+        case .prores422: return 26
+        case .hevcAlpha: return 0.15
+        case .prores4444Alpha: return 12
         }
     }
 
@@ -170,8 +181,8 @@ enum VideoFormat: String, Codable, CaseIterable, Identifiable {
         case .h264: return "Compatibile ovunque: YouTube, Instagram, TV, telefoni."
         case .hevc: return "Qualità migliore a parità di peso. Per Mac, iPhone e YouTube."
         case .prores422: return "Qualità da montaggio professionale. File grandi."
-        case .prores4444Alpha: return "Canale alfa per Final Cut, Premiere, DaVinci, After Effects. File grandi. Lo sfondo non viene incluso."
-        case .hevcAlpha: return "Canale alfa leggero, per Final Cut, iMovie, Motion e dispositivi Apple. Lo sfondo non viene incluso."
+        case .prores4444Alpha: return "Canale alfa per Premiere, DaVinci, After Effects. ATTENZIONE: file molto pesanti (circa 10–15 MB al secondo). Usalo solo se il tuo programma non legge l'HEVC trasparente. Lo sfondo non viene incluso."
+        case .hevcAlpha: return "Consigliato per la trasparenza: file leggerissimi (circa 100 volte meno del ProRes). Funziona in Final Cut, iMovie, Motion e sui dispositivi Apple; per Premiere o DaVinci usa ProRes 4444. Lo sfondo non viene incluso."
         }
     }
 }

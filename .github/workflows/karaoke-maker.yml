@@ -43,6 +43,35 @@ jobs:
           screencapture -x selftest-out/screenshot-video.png || true
           pgrep -x KaraokeMaker
           pkill -x KaraokeMaker || true
+      - name: Prova della sincronizzazione con la barra spaziatrice
+        working-directory: karaoke-maker
+        run: |
+          python3 - <<'PY'
+          import json, os
+          src = json.load(open("TestData/progetto-web.json"))
+          lines = [{"text": l["text"], "brk": False, "words": [{"w": w["w"]} for w in l["words"]]} for l in src[:6]]
+          p = {"version": 2, "title": "Prova tasti", "lyrics": "\n".join(l["text"] for l in lines),
+               "lines": lines, "vocalAudio": {"path": os.path.abspath("selftest-out/test-audio.caf")}}
+          json.dump(p, open("/tmp/prova-tasti.karaoke", "w"))
+          PY
+          pkill -x KaraokeMaker || true
+          sleep 1
+          open -a "$PWD/dist/Karaoke Maker.app" /tmp/prova-tasti.karaoke
+          sleep 10
+          osascript -e 'tell application "Karaoke Maker" to activate' || true
+          sleep 1
+          osascript -e 'tell application "System Events" to keystroke "2" using command down' || true
+          sleep 2
+          # prima pressione: avvia l'audio; poi una parola ogni 0,4 s
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            osascript -e 'tell application "System Events" to key code 49'
+            sleep 0.4
+          done
+          sleep 1
+          osascript -e 'tell application "System Events" to key code 53' || true
+          sleep 1
+          screencapture -x selftest-out/screenshot-spazio.png || true
+          pkill -x KaraokeMaker || true
       - name: Carica i risultati della verifica
         if: always()
         uses: actions/upload-artifact@v4
@@ -71,6 +100,7 @@ jobs:
           cp $S/frame-scorrimento-intro.png anteprima-6-titolo.png
           cp $S/frame-scorrimento-countdown.png anteprima-7-conto-alla-rovescia.png
           cp $S/screenshot-nuovo.png anteprima-0-avvio.png 2>/dev/null || true
+          cp $S/screenshot-spazio.png anteprima-0-prova-spazio.png 2>/dev/null || true
           cp $S/screenshot-app.png anteprima-0-app.png 2>/dev/null || true
           cp $S/screenshot-video.png anteprima-0-app-video.png 2>/dev/null || true
           gh release create karaoke-maker-latest karaoke-maker/dist/KaraokeMaker-mac.zip anteprima-*.png \

@@ -62,7 +62,7 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $editor.showExport) {
-            ExportSheet(document: document, exporter: exporter, audioURL: videoAudioURL)
+            ExportSheet(document: document, exporter: exporter, audioURL: videoAudioURL, duration: previewPlayer.duration)
         }
         .focusedSceneValue(\.editorActions, EditorActions(
             setTab: { editor.tab = $0 },
