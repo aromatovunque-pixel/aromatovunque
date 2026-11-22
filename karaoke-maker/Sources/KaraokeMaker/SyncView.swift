@@ -20,6 +20,8 @@ struct SyncView: View {
         VStack(spacing: 0) {
             transport
                 .padding(.horizontal, 16).padding(.top, 10)
+            banner
+                .padding(.horizontal, 16).padding(.top, 8)
             VStack(spacing: 6) {
                 WaveformView(data: wave, clock: player.clock, duration: player.duration,
                              markers: markers, selected: editor.sel,
@@ -57,6 +59,8 @@ struct SyncView: View {
         }
         .onAppear {
             editor.undo = envUndo
+            // nessun campo di testo deve trattenere la barra spaziatrice
+            DispatchQueue.main.async { editor.window?.makeFirstResponder(nil) }
             installMonitor()
         }
         .onDisappear(perform: removeMonitor)
@@ -72,6 +76,63 @@ struct SyncView: View {
                 editor.sel = WordRef(l: 0, w: 0)
             }
         } message: { Text("Si può sempre annullare con ⌘Z.") }
+    }
+
+    // MARK: Banner con la prossima parola
+
+    private var nextWordText: String? {
+        guard valid(editor.sel) else { return nil }
+        return lines[editor.sel.l].words[editor.sel.w].w
+    }
+
+    private var banner: some View {
+        let allDone = document.project.wordCount > 0 && document.project.timedCount == document.project.wordCount
+        return HStack(spacing: 14) {
+            if !player.hasAudio {
+                Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                Text("Nessun audio caricato: aggiungilo nella sezione 1 · Testo e audio.")
+                Spacer()
+                Button("Vai alla sezione 1") { editor.tab = .lyrics }
+            } else if lines.isEmpty {
+                Image(systemName: "text.badge.plus").foregroundStyle(.orange)
+                Text("Nessun testo: incollalo nella sezione 1.")
+                Spacer()
+            } else if editor.mode == .check {
+                Image(systemName: "eye.fill").foregroundStyle(.secondary)
+                Text("CONTROLLA · **Spazio** = play/pausa · la parola cantata si illumina")
+                Spacer()
+            } else if !player.isPlaying {
+                Image(systemName: "space").font(.title2).foregroundStyle(Color.accentColor)
+                Text("Premi **SPAZIO** per far partire l'audio")
+                if let w = nextWordText, !allDone {
+                    Text("· poi SPAZIO quando inizia **«\(w)»**").foregroundStyle(.secondary)
+                }
+                Spacer()
+                Button { player.play() } label: { Label("Avvia", systemImage: "play.fill") }
+                    .buttonStyle(.borderedProminent)
+            } else if let w = nextWordText {
+                Image(systemName: "hand.tap.fill").font(.title2).foregroundStyle(.yellow)
+                Text("Premi **SPAZIO** quando inizia")
+                Text("«\(w)»")
+                    .font(.system(size: 28, weight: .heavy))
+                    .foregroundStyle(.yellow)
+                    .id(editor.sel)
+                    .transition(.scale)
+                Spacer()
+                Button { tap() } label: { Label("Segna", systemImage: "hand.tap") }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.yellow)
+                Button { player.pause() } label: { Image(systemName: "pause.fill") }
+            }
+            if allDone && editor.mode == .mark && player.hasAudio {
+                Label("Tutte le parole sono sincronizzate", systemImage: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+            }
+        }
+        .font(.title3)
+        .padding(.horizontal, 14).padding(.vertical, 8)
+        .frame(maxWidth: .infinity, minHeight: 52, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 10).fill(Color.secondary.opacity(0.12)))
     }
 
     // MARK: Barra di trasporto
@@ -312,7 +373,8 @@ struct SyncView: View {
 
     private func handleKey(_ e: NSEvent) -> Bool {
         guard editor.tab == .sync, let win = editor.window, e.window === win, win.attachedSheet == nil else { return false }
-        if win.firstResponder is NSText { return false }
+        // in questa sezione non ci sono campi di testo: se uno è rimasto attivo, lo libero
+        if win.firstResponder is NSText { win.makeFirstResponder(nil) }
         let mods = e.modifierFlags.intersection([.command, .control, .option])
         if !mods.isEmpty { return false }
         let shift = e.modifierFlags.contains(.shift)
