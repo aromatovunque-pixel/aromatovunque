@@ -39,6 +39,8 @@ Poi aprila normalmente.
 - Puoi scegliere carattere, dimensione, colori, contorno, ombra, posizione verticale, maiuscolo, conto alla rovescia e titolo iniziale.
 - **Sfondo:** sfumato animato, tinta unita, immagine oppure trasparente.
 
+**Frasi per StageTraxx**: in *Sincronizza* scegli la modalità **Frasi**. Avvia l'audio, poi premi **Spazio** o **clicca sulla frase** quando inizia: l'app salva il tempo e passa alla frase successiva. Esportando per StageTraxx ogni riga diventa `[MM:SS.xx]Testo della frase`, il formato che StageTraxx usa per scorrere ed evidenziare il testo. Nella sezione MIDI puoi scegliere i tempi *per frase*, *per parola* o *nessuno*.
+
 **4 · MIDI (pedaliera, StageTraxx)**
 - I comandi rapidi sono pronti per la BOSS GX-100: **1 Clean** (PC0), **2 Crunch** (PC1), **3 Distorto** (PC2), **4 Solo** (PC3), sul canale 1. StageTraxx conta i programmi da 0, quindi PC0 è la prima memoria.
 - Nella sezione *Sincronizza* premi **1–4** mentre ascolti: il cambio viene salvato al tempo esatto e appare come bandierina arancione trascinabile sulla forma d'onda.
