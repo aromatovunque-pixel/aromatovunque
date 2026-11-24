@@ -16,9 +16,15 @@ enum EditorTab: String, CaseIterable, Identifiable {
 }
 
 enum SyncMode: String, CaseIterable, Identifiable {
-    case mark, check
+    case mark, line, check
     var id: String { rawValue }
-    var label: String { self == .mark ? "Segna" : "Controlla" }
+    var label: String {
+        switch self {
+        case .mark: return "Parole"
+        case .line: return "Frasi"
+        case .check: return "Controlla"
+        }
+    }
 }
 
 struct WordRef: Equatable, Hashable {

@@ -102,6 +102,28 @@ enum SelfTest {
             check(back.midi == mp.midi, "MIDI salvato nel progetto")
         }
 
+        // testo con i tempi per StageTraxx (per frase e per parola)
+        var lp = project
+        lp.midi.events = []
+        lp.midi.lyricTimes = .lines
+        let byLine = StageTraxxExporter.make(lp)
+        let firstT = lp.lines[0].words[0].t!
+        check(byLine.contains("[\(MidiSyntax.stamp(firstT))]\(lp.lines[0].text)\n"), "StageTraxx tempi per frase")
+        let lineBack = KaraokeProject.importText(byLine)
+        check(lineBack.lines.count == lp.lines.count
+              && zip(lineBack.lines, lp.lines).allSatisfy { abs(($0.words[0].t ?? -9) - ($1.words[0].t ?? -8)) < 0.006 }
+              && !lineBack.lyrics.contains("["),
+              "import tempi per frase")
+        lp.midi.lyricTimes = .words
+        let byWord = StageTraxxExporter.make(lp)
+        let wordBack = KaraokeProject.importText(byWord)
+        check(wordBack.timedCount == lp.timedCount && wordBack.lines[1].words.map { $0.w } == lp.lines[1].words.map { $0.w },
+              "StageTraxx tempi per parola: \(wordBack.timedCount)/\(lp.timedCount)")
+        let off = KaraokeProject.importText("[offset:+500]\n[00:10.00]Ciao mondo\n[midi@00:09.00: PC1@1]")
+        check(off.lines.first?.words.first?.t == 10.5 && off.midi.events.first?.t == 9.5, "offset StageTraxx")
+        try? byLine.write(to: out.appendingPathComponent("test-stagetraxx-frasi.txt"), atomically: true, encoding: .utf8)
+        print(byLine.split(separator: "\n").prefix(4).joined(separator: "\n"))
+
         let simple = KaraokeProject.importText("[ti:Prova]\n[00:05.50]Prima riga\n[00:09.00]Seconda riga")
         check(simple.title == "Prova" && simple.lines.count == 2 && simple.lines[1].words[0].t == 9.0,
               "import LRC semplice")

@@ -101,6 +101,29 @@ struct SyncView: View {
                 Image(systemName: "eye.fill").foregroundStyle(.secondary)
                 Text("CONTROLLA · **Spazio** = play/pausa · la parola cantata si illumina")
                 Spacer()
+            } else if editor.mode == .line {
+                Image(systemName: "text.line.first.and.arrowtriangle.forward").font(.title2).foregroundStyle(.yellow)
+                if !player.isPlaying {
+                    Text("FRASI (StageTraxx) · premi **SPAZIO** per avviare, poi SPAZIO **o clic sulla frase** quando inizia")
+                } else if valid(editor.sel) {
+                    Text("Premi **SPAZIO** o clicca quando inizia")
+                    Text("«\(lines[editor.sel.l].text)»")
+                        .font(.system(size: 22, weight: .heavy))
+                        .foregroundStyle(.yellow)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .id(editor.sel.l)
+                }
+                Spacer()
+                if player.isPlaying {
+                    Button { tapLine() } label: { Label("Segna frase", systemImage: "hand.tap") }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.yellow)
+                    Button { player.pause() } label: { Image(systemName: "pause.fill") }
+                } else {
+                    Button { player.play() } label: { Label("Avvia", systemImage: "play.fill") }
+                        .buttonStyle(.borderedProminent)
+                }
             } else if !player.isPlaying {
                 Image(systemName: "space").font(.title2).foregroundStyle(Color.accentColor)
                 Text("Premi **SPAZIO** per far partire l'audio")
@@ -159,7 +182,8 @@ struct SyncView: View {
                 ForEach(SyncMode.allCases) { Text($0.label).tag($0) }
             }
             .pickerStyle(.segmented)
-            .frame(width: 190)
+            .frame(width: 250)
+            .help("Parole: Spazio su ogni parola (karaoke) · Frasi: Spazio o clic su ogni frase (StageTraxx) · Controlla: riascolto")
             Spacer()
             Text("\(document.project.timedCount) / \(document.project.wordCount) parole")
                 .font(.callout.monospacedDigit().weight(.semibold))
@@ -179,6 +203,8 @@ struct SyncView: View {
                     .foregroundStyle(.orange)
             } else if let e = player.loadError {
                 Label(e, systemImage: "xmark.octagon.fill").foregroundStyle(.red)
+            } else if editor.mode == .line {
+                Text("**FRASI (per StageTraxx):** **Spazio** o **clic sulla frase** = segna l'inizio della frase al tempo attuale e passa alla successiva · a riproduzione ferma il clic fa riascoltare la frase · **⌫** annulla · **← →** sposta di 0,05 s (**⇧** 0,2 s) · **↑ ↓** frase precedente/successiva · **1–9** comando MIDI. Esporta con ⇧⌘E: ogni riga riceve il suo [MM:SS.xx].")
             } else if editor.mode == .mark {
                 Text("**SEGNA:** premi **Spazio** quando il cantante *inizia* la parola col bordo giallo (la prima volta Spazio avvia l'audio) · **↩** segna la fine della riga · **Esc** pausa · **⌫** annulla · **← →** sposta di 0,05 s (**⇧** 0,2 s) · **↑ ↓** parola precedente/successiva · clic su una parola = riascolta da 3 s prima · trascina i marcatori sull'onda per correggere · **1–9** inserisce un comando MIDI (es. 1 Clean, 2 Crunch, 3 Distorto, 4 Solo)")
             } else {
@@ -208,7 +234,11 @@ struct SyncView: View {
                             LineRow(index: i, line: lines[i],
                                     selectedWord: editor.sel.l == i ? editor.sel.w : nil,
                                     liveWord: editor.live?.l == i ? editor.live?.w : nil,
-                                    onTap: { j in select(WordRef(l: i, w: j), seek: true) },
+                                    lineMode: editor.mode == .line,
+                                    onTap: { j in
+                                        if editor.mode == .line { tapLine(i) } else { select(WordRef(l: i, w: j), seek: true) }
+                                    },
+                                    onReplay: { j in select(WordRef(l: i, w: j), seek: true) },
                                     onClear: { j in
                                         document.update(undo, "Cancella tempo") { $0.lines[i].words[j].t = nil }
                                     },
@@ -315,6 +345,36 @@ struct SyncView: View {
         if let n = next(r) { editor.sel = n }
     }
 
+    /// Modalità Frasi: tempo di inizio della frase (= prima parola).
+    private func nextLine(after l: Int) -> Int? {
+        var k = l + 1
+        while k < lines.count { if !lines[k].words.isEmpty { return k }; k += 1 }
+        return nil
+    }
+
+    private func previousLine(before l: Int) -> Int? {
+        var k = l - 1
+        while k >= 0 { if !lines[k].words.isEmpty { return k }; k -= 1 }
+        return nil
+    }
+
+    private func tapLine(_ l: Int? = nil) {
+        let li = l ?? editor.sel.l
+        guard li >= 0, li < lines.count, !lines[li].words.isEmpty else { return }
+        guard player.hasAudio else { return }
+        if !player.isPlaying {
+            // a riproduzione ferma il clic seleziona la frase e la fa riascoltare
+            select(WordRef(l: li, w: 0), seek: true)
+            return
+        }
+        let t = round2(player.currentTime)
+        let r = WordRef(l: li, w: 0)
+        document.update(undo, "Segna frase") { $0.lines[li].words[0].t = t }
+        editor.tapHistory.append(editor.sel)
+        editor.lastTapped = r
+        if let n = nextLine(after: li) { editor.sel = WordRef(l: n, w: 0) } else { editor.sel = r }
+    }
+
     private func markLineEnd() {
         guard let r = editor.lastTapped ?? (valid(editor.sel) ? editor.sel : nil), r.l < lines.count else { return }
         let t = round2(player.currentTime)
@@ -324,7 +384,7 @@ struct SyncView: View {
 
     private func undoLast() {
         guard let u = undo, u.canUndo else { return }
-        let wasTap = u.undoActionName == "Segna parola"
+        let wasTap = u.undoActionName == "Segna parola" || u.undoActionName == "Segna frase"
         u.undo()
         if wasTap, let r = editor.tapHistory.popLast(), valid(r) {
             editor.sel = r
@@ -333,7 +393,8 @@ struct SyncView: View {
     }
 
     private func nudge(_ d: Double) {
-        let r = editor.sel
+        var r = editor.sel
+        if editor.mode == .line { r.w = 0 }
         guard valid(r), let t = lines[r.l].words[r.w].t else { return }
         document.update(undo, "Sposta parola") { $0.lines[r.l].words[r.w].t = round2(max(0, t + d)) }
     }
@@ -387,7 +448,11 @@ struct SyncView: View {
         case 49: // spazio
             guard player.hasAudio else { return true }
             if !player.isPlaying { player.play(); return true }
-            if editor.mode == .mark { tap() } else { player.pause() }
+            switch editor.mode {
+            case .mark: tap()
+            case .line: tapLine()
+            case .check: player.pause()
+            }
             return true
         case 36, 76: // invio
             if editor.mode == .mark { markLineEnd() }
@@ -398,8 +463,16 @@ struct SyncView: View {
             undoLast(); return true
         case 123: nudge(shift ? -0.2 : -0.05); return true
         case 124: nudge(shift ? 0.2 : 0.05); return true
-        case 126: if let p = previous(editor.sel) { editor.sel = p }; return true
-        case 125: if let n = next(editor.sel) { editor.sel = n }; return true
+        case 126:
+            if editor.mode == .line {
+                if let p = previousLine(before: editor.sel.l) { editor.sel = WordRef(l: p, w: 0) }
+            } else if let p = previous(editor.sel) { editor.sel = p }
+            return true
+        case 125:
+            if editor.mode == .line {
+                if let n = nextLine(after: editor.sel.l) { editor.sel = WordRef(l: n, w: 0) }
+            } else if let n = next(editor.sel) { editor.sel = n }
+            return true
         default: return false
         }
     }
@@ -421,28 +494,39 @@ struct LineRow: View, Equatable {
     let line: KLine
     let selectedWord: Int?
     let liveWord: Int?
+    var lineMode = false
     let onTap: (Int) -> Void
+    var onReplay: (Int) -> Void = { _ in }
     let onClear: (Int) -> Void
     let onSetNow: (Int) -> Void
     let onClearEnd: () -> Void
 
     static func == (a: LineRow, b: LineRow) -> Bool {
         a.index == b.index && a.line == b.line && a.selectedWord == b.selectedWord && a.liveWord == b.liveWord
+            && a.lineMode == b.lineMode
     }
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
-            Text("\(index + 1)")
-                .font(.caption.monospacedDigit())
-                .foregroundStyle(.tertiary)
-                .frame(width: 28, alignment: .trailing)
-                .padding(.top, 8)
+            if lineMode {
+                Text(line.words.first?.t.map { MidiSyntax.stamp($0) } ?? "--:--.--")
+                    .font(.system(.callout, design: .monospaced).weight(.semibold))
+                    .foregroundStyle(line.words.first?.t == nil ? Color.secondary : Color.yellow)
+                    .frame(width: 80, alignment: .trailing)
+                    .padding(.top, 8)
+            } else {
+                Text("\(index + 1)")
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.tertiary)
+                    .frame(width: 28, alignment: .trailing)
+                    .padding(.top, 8)
+            }
             FlowLayout(spacing: 4, lineSpacing: 4) {
                 ForEach(line.words.indices, id: \.self) { j in
                     WordChip(word: line.words[j], selected: selectedWord == j, live: liveWord == j)
                         .onTapGesture { onTap(j) }
                         .contextMenu {
-                            Button("Riascolta da qui") { onTap(j) }
+                            Button("Riascolta da qui") { onReplay(j) }
                             Button("Imposta al tempo attuale") { onSetNow(j) }
                             Button("Cancella tempo") { onClear(j) }
                         }
@@ -461,6 +545,8 @@ struct LineRow: View, Equatable {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.secondary.opacity(selectedWord != nil ? 0.16 : 0.07))
         )
+        .contentShape(Rectangle())
+        .onTapGesture { if lineMode { onTap(0) } }
         .overlay(
             RoundedRectangle(cornerRadius: 10)
                 .stroke(selectedWord != nil ? Color.yellow.opacity(0.35) : Color.clear, lineWidth: 1)

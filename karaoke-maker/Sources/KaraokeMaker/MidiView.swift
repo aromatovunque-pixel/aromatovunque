@@ -113,6 +113,11 @@ struct MidiView: View {
                 }
 
                 Section("StageTraxx") {
+                    Picker("Tempi del testo", selection: document.binding(\.midi.lyricTimes, undo, "Tempi del testo")) {
+                        ForEach(LyricTimeMode.allCases) { Text($0.label).tag($0) }
+                    }
+                    Text(lyricTimesNote)
+                        .font(.caption).foregroundStyle(.secondary)
                     Button {
                         exportFile()
                     } label: {
@@ -142,6 +147,16 @@ struct MidiView: View {
             }
             .formStyle(.grouped)
             .frame(width: 400)
+        }
+    }
+
+    private var lyricTimesNote: String {
+        let p = document.project
+        let timedLines = p.lines.filter { $0.words.first?.t != nil }.count
+        switch midi.lyricTimes {
+        case .none: return "Solo testo e comandi MIDI, senza tempi."
+        case .lines: return "Ogni frase inizia con [MM:SS.xx]: StageTraxx evidenzia e scorre il testo da solo. Frasi con il tempo: \(timedLines) di \(p.lines.count) (segnale in Sincronizza → Frasi)."
+        case .words: return "Un [MM:SS.xx] davanti a ogni parola sincronizzata: StageTraxx evidenzia parola per parola. Parole con il tempo: \(p.timedCount) di \(p.wordCount)."
         }
     }
 

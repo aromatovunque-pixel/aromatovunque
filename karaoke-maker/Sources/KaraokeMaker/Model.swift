@@ -323,7 +323,8 @@ struct KaraokeProject: Codable, Equatable {
     static func importText(_ text: String) -> KaraokeProject {
         var p = KaraokeProject()
         let tagRx = try! NSRegularExpression(pattern: #"^\[([^\]]*)\]"#)
-        let wordRx = try! NSRegularExpression(pattern: #"<(\d+):(\d+(?:[.:]\d+)?)>"#)
+        let wordRx = try! NSRegularExpression(pattern: #"[<\[](\d{1,2}):(\d{2}(?:[.:]\d{1,3})?)[>\]]"#)
+        var offsetMs: Double = 0
         func seconds(_ s: String) -> Double? {
             let parts = s.split(separator: ":")
             guard parts.count >= 2, let m = Double(parts[0]) else { return nil }
@@ -358,6 +359,7 @@ struct KaraokeProject: Codable, Equatable {
                     let val = tag[tag.index(after: colon)...].trimmingCharacters(in: .whitespaces)
                     if key == "ti" { p.title = val }
                     if key == "ar" { p.artist = val }
+                    if key == "offset" { offsetMs = Double(val.replacingOccurrences(of: "+", with: "")) ?? 0 }
                     isMeta = true
                 } else {
                     break // es. [Ritornello]: resta e viene ignorato dal parser
@@ -367,7 +369,7 @@ struct KaraokeProject: Codable, Equatable {
             if isMeta && line.isEmpty { continue }
             // parole con tempi <mm:ss.xx>
             var words: [KWord] = []
-            var pending: Double?
+            var pending: Double? = lineT
             var hasWordTimes = false
             var pos = line.startIndex
             let ns = NSRange(line.startIndex..., in: line)
@@ -378,6 +380,7 @@ struct KaraokeProject: Codable, Equatable {
                 let tag = String(line[r]).dropFirst().dropLast()
                 pending = seconds(String(tag))
                 hasWordTimes = true
+                isLRC = true
                 pos = r.upperBound
             }
             segments.append((String(line[pos...]), pending))
@@ -404,6 +407,14 @@ struct KaraokeProject: Codable, Equatable {
                     k += 1
                 }
             }
+        }
+        if offsetMs != 0 {
+            let d = offsetMs / 1000
+            for i in p.lines.indices {
+                for j in p.lines[i].words.indices { p.lines[i].words[j].t = p.lines[i].words[j].t.map { max(0, $0 + d) } }
+                p.lines[i].end = p.lines[i].end.map { max(0, $0 + d) }
+            }
+            for i in p.midi.events.indices { p.midi.events[i].t = max(0, p.midi.events[i].t + d) }
         }
         return p
     }

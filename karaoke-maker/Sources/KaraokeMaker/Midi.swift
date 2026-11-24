@@ -46,6 +46,8 @@ struct MidiSettings: Codable, Equatable {
     var events: [MidiEvent] = []
     /// altri tag MIDI importati (es. [midi@play: …]) da conservare all'esportazione
     var extraTags: [String] = []
+    /// tempi del testo nell'esportazione per StageTraxx
+    var lyricTimes: LyricTimeMode = .lines
 
     init() {}
     init(from decoder: Decoder) throws {
@@ -56,6 +58,7 @@ struct MidiSettings: Codable, Equatable {
         presets = c.v(.presets, d.presets)
         events = c.v(.events, d.events)
         extraTags = c.v(.extraTags, d.extraTags)
+        lyricTimes = c.v(.lyricTimes, d.lyricTimes)
     }
 
     /// Prime 4 memorie della BOSS GX-100 (U01-1…U01-4 con la Program Map "FIX").
@@ -137,6 +140,18 @@ enum MidiSyntax {
 
 // MARK: - Esportazione per StageTraxx
 
+enum LyricTimeMode: String, Codable, CaseIterable, Identifiable {
+    case none, lines, words
+    var id: String { rawValue }
+    var label: String {
+        switch self {
+        case .none: return "Nessuno"
+        case .lines: return "Per frase"
+        case .words: return "Per parola"
+        }
+    }
+}
+
 enum StageTraxxExporter {
     /// Testo della canzone con i comandi MIDI su righe dedicate, nell'ordine dei tempi.
     /// Da incollare nel campo "Lyrics" del brano in StageTraxx.
@@ -158,10 +173,24 @@ enum StageTraxxExporter {
             for (i, l) in p.lines.enumerated() {
                 if l.brk && i > 0 { out.append("") }
                 if let s = l.words.compactMap({ $0.t }).min() { flush(before: s) }
-                out.append(l.text)
+                out.append(timedText(l, midi.lyricTimes))
             }
         }
         flush(before: nil)
         return out.joined(separator: "\n") + "\n"
+    }
+
+    /// Riga con i timestamp di StageTraxx: [MM:SS.xx] a inizio frase, o davanti a ogni parola.
+    static func timedText(_ l: KLine, _ mode: LyricTimeMode) -> String {
+        switch mode {
+        case .none:
+            return l.text
+        case .lines:
+            guard let t = l.words.first?.t ?? l.words.compactMap({ $0.t }).min() else { return l.text }
+            return "[\(MidiSyntax.stamp(t))]" + l.text
+        case .words:
+            guard l.words.contains(where: { $0.t != nil }) else { return l.text }
+            return l.words.map { w in w.t.map { "[\(MidiSyntax.stamp($0))]\(w.w)" } ?? w.w }.joined(separator: " ")
+        }
     }
 }
